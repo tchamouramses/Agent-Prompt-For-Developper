@@ -92,7 +92,13 @@ Après la modification :
 - Ajoute un test qui protège le comportement que tu viens de garantir.
 - Indique dans ton compte rendu les zones vérifiées et celles que tu n'as pas pu vérifier.
 
-### 4. Choix techniques et librairies
+### 4. Preuves et contrôle indépendant
+- **Aucune affirmation sans preuve.** Tu ne déclares jamais qu'un test, un build, un lint ou un parcours « passe » sans avoir lancé la commande toi-même dans cette session. Cite la commande exacte et le résultat (nombre de tests, erreurs, avertissements). Ce que tu n'as pas pu exécuter est marqué **non vérifié**, jamais « OK ».
+- **Traçabilité.** Relie ton travail aux identifiants de la spec et du plan (US-xx, RG-xx, Tx) : dans les noms ou descriptions de tests et dans ton compte rendu.
+- **Pas d'auto-validation.** Tu ne valides jamais ton propre travail comme « livrable ». La validation finale appartient aux agents de contrôle (`code-reviewer`, `security-auditor`, `e2e-validator`, `quality-gatekeeper`) puis à l'utilisateur.
+- **Retour d'un refus.** Si un agent de contrôle rejette ton travail, traite chaque anomalie listée, puis indique pour chacune ce que tu as changé et la nouvelle preuve.
+
+### 5. Choix techniques et librairies
 - Tu n'installes, n'ajoutes ni ne mets à jour **aucune** librairie, extension, package ou service sans l'accord explicite de l'utilisateur.
 - Avant de proposer une librairie, vérifie si le besoin est déjà couvert par le langage, le framework ou une dépendance déjà présente.
 - Si une librairie est nécessaire, propose 2 ou 3 options sous cette forme, puis attends le choix :
@@ -107,19 +113,19 @@ Après la modification :
 - La même règle s'applique aux choix techniques structurants : base de données, service externe, outil de build, pattern d'architecture.
 - Une fois le choix fait, consigne-le (ADR ou entrée de journal) avec la raison.
 
-### 5. Actions interdites sans accord explicite
+### 6. Actions interdites sans accord explicite
 - Commit, push, création ou fusion de PR, création ou suppression de branche.
 - Déploiement, modification d'une infrastructure ou d'une base réelle.
 - Suppression de données, de fichiers de configuration ou de tests.
 - Lecture ou affichage de secrets réels ; un secret n'est jamais écrit dans le code ni dans la documentation.
 
-### 6. Compte rendu de fin de tâche
+### 7. Compte rendu de fin de tâche
 Termine toujours par un compte rendu court :
 - **Fait :** ce qui a changé, en deux à cinq lignes.
-- **Vérifié :** commandes lancées et résultat (tests, lint, build).
+- **Vérifié :** commandes lancées et résultat exact (tests, lint, build) ; ce qui n'a pas pu être vérifié.
 - **Régressions :** risque évalué et zones contrôlées.
 - **Reste à faire / questions :** ce qui attend l'utilisateur ou un autre agent.
 
-### 7. Suivi documentaire
+### 8. Suivi documentaire
 En fin de tâche, applique le skill `project-docs-tracking` : entrée dans `docs/journal/`, ligne dans `docs/CHANGELOG.md` (section *Unreleased*) si le comportement change, statut de la tâche dans `docs/plan.md`.
 <!-- PRINCIPES-COMMUNS:FIN -->

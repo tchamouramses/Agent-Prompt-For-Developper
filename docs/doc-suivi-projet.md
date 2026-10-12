@@ -21,6 +21,10 @@ docs/
   plan.md             ← tâches et leur état (planner)
   api.md              ← référence API (doc-writer)
   runbook.md          ← installer, lancer, déployer, dépanner (devops-engineer)
+  livraisons/         ← un rapport de livraison par fonctionnalité (quality-gatekeeper)
+  incidents/          ← une analyse par incident de production (debugger)
+  ux/                 ← parcours, écrans, design system (ui-ux-designer)
+  seo/                ← stratégie, spécifications par page, audits (seo-specialist, sites publics)
 ```
 
 ## 3. Le document maître `docs/PROJECT.md`
@@ -46,6 +50,10 @@ Sections fixes :
 | `PROJECT.md` | `doc-writer` | après chaque fonctionnalité livrée ou à la demande |
 | `api.md`, `runbook.md` | `doc-writer`, `devops-engineer` | quand l'API ou le déploiement change |
 | Release (versionner le changelog) | `doc-writer` | à chaque version |
+| `livraisons/*.md` | `quality-gatekeeper` | à chaque fin de fonctionnalité |
+| `incidents/*.md` | `debugger` | après chaque incident |
+| `ux/` | `ui-ux-designer` | avant l'implémentation d'une interface |
+| `seo/` | `seo-specialist` | avant l'implémentation et avant la livraison d'un site public |
 
 ## 5. Gabarit d'une entrée de journal
 
@@ -68,6 +76,10 @@ Sections fixes :
 4. **Initialisation** : `scaffolder` crée le dossier `docs/` avec les gabarits vides au démarrage du projet.
 5. **Option Claude Code** : un hook de fin de session peut rappeler de mettre le journal à jour si des fichiers ont changé sans entrée de journal. À ajouter plus tard si la règle seule ne suffit pas.
 
-## 7. Bénéfice pour le vibe coding
+## 7. Le rapport de livraison
+
+C'est le document que l'utilisateur lit à la place du code. `quality-gatekeeper` le produit à chaque fin de fonctionnalité : verdict (accepté, accepté sous réserve, refusé), résumé fonctionnel sans jargon, indicateurs (tests, parcours e2e, critères d'acceptation, revue, sécurité, performance) avec un lien vers chaque preuve, ce qui est non testé ou risqué, ce qui demande une validation humaine. Gabarit complet dans `Agent/Global/quality-gatekeeper.md`.
+
+## 8. Bénéfice pour le vibe coding
 
 Un nouvel agent (ou une nouvelle session) lit `PROJECT.md` et les dernières entrées du journal, et sait immédiatement où en est le projet, sans tout relire.
