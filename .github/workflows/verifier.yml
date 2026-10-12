@@ -19,3 +19,5 @@ jobs:
         run: python3 scripts/validate-skills.py
       - name: Cas d'essai du hook des actions réservées
         run: python3 scripts/test-hook-actions-reservees.py
+      - name: Cas d'essai de l'installation
+        run: python3 scripts/test-install.py

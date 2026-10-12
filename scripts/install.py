@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
-"""Installe les agents, les skills et les garde-fous de cette bibliothèque dans un projet.
+"""Installe les agents, les skills et les garde-fous de cette bibliothèque dans un projet ou pour tous les projets.
 
-Installe les agents globaux, l'agent d'implémentation de chaque stack choisie, tous les
-skills rédigés qu'ils citent (directement ou par un autre skill), et les réglages qui
-imposent les actions réservées. Un fichier existant du projet n'est jamais écrasé sans
---force, sauf les réglages Claude Code, fusionnés.
+Installe les agents globaux, l'agent d'implémentation de chaque stack retenue, tous les skills
+rédigés qu'ils citent (directement ou par un autre skill), et les réglages qui imposent les
+actions réservées. Les stacks sont détectées dans le projet si aucune n'est donnée.
+
+Un manifeste (.bibliotheque-agents.json) liste ce qui a été installé : relancer la commande met
+à jour ces fichiers et retire ceux devenus inutiles ; --desinstaller les retire tous. Un fichier
+du projet qui n'a pas été installé par ce script n'est jamais écrasé sans --force.
 
 Usage :
-  python3 scripts/install.py <dossier-du-projet> --stack laravel[,nextjs] [--outil claude|codex|les-deux] [--force]
+  python3 scripts/install.py [dossier-du-projet] [--stack auto|laravel,nextjs|toutes|aucune]
+                             [--langage php,java,typescript] [--outil auto|claude|codex|les-deux]
+                             [--global] [--force] [--desinstaller]
 
-Stacks : laravel, symfony, spring-boot, angular, nextjs, expo, aucune.
+Exemples :
+  python3 scripts/install.py                            projet courant, stacks et outils détectés
+  python3 scripts/install.py ~/mon-api --stack laravel  stack imposée
+  python3 scripts/install.py --langage typescript       agents Angular, Next.js et Expo
+  python3 scripts/install.py --global                   ~/.claude et ~/.codex, toutes les stacks
+  python3 scripts/install.py --desinstaller             retire ce qui a été installé ici
 """
 import argparse
 import json
@@ -19,6 +29,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+MANIFESTE = ".bibliotheque-agents.json"
 STACKS = {
     "laravel": "PHP/laravel-implementer.md",
     "symfony": "PHP/symfony-implementer.md",
@@ -27,8 +38,20 @@ STACKS = {
     "nextjs": "TypeScript/nextjs-implementer.md",
     "expo": "TypeScript/expo-mobile-implementer.md",
 }
+LANGAGES = {
+    "php": ["laravel", "symfony"],
+    "java": ["spring-boot"],
+    "typescript": ["angular", "nextjs", "expo"],
+}
+NON_COUVERTS = {
+    "go.mod": "Go", "pyproject.toml": "Python", "requirements.txt": "Python", "Cargo.toml": "Rust",
+    "pubspec.yaml": "Dart/Flutter", "Gemfile": "Ruby", "mix.exs": "Elixir",
+}
+IGNORES = {"node_modules", "vendor", ".git", "dist", "build", "target", ".next", ".expo", "storage"}
 MENTION = re.compile(r"skills? `([a-z0-9-]+)`")
 
+
+# --- Choix des agents et skills -------------------------------------------------------------
 
 def skills_rediges() -> dict[str, Path]:
     return {p.parent.name: p.parent for p in ROOT.glob("Skills/*/*/SKILL.md")}
@@ -63,108 +86,366 @@ def fermeture_skills(agents: list[Path], rediges: dict[str, Path]) -> tuple[set[
     return retenus, absents
 
 
-def copier(source: Path, cible: Path, force: bool, journal: list[str]) -> None:
-    if cible.exists() and not force:
-        journal.append(f"conservé (existe déjà) : {cible}")
-        return
-    cible.parent.mkdir(parents=True, exist_ok=True)
-    if source.is_dir():
-        shutil.rmtree(cible, ignore_errors=True)
-        shutil.copytree(source, cible)
+# --- Détection ------------------------------------------------------------------------------
+
+def fichiers_marqueurs(projet: Path, profondeur: int = 2):
+    """Parcourt la racine et les sous-dossiers jusqu'à `profondeur` (apps/web, packages/api…)."""
+    dossiers = [projet]
+    for _ in range(profondeur + 1):
+        suivants = []
+        for dossier in dossiers:
+            try:
+                enfants = list(dossier.iterdir())
+            except OSError:
+                continue
+            for enfant in enfants:
+                if enfant.is_file():
+                    yield enfant
+                elif enfant.is_dir() and enfant.name not in IGNORES and not enfant.name.startswith("."):
+                    suivants.append(enfant)
+        dossiers = suivants
+
+
+def lire_json(chemin: Path) -> dict:
+    try:
+        return json.loads(chemin.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def detecter(projet: Path) -> tuple[list[str], dict[str, str]]:
+    """Retourne les stacks couvertes trouvées et les langages vus sans stack couverte (langage -> fichier)."""
+    stacks: set[str] = set()
+    autres: dict[str, tuple[str, Path]] = {}
+    couverts: set[Path] = set()
+    for fichier in fichiers_marqueurs(projet):
+        relatif = str(fichier.relative_to(projet))
+        if fichier.name == "composer.json":
+            paquets = {**lire_json(fichier).get("require", {}), **lire_json(fichier).get("require-dev", {})}
+            if "laravel/framework" in paquets:
+                stacks.add("laravel")
+                couverts.add(fichier.parent)
+            elif "symfony/framework-bundle" in paquets:
+                stacks.add("symfony")
+                couverts.add(fichier.parent)
+            else:
+                autres.setdefault("PHP sans Laravel ni Symfony", (relatif, fichier.parent))
+        elif fichier.name in ("pom.xml", "build.gradle", "build.gradle.kts"):
+            if "spring-boot" in fichier.read_text(encoding="utf-8", errors="ignore"):
+                stacks.add("spring-boot")
+                couverts.add(fichier.parent)
+            else:
+                autres.setdefault("Java ou Kotlin sans Spring Boot", (relatif, fichier.parent))
+        elif fichier.name == "package.json":
+            donnees = lire_json(fichier)
+            paquets = {**donnees.get("dependencies", {}), **donnees.get("devDependencies", {})}
+            if "expo" in paquets:
+                stacks.add("expo")
+                couverts.add(fichier.parent)
+            elif "next" in paquets:
+                stacks.add("nextjs")
+                couverts.add(fichier.parent)
+            elif "@angular/core" in paquets:
+                stacks.add("angular")
+                couverts.add(fichier.parent)
+            elif paquets:
+                autres.setdefault("JavaScript/TypeScript sans Angular, Next.js ni Expo", (relatif, fichier.parent))
+        elif fichier.name in NON_COUVERTS:
+            autres.setdefault(NON_COUVERTS[fichier.name], (relatif, fichier.parent))
+        elif fichier.suffix == ".csproj":
+            autres.setdefault(".NET", (relatif, fichier.parent))
+    # Un package.json à côté d'un composer.json Laravel (Vite) n'est pas un projet JavaScript à part.
+    return sorted(stacks), {l: rel for l, (rel, dossier) in autres.items() if dossier not in couverts}
+
+
+def outils_detectes() -> str:
+    claude, codex = shutil.which("claude"), shutil.which("codex")
+    if claude and codex:
+        return "les-deux"
+    return "codex" if codex and not claude else "claude"
+
+
+# --- Écriture -------------------------------------------------------------------------------
+
+class Installation:
+    """Copie les fichiers et tient le manifeste de ce qui appartient à la bibliothèque."""
+
+    def __init__(self, base: Path, force: bool, ancien: dict):
+        self.base = base
+        self.force = force
+        self.anciens = set(ancien.get("fichiers", []))
+        self.fichiers: list[str] = []
+        self.refus_ajoutes: list[str] = list(ancien.get("refus_ajoutes", []))
+        self.journal: list[str] = []
+
+    def rel(self, cible: Path) -> str:
+        return str(cible.relative_to(self.base))
+
+    def copier(self, source: Path, cible: Path, toujours: bool = False) -> None:
+        rel = self.rel(cible)
+        if cible.exists() and not (self.force or toujours or rel in self.anciens):
+            self.journal.append(f"conservé (existe déjà, pas installé par ce script) : {cible}")
+            return
+        cible.parent.mkdir(parents=True, exist_ok=True)
+        if source.is_dir():
+            shutil.rmtree(cible, ignore_errors=True)
+            shutil.copytree(source, cible)
+        else:
+            shutil.copy2(source, cible)
+        self.fichiers.append(rel)
+        self.journal.append(f"{'mis à jour' if rel in self.anciens else 'installé'} : {cible}")
+
+    def ecrire(self, cible: Path, contenu: str) -> None:
+        cible.parent.mkdir(parents=True, exist_ok=True)
+        cible.write_text(contenu, encoding="utf-8")
+
+    def retirer_obsoletes(self) -> None:
+        for rel in sorted(self.anciens - set(self.fichiers)):
+            supprimer(self.base / rel, self.journal)
+
+
+def supprimer(chemin: Path, journal: list[str]) -> None:
+    if chemin.is_dir():
+        shutil.rmtree(chemin)
+    elif chemin.exists():
+        chemin.unlink()
     else:
-        shutil.copy2(source, cible)
-    journal.append(f"installé : {cible}")
+        return
+    journal.append(f"retiré : {chemin}")
 
 
-def fusionner_reglages_claude(projet: Path, journal: list[str]) -> None:
+def commande_hook(global_: bool) -> str:
+    racine = '"$HOME"' if global_ else '"$CLAUDE_PROJECT_DIR"'
+    return f"python3 {racine}/.claude/hooks/actions-reservees.py"
+
+
+def fusionner_reglages_claude(inst: Installation, global_: bool) -> None:
     modele = json.loads((ROOT / "Config" / "claude" / "settings.json").read_text(encoding="utf-8"))
-    cible = projet / ".claude" / "settings.json"
-    actuel = json.loads(cible.read_text(encoding="utf-8")) if cible.exists() else {}
+    cible = inst.base / ".claude" / "settings.json"
+    actuel = lire_json(cible) if cible.exists() else {}
     refus = actuel.setdefault("permissions", {}).setdefault("deny", [])
-    refus.extend(r for r in modele["permissions"]["deny"] if r not in refus)
+    for regle in modele["permissions"]["deny"]:
+        if regle not in refus:
+            refus.append(regle)
+            inst.refus_ajoutes.append(regle)
     pre = actuel.setdefault("hooks", {}).setdefault("PreToolUse", [])
-    if not any("actions-reservees.py" in json.dumps(h) for h in pre):
-        pre.extend(modele["hooks"]["PreToolUse"])
+    pre[:] = [h for h in pre if "actions-reservees.py" not in json.dumps(h)]
+    hook = json.loads(json.dumps(modele["hooks"]["PreToolUse"]))
+    for entree in hook:
+        for h in entree["hooks"]:
+            h["command"] = commande_hook(global_)
+    pre.extend(hook)
     actuel.setdefault("$schema", modele["$schema"])
-    cible.parent.mkdir(parents=True, exist_ok=True)
+    inst.ecrire(cible, json.dumps(actuel, ensure_ascii=False, indent=2) + "\n")
+    inst.journal.append(f"fusionné : {cible}")
+
+
+def retirer_reglages_claude(base: Path, refus_ajoutes: list[str], journal: list[str]) -> None:
+    cible = base / ".claude" / "settings.json"
+    if not cible.exists():
+        return
+    actuel = lire_json(cible)
+    permissions = actuel.get("permissions", {})
+    if "deny" in permissions:
+        permissions["deny"] = [r for r in permissions["deny"] if r not in refus_ajoutes]
+    pre = actuel.get("hooks", {}).get("PreToolUse")
+    if pre is not None:
+        actuel["hooks"]["PreToolUse"] = [h for h in pre if "actions-reservees.py" not in json.dumps(h)]
+    for cle, enfant in (("permissions", "deny"), ("hooks", "PreToolUse")):
+        if actuel.get(cle, {}).get(enfant) == []:
+            del actuel[cle][enfant]
+        if actuel.get(cle) == {}:
+            del actuel[cle]
+    if set(actuel) <= {"$schema"}:
+        supprimer(cible, journal)
+        return
     cible.write_text(json.dumps(actuel, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    journal.append(f"fusionné : {cible}")
+    journal.append(f"nettoyé : {cible}")
+
+
+def retirer_dossiers_vides(base: Path) -> None:
+    for racine in (base / ".claude", base / ".codex", base / ".agents"):
+        if not racine.is_dir():
+            continue
+        for dossier in sorted((d for d in racine.rglob("*") if d.is_dir()), key=lambda d: -len(d.parts)) + [racine]:
+            if not any(dossier.iterdir()):
+                dossier.rmdir()
 
 
 DEBUT_BLOC = "<!-- BIBLIOTHEQUE-AGENTS:DEBUT -->"
 FIN_BLOC = "<!-- BIBLIOTHEQUE-AGENTS:FIN -->"
 
 
-def fusionner_agents_md(projet: Path, journal: list[str]) -> None:
-    """Ajoute les instructions Codex dans AGENTS.md entre marqueurs, sans effacer celles du projet."""
-    bloc = f"{DEBUT_BLOC}\n{(ROOT / 'Codex' / 'AGENTS.md').read_text(encoding='utf-8').strip()}\n{FIN_BLOC}\n"
-    cible = projet / "AGENTS.md"
-    actuel = cible.read_text(encoding="utf-8") if cible.exists() else ""
+def remplacer_bloc(actuel: str, bloc: str) -> str:
     if DEBUT_BLOC in actuel and FIN_BLOC in actuel:
         avant, reste = actuel.split(DEBUT_BLOC, 1)
         apres = reste.split(FIN_BLOC, 1)[1].lstrip("\n")
-        nouveau = avant + bloc + apres
-    else:
-        nouveau = (actuel.rstrip() + "\n\n" if actuel.strip() else "") + bloc
-    cible.write_text(nouveau, encoding="utf-8")
+        return (avant + bloc + apres) if bloc else (avant.rstrip() + "\n" + apres if avant.strip() else apres)
+    if not bloc:
+        return actuel
+    return (actuel.rstrip() + "\n\n" if actuel.strip() else "") + bloc
+
+
+def retirer_bloc_agents_md(base: Path, journal: list[str]) -> None:
+    for agents_md in (base / "AGENTS.md", base / ".codex" / "AGENTS.md"):
+        if agents_md.exists() and DEBUT_BLOC in agents_md.read_text(encoding="utf-8"):
+            reste = remplacer_bloc(agents_md.read_text(encoding="utf-8"), "")
+            if reste.strip():
+                agents_md.write_text(reste, encoding="utf-8")
+            else:
+                agents_md.unlink()
+            journal.append(f"bloc retiré : {agents_md}")
+
+
+def fusionner_agents_md(inst: Installation, global_: bool) -> None:
+    """Ajoute les instructions Codex entre marqueurs, sans effacer celles déjà présentes."""
+    texte = (ROOT / "Codex" / "AGENTS.md").read_text(encoding="utf-8").strip()
+    if global_:
+        texte = texte.replace("`.codex/agents/", "`~/.codex/agents/")
+    cible = inst.base / (".codex/AGENTS.md" if global_ else "AGENTS.md")
+    actuel = cible.read_text(encoding="utf-8") if cible.exists() else ""
+    nouveau = remplacer_bloc(actuel, f"{DEBUT_BLOC}\n{texte}\n{FIN_BLOC}\n")
+    inst.ecrire(cible, nouveau)
     taille = len(nouveau.encode("utf-8"))
-    journal.append(f"fusionné : {cible} ({taille} octets)")
+    inst.journal.append(f"fusionné : {cible} ({taille} octets)")
     if taille > 32 * 1024:
-        journal.append("attention : AGENTS.md dépasse 32 Kio, limite par défaut de Codex (project_doc_max_bytes)")
+        inst.journal.append("attention : AGENTS.md dépasse 32 Kio, limite par défaut de Codex (project_doc_max_bytes)")
 
 
-def installer_claude(projet, agents, skills, rediges, force, journal) -> None:
+def installer_claude(inst, agents, skills, rediges, global_) -> None:
     for agent in agents:
-        copier(agent, projet / ".claude" / "agents" / agent.name, force, journal)
+        inst.copier(agent, inst.base / ".claude" / "agents" / agent.name)
     for nom in sorted(skills):
-        copier(rediges[nom], projet / ".claude" / "skills" / nom, force, journal)
-    copier(ROOT / "Config" / "claude" / "hooks" / "actions-reservees.py",
-           projet / ".claude" / "hooks" / "actions-reservees.py", True, journal)
-    fusionner_reglages_claude(projet, journal)
+        inst.copier(rediges[nom], inst.base / ".claude" / "skills" / nom)
+    inst.copier(ROOT / "Config" / "claude" / "hooks" / "actions-reservees.py",
+                inst.base / ".claude" / "hooks" / "actions-reservees.py", toujours=True)
+    fusionner_reglages_claude(inst, global_)
 
 
-def installer_codex(projet, agents, skills, rediges, force, journal) -> None:
-    fusionner_agents_md(projet, journal)
+def installer_codex(inst, agents, skills, rediges, global_) -> None:
+    fusionner_agents_md(inst, global_)
     for agent in agents:
         toml = ROOT / "Codex" / "agents" / f"{agent.stem}.toml"
-        copier(toml, projet / ".codex" / "agents" / toml.name, force, journal)
+        inst.copier(toml, inst.base / ".codex" / "agents" / toml.name)
     for nom in sorted(skills):
-        copier(rediges[nom], projet / ".agents" / "skills" / nom, force, journal)
-    copier(ROOT / "Config" / "codex" / "config.toml", projet / ".codex" / "config.toml", force, journal)
-    copier(ROOT / "Config" / "codex" / "rules" / "actions-reservees.rules",
-           projet / ".codex" / "rules" / "actions-reservees.rules", True, journal)
+        inst.copier(rediges[nom], inst.base / ".agents" / "skills" / nom)
+    if not global_:  # ~/.codex/config.toml appartient à l'utilisateur : on n'y touche pas.
+        inst.copier(ROOT / "Config" / "codex" / "config.toml", inst.base / ".codex" / "config.toml")
+    inst.copier(ROOT / "Config" / "codex" / "rules" / "actions-reservees.rules",
+                inst.base / ".codex" / "rules" / "actions-reservees.rules", toujours=True)
+
+
+# --- Commande -------------------------------------------------------------------------------
+
+def choisir_stacks(args, projet: Path) -> tuple[list[str], list[str]]:
+    """Retourne les stacks retenues et les remarques à afficher."""
+    remarques: list[str] = []
+    if args.stack == "aucune":
+        stacks: list[str] = []
+    elif args.stack == "toutes" or (args.stack == "auto" and args.global_ and not args.langage):
+        stacks = list(STACKS)
+    elif args.stack == "auto" and not args.langage:
+        stacks, autres = detecter(projet)
+        remarques.append(f"stacks détectées : {', '.join(stacks) or 'aucune'}")
+        for langage, fichier in autres.items():
+            remarques.append(f"non couvert : {langage} ({fichier}), agents génériques seulement")
+    else:
+        stacks = [] if args.stack == "auto" else [s.strip() for s in args.stack.split(",")]
+    for langage in filter(None, (l.strip().lower() for l in (args.langage or "").split(","))):
+        stacks += LANGAGES[langage]
+    return sorted(set(stacks), key=list(STACKS).index), remarques
+
+
+def desinstaller(base: Path, ancien: dict) -> int:
+    if not ancien:
+        print(f"Rien à désinstaller : pas de {MANIFESTE} dans {base}")
+        return 1
+    journal: list[str] = []
+    for rel in ancien.get("fichiers", []):
+        supprimer(base / rel, journal)
+    retirer_reglages_claude(base, ancien.get("refus_ajoutes", []), journal)
+    retirer_bloc_agents_md(base, journal)
+    retirer_dossiers_vides(base)
+    (base / MANIFESTE).unlink()
+    print(*journal, sep="\n")
+    print("\nBibliothèque désinstallée. Les documents de suivi (docs/) sont conservés.")
+    return 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("projet", type=Path)
-    parser.add_argument("--stack", required=True, help="stacks séparées par des virgules, ou « aucune »")
-    parser.add_argument("--outil", choices=["claude", "codex", "les-deux"], default="claude")
-    parser.add_argument("--force", action="store_true", help="remplace les fichiers déjà présents")
+    parser.add_argument("projet", type=Path, nargs="?", default=Path.cwd(),
+                        help="dossier du projet (défaut : dossier courant)")
+    parser.add_argument("--stack",
+                        help="auto (défaut, détectée ; à la relance, celles de l'installation), toutes, aucune, ou liste : " + ", ".join(STACKS))
+    parser.add_argument("--langage", help="ajoute les stacks d'un langage : " + ", ".join(
+        f"{l} ({', '.join(s)})" for l, s in LANGAGES.items()))
+    parser.add_argument("--outil", choices=["auto", "claude", "codex", "les-deux"],
+                        help="auto (défaut) : les outils trouvés dans le PATH, Claude Code sinon ; "
+                             "à la relance, ceux de l'installation")
+    parser.add_argument("--global", dest="global_", action="store_true",
+                        help="installe dans ~/.claude et ~/.codex pour tous les projets")
+    parser.add_argument("--force", action="store_true",
+                        help="remplace aussi les fichiers qui n'ont pas été installés par ce script")
+    parser.add_argument("--desinstaller", action="store_true", help="retire ce que ce script a installé")
     args = parser.parse_args()
 
-    stacks = [] if args.stack == "aucune" else [s.strip() for s in args.stack.split(",")]
-    inconnues = [s for s in stacks if s not in STACKS]
-    if inconnues or not args.projet.is_dir():
-        print(f"Stack inconnue : {', '.join(inconnues)}" if inconnues else f"Dossier introuvable : {args.projet}")
+    base = Path.home() if args.global_ else args.projet.resolve()
+    if not base.is_dir():
+        print(f"Dossier introuvable : {base}")
+        return 1
+    ancien = lire_json(base / MANIFESTE)
+    if args.desinstaller:
+        return desinstaller(base, ancien)
+    if args.stack is None:
+        # Relancer la commande sans option met à jour l'installation existante à l'identique.
+        args.stack = (",".join(ancien["stacks"]) or "aucune") if ancien and not args.langage else "auto"
+    args.outil = args.outil or ancien.get("outil", "auto")
+
+    mots_cles = ("auto", "toutes", "aucune")
+    inconnues = [] if args.stack in mots_cles else [s.strip() for s in args.stack.split(",") if s.strip() not in STACKS]
+    langues = [l.strip() for l in (args.langage or "").lower().split(",") if l.strip() and l.strip() not in LANGAGES]
+    if inconnues or langues:
+        print(f"Stack inconnue : {', '.join(inconnues)}. Stacks couvertes : {', '.join(STACKS)}." if inconnues else
+              f"Langage non spécialisé : {', '.join(langues)}. Langages couverts : {', '.join(LANGAGES)}. "
+              "Pour un autre langage, lance --stack aucune : les agents génériques s'appliquent.")
         return 1
 
+    stacks, remarques = choisir_stacks(args, base)
+    outil = outils_detectes() if args.outil == "auto" else args.outil
     rediges = skills_rediges()
     agents = agents_choisis(stacks)
     skills, absents = fermeture_skills(agents, rediges)
-    journal: list[str] = []
-    if args.outil in ("claude", "les-deux"):
-        installer_claude(args.projet, agents, skills, rediges, args.force, journal)
-    if args.outil in ("codex", "les-deux"):
-        installer_codex(args.projet, agents, skills, rediges, args.force, journal)
+    inst = Installation(base, args.force, ancien)
+    if outil in ("claude", "les-deux"):
+        installer_claude(inst, agents, skills, rediges, args.global_)
+    if outil in ("codex", "les-deux"):
+        installer_codex(inst, agents, skills, rediges, args.global_)
+    inst.retirer_obsoletes()
+    ancien_outil = ancien.get("outil", "")
+    if ancien_outil in ("claude", "les-deux") and outil == "codex":
+        retirer_reglages_claude(base, inst.refus_ajoutes, inst.journal)
+        inst.refus_ajoutes = []
+    if ancien_outil in ("codex", "les-deux") and outil == "claude":
+        retirer_bloc_agents_md(base, inst.journal)
+    retirer_dossiers_vides(base)
+    inst.ecrire(base / MANIFESTE, json.dumps({
+        "outil": outil, "stacks": stacks, "global": args.global_,
+        "fichiers": sorted(inst.fichiers), "refus_ajoutes": sorted(set(inst.refus_ajoutes)),
+    }, ensure_ascii=False, indent=2) + "\n")
 
-    a_relire = ["CLAUDE.md"] + (["AGENTS.md"] if args.outil == "claude" else [])
-    for fichier in a_relire:
-        if (args.projet / fichier).exists():
-            journal.append(f"à relire : {fichier} existe déjà ; ses consignes s'appliquent aussi aux agents "
-                           "(principes communs, règle 1)")
-    print(*journal, sep="\n")
-    print(f"\n{len(agents)} agents et {len(skills)} skills installés pour : {', '.join(stacks) or 'aucune stack'}.")
+    if not args.global_:
+        a_relire = ["CLAUDE.md"] + (["AGENTS.md"] if outil == "claude" else [])
+        for fichier in a_relire:
+            if (base / fichier).exists():
+                inst.journal.append(f"à relire : {fichier} existe déjà ; ses consignes s'appliquent aussi aux agents "
+                                    "(principes communs, règle 1)")
+    print(*inst.journal, sep="\n")
+    print()
+    print(*remarques, sep="\n")
+    cible = "pour tous les projets (~/.claude, ~/.codex, ~/.agents)" if args.global_ else f"dans {base}"
+    print(f"{len(agents)} agents et {len(skills)} skills installés {cible}, outil : {outil}, "
+          f"stacks : {', '.join(stacks) or 'aucune'}.")
     if absents:
         print(f"Skills cités mais pas encore rédigés ({len(absents)}), signalés par les agents s'ils en ont besoin :")
         print("  " + ", ".join(sorted(absents)))
