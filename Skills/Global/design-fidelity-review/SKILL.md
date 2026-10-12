@@ -28,7 +28,7 @@ La lecture des sources et la spécification d'écran relèvent du skill `design-
 2. **Capturer le rendu** avec l'outil déjà présent dans le projet (Playwright, Maestro, Detox, outil MCP de navigateur) :
    - aux largeurs de la source, et au minimum 375 px et 1280 px pour le web ; pour le mobile, un petit et un grand écran, iOS et Android si possible ;
    - pour chaque état spécifié : nominal, chargement, vide, erreur, succès, données longues, focus clavier, survol si la source le montre.
-   Sans outil de capture, n'en installe pas : propose-le selon les principes communs et marque la comparaison **non vérifiée**.
+   Sans outil de capture, installe l'outil standard selon la règle 4 des principes communs (Playwright pour le web) ; si c'est impossible, marque la comparaison **non vérifiée**.
 3. **Comparer zone par zone** avec la source et la spécification : structure et ordre des blocs, présence de chaque composant, textes exacts, couleurs, typographie (police, taille, graisse, interligne), espacements et alignements, rayons et ombres, icônes et images, comportement aux points de rupture, états.
 4. **Mesurer quand la valeur est exacte** : lis la valeur calculée dans le rendu (style calculé du navigateur, inspecteur, valeur du composant) plutôt que de l'estimer sur la capture.
 5. **Classer chaque écart** :
@@ -55,8 +55,8 @@ Non vérifié : Android (émulateur indisponible).
 
 ## Limites
 - Pas de correction pendant la revue quand tu es `e2e-validator` : tu signales, l'agent d'implémentation corrige.
-- Une comparaison automatique pixel par pixel ne s'ajoute qu'avec l'accord de l'utilisateur (nouvel outil) ; elle ne remplace pas la lecture zone par zone.
+- Une comparaison automatique pixel par pixel ne remplace pas la lecture zone par zone.
 
 ## En cas de blocage
 - Spécification d'écran absente : appliquer d'abord le skill `design-inputs`, ou demander à `ui-ux-designer`.
-- Écart dû à une source ambiguë ou contradictoire : le classer « question » et le poser à l'utilisateur au lieu de trancher.
+- Écart dû à une source ambiguë ou contradictoire : appliquer la règle du skill `design-inputs` (source la plus récente, sinon la plus détaillée), classer l'écart « toléré » et consigner l'hypothèse.

@@ -58,10 +58,10 @@ description: Checklist détaillée pour relire un changement (diff, branche ou P
 - Nommage, taille des fonctions, imbrication, conventions du projet (pas les tiennes).
 
 ### Dépendances
-- Toute dépendance ajoutée a un accord de l'utilisateur tracé (journal ou ADR).
+- Toute dépendance ajoutée respecte les critères du skill `autonomy-policy` (licence, maintenance, compatibilité, adoption, vulnérabilités, poids) et sa comparaison est consignée (journal ou ADR).
 
 4. **Classer** :
-   - **Bloquant** : bug, régression, faille, perte de données, critère non respecté, test manquant sur un comportement critique, dépendance non validée.
+   - **Bloquant** : bug, régression, faille, perte de données, critère non respecté, test manquant sur un comportement critique, dépendance hors critères ou sans comparaison consignée.
    - **Important** : duplication, code mort, violation SOLID qui gêne déjà la maintenance, test fragile.
    - **Suggestion** : nommage, style, amélioration facultative. Une préférence n'est jamais bloquante.
 

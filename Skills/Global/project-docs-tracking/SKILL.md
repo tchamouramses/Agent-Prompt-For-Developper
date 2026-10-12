@@ -28,7 +28,7 @@ Le dossier `docs/` est la mémoire du projet. Une nouvelle session ou un nouvel 
 2. Lis les 5 dernières entrées de `docs/journal/` (tri par nom de fichier, qui commence par la date).
 3. Si ta tâche vient de `docs/plan.md`, lis sa ligne : identifiant, critère « terminé », dépendances, risque.
 
-Si `docs/` n'existe pas, ne crée pas l'arborescence de ta propre initiative : signale-le dans ton compte rendu. Seuls `scaffolder` (nouveau projet), `doc-writer` et `orchestrator` (avec l'accord de l'utilisateur) la créent, à partir des gabarits ci-dessous.
+Si `docs/` n'existe pas, ne crée pas l'arborescence de ta propre initiative : signale-le dans ton compte rendu. Seuls `scaffolder` (nouveau projet), `doc-writer` et `orchestrator` la créent, à partir des gabarits ci-dessous.
 
 ### En fin de tâche
 
@@ -41,7 +41,7 @@ Fichier `docs/journal/AAAA-MM-JJ-<sujet-court>.md`. Si le fichier existe déjà 
 - Tâche : plan.md#<Tx> (ou « hors plan : <demande> »)
 - Fait : <ce qui a changé, en une à trois lignes>
 - Fichiers : <chemins principaux>
-- Décisions : <choix faits et par qui ; « aucune » sinon>
+- Décisions : <choix et hypothèses, par qui, raison et façon d'annuler ; « aucune » sinon>
 - Vérifications : <commandes et résultats exacts ; ce qui n'a pas été vérifié>
 - Reste à faire / risques : <…>
 ```

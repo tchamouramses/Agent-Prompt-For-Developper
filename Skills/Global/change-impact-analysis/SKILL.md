@@ -42,7 +42,7 @@ La règle est dans les principes des agents qui modifient du code (« Gestion de
 | Élément | Usages trouvés | Indirects / externes | Couvert par | Action |
 |---------|----------------|----------------------|-------------|--------|
 | `OrderResource::toArray` | 3 contrôleurs | app mobile (champ `total`) | tests/Feature/OrderApiTest | garder `total`, ajouter `total_ttc` |
-Risque : possible (consommateur mobile hors dépôt). Question posée à l'utilisateur.
+Risque : possible (consommateur mobile hors dépôt), réduit à faible : `total` conservé et marqué obsolète, tâche T9 ajoutée au plan pour le retirer.
 ```
 
 ## Vérifications
@@ -53,4 +53,4 @@ Risque : possible (consommateur mobile hors dépôt). Question posée à l'utili
 - Tu ne peux pas voir les dépôts externes : un consommateur externe probable suffit à classer le risque en « possible ».
 
 ## En cas de blocage
-- Usage impossible à confirmer (chaîne construite dynamiquement, consommateur inconnu) : classer en « possible » et poser la question avec ce que tu as trouvé.
+- Usage impossible à confirmer (chaîne construite dynamiquement, consommateur inconnu) : classer en « possible » et appliquer la protection la plus sûre (compatibilité ascendante, test sur l'usage supposé). Seule une rupture de contrat externe sans compatibilité possible devient une décision humaine.

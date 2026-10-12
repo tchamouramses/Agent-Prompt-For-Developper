@@ -51,9 +51,9 @@ Les tests, et dans le compte rendu une ligne par critère ou règle : identifian
 - La suite de la zone passe, avec la commande et le résultat cités.
 
 ## Limites
-- Pas de nouvel outil de test sans accord (principes communs) : utilise ceux du projet.
+- Utilise les outils de test du projet ; un nouvel outil ne s'ajoute que si aucun n'existe pour ce niveau de test, selon la règle 4 des principes communs.
 - La couverture en pourcentage n'est pas un objectif ; la couverture des critères l'est.
 
 ## En cas de blocage
-- Comportement attendu ambigu : la question va à `product-analyst` (ou à l'utilisateur) avant d'écrire le test.
+- Comportement attendu ambigu : `product-analyst` tranche ; sans lui, retiens l'hypothèse la plus prudente, consigne-la et nomme le test d'après elle.
 - Code impossible à tester sans restructuration : signale-le et propose le changement minimal (injection de la dépendance) au lieu de restructurer hors de ta tâche.

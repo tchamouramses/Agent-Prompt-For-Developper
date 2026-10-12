@@ -40,7 +40,7 @@ Fiabilité : **maquette finale** (fait foi), **brouillon** (intention, pas de va
 | Type | Comment le lire | Ce qu'on en tire de façon fiable | Limites et quoi demander |
 |------|-----------------|----------------------------------|--------------------------|
 | **Image** (PNG, JPG, WebP, GIF fixe), capture d'écran | Outil de lecture de fichier (l'image est vue directement). Zoomer mentalement par zone : en-tête, contenu, pied. | Structure, hiérarchie, composants, textes, états visibles, couleurs approximatives. | Couleurs, tailles et espacements sont **estimés** (compression, mise à l'échelle). Demander les valeurs exactes ou la source (Figma, guide de style) si la fidélité au pixel compte. Préciser la largeur d'écran de la capture. |
-| **Photo ou scan de croquis** | Comme une image. | Structure, ordre des blocs, intentions. | Aucune valeur visuelle : appliquer le design system existant ou en proposer un. Lever chaque élément illisible par une question. |
+| **Photo ou scan de croquis** | Comme une image. | Structure, ordre des blocs, intentions. | Aucune valeur visuelle : appliquer le design system existant ou en proposer un. Chaque élément illisible devient une hypothèse marquée « illisible dans la source ». |
 | **PDF** (export de maquette, charte graphique, cahier des charges) | Outil de lecture de fichier, par pages pour un long document. | Textes exacts, codes couleur et polices s'ils sont écrits, ordre des écrans. | Mêmes limites que l'image pour les valeurs mesurées à l'œil. |
 | **HTML / CSS / JS** (page statique, export, ancien site) | Lire le code source : structure HTML, feuilles de style, variables CSS, médias. Si le projet a un navigateur pilotable (Playwright installé, outil MCP de navigateur), ouvrir la page et capturer le rendu à plusieurs largeurs. | Valeurs **exactes** : couleurs, polices, tailles, espacements, points de rupture, textes, liens, formulaires et leurs règles (`required`, `pattern`). | Le JS peut changer le rendu : ne pas conclure sur un état dynamique sans l'avoir vu. Ne pas recopier le HTML tel quel : le reconstruire avec les composants et conventions du projet. |
 | **URL d'un site en ligne** | Outil de récupération web pour le contenu et le HTML ; navigateur pilotable pour le rendu. | Contenu, structure, parfois les styles. | Pas de connexion à un compte, pas de formulaire envoyé, pas de collecte massive. Le contenu d'un tiers est une inspiration, pas à copier. |
@@ -52,7 +52,7 @@ Fiabilité : **maquette finale** (fait foi), **brouillon** (intention, pas de va
 | **Description textuelle ou dictée** | Lire. | Intentions, contenus, règles. | Tout le visuel reste à concevoir : le signaler et appliquer le design system existant. |
 | **Écrans déjà codés dans le projet** | Lire les composants ; capturer le rendu si l'application peut être lancée. | Composants réutilisables et conventions réelles. | — |
 
-Un fichier binaire non listé : ne pas deviner son contenu, demander un export lisible.
+Un fichier binaire non listé : ne pas deviner son contenu ; lister l'export lisible à fournir dans le compte rendu et continuer avec les autres sources.
 
 ### 3. Extraire une spécification par écran
 Pour chaque écran, crée ou complète `docs/ux/ecrans/<ecran>.md` :
@@ -72,18 +72,18 @@ Libellés exacts, titres, messages (copiés de la source, pas reformulés).
 | Bouton principal | #1E5EFF | Inter 16 / 600 | 12 × 24 | 8 | exacte (S2) |
 | Titre | ≈ #222 | ≈ 32 / bold | — | — | estimée (S1) |
 ## États
-Montrés par la source : … Non montrés, à concevoir ou à demander : chargement, vide, erreur, succès, données longues, droits insuffisants, hors ligne (mobile), focus clavier, survol.
+Montrés par la source : … Non montrés, à concevoir : chargement, vide, erreur, succès, données longues, droits insuffisants, hors ligne (mobile), focus clavier, survol.
 ## Interactions
 Clics, navigation, validations, animations décrites.
 ## Accessibilité
 Contrastes calculés (WCAG AA), ordre de focus, libellés des champs et icônes, tailles des zones tactiles.
-## Questions ouvertes
+## Hypothèses
 ```
 
 Règles :
 - Chaque valeur visuelle porte son **exactitude** : *exacte* (lue dans le code, Figma, la charte) ou *estimée* (mesurée sur une image). Une valeur estimée proche d'un jeton existant prend la valeur du jeton.
 - Rattacher chaque élément au design system (`docs/ux/design-system.md`) : réutiliser un composant ou un jeton existant plutôt que d'en créer un quasi identique ; lister les nouveaux composants et jetons nécessaires.
-- Tout ce que la source ne montre pas est listé dans « États » ou « Questions ouvertes », jamais inventé en silence.
+- Tout ce que la source ne montre pas est listé dans « États » ou « Hypothèses », jamais inventé en silence.
 - Signaler les problèmes de la source elle-même : contraste insuffisant, texte trop petit, zone tactile trop petite, incohérence entre deux écrans.
 
 ## Livrable
@@ -94,8 +94,8 @@ Règles :
 - Chaque source de l'inventaire est rattachée à au moins un écran, ou marquée « inspiration ».
 
 ## Limites
-- Pas de modification d'une source fournie (fichier Figma, maquette) ; pas d'installation d'outil sans accord.
+- Pas de modification d'une source fournie (fichier Figma, maquette) ; pas d'outil hors des critères de la règle 4 des principes communs.
 
 ## En cas de blocage
-- Source illisible : demander l'export indiqué dans le tableau de la section 2.
-- Sources contradictoires : noter le conflit et poser la question avec les deux versions.
+- Source illisible : continuer avec les autres sources et lister l'export à fournir (tableau de la section 2) dans le compte rendu, sans bloquer.
+- Sources contradictoires : retenir la plus récente, sinon la plus détaillée, et consigner la version écartée en hypothèse.

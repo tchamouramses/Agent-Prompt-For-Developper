@@ -1,4 +1,4 @@
-# Catalogue des agents et skills (v0.5)
+# Catalogue des agents et skills (v0.6)
 
 > Brouillon à valider.
 > Date : 2026-10-12
@@ -9,9 +9,10 @@
 2. **Les agents portent le comportement, les skills portent le savoir.** Un agent dit *comment travailler* (méthode, limites, format de sortie). Un skill apporte une *connaissance réutilisable* (checklist, convention, template, savoir propre à un langage).
 3. **Global d'abord, spécifique ensuite.** La plupart des agents sont globaux. La spécialisation par langage passe surtout par des skills de langage que l'agent global charge. On ne crée un agent spécifique à un langage que si sa méthode de travail change vraiment (ex. un intégrateur mobile Flutter).
 4. **Le moins de droits possible.** Les agents de contrôle (revue, sécurité, gatekeeper) n'ont aucun outil d'écriture : ils rendent leur rapport, que l'orchestrateur enregistre dans `docs/`. Les agents qui écrivent du code ne touchent qu'à leur périmètre.
-5. **L'humain garde la main sur l'irréversible.** Aucun agent ne déploie, ne supprime de données, ne pousse sur la branche principale ou n'ajoute de dépendance sans validation.
+5. **Autonomie par défaut, l'humain pour l'irréversible.** Les agents décident seuls de ce qui est réversible (librairies selon des critères, choix par défaut, réduction des régressions, arbitrage entre agents) et consignent leurs choix. Seules les actions réservées attendent un humain : fusion dans la branche principale, déploiement, données réelles, secrets, coûts, messages externes, choix légaux. Elles sont préparées pour qu'il n'ait qu'à accepter, et regroupées en un seul message.
 6. **Produire et contrôler sont séparés.** L'agent qui produit ne valide jamais son propre travail. Des agents de contrôle indépendants vérifient, et `quality-gatekeeper` autorise ou refuse la livraison sur preuves.
 7. **Aucune affirmation sans preuve.** Un test, un build ou un parcours n'est « réussi » que si la commande a été exécutée et son résultat cité.
+8. **Générique.** Aucun agent ni skill ne cite un produit particulier : les exemples sont neutres et valent pour tout projet.
 
 ## 2. Phases couvertes
 
@@ -43,8 +44,8 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 
 ### 3.1 `product-analyst` (Cadrage)
 - **Mission :** transformer une idée floue en besoin clair et testable.
-- **Entrées / Sorties :** idée, notes, échanges → `docs/spec.md` (contexte, utilisateurs, user stories, critères d'acceptation, hors périmètre, questions ouvertes).
-- **Fait :** pose des questions, reformule, priorise (MoSCoW), identifie les cas limites.
+- **Entrées / Sorties :** idée, notes, échanges → `docs/spec.md` (contexte, utilisateurs, user stories, critères d'acceptation, hors périmètre, hypothèses).
+- **Fait :** tranche les zones floues par des hypothèses explicites, reformule, priorise (MoSCoW), identifie les cas limites.
 - **Ne fait pas :** pas de code, pas de choix technique, pas d'estimation de délais.
 - **Outils :** lecture, écriture de fichiers `docs/` uniquement.
 - **Skills :** `user-stories`, `acceptance-criteria`.
@@ -52,7 +53,7 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 ### 3.2 `architect` (Conception)
 - **Mission :** choisir la stack et définir la structure du système.
 - **Entrées / Sorties :** `spec.md` → `docs/architecture.md` (stack, modules, flux, modèle de données haut niveau) + ADR pour chaque décision importante.
-- **Fait :** compare 2–3 options avec avantages et inconvénients, justifie, anticipe sécurité et scalabilité à la bonne échelle.
+- **Fait :** compare 2–3 options avec avantages et inconvénients, tranche et consigne en ADR, anticipe sécurité et scalabilité à la bonne échelle.
 - **Ne fait pas :** pas d'implémentation, pas de sur-ingénierie (pas de microservices pour un MVP sans justification).
 - **Outils :** lecture, recherche web, écriture `docs/`.
 - **Skills :** `adr`, `api-design`, `architecture-patterns`, skill du langage choisi.
@@ -74,13 +75,13 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 - **Mission :** coder une tâche du plan, avec ses tests, en respectant les conventions du projet.
 - **Entrées / Sorties :** une tâche de `plan.md` → code + tests + note courte de ce qui a changé.
 - **Fait :** lit le code existant avant d'écrire, fait des changements minimaux, lance lint et tests avant de rendre la main.
-- **Ne fait pas :** ne change pas l'architecture, n'ajoute pas de dépendance sans demander, ne traite pas de tâche hors plan, ne commit pas sans accord.
+- **Ne fait pas :** ne change pas l'architecture, n'ajoute pas de dépendance hors des critères de choix, ne traite pas de tâche hors plan, ne fusionne pas dans la branche principale.
 - **Skills :** `coding-conventions-<langage>`, `git-workflow`, `error-handling`, `logging`.
 
 ### 3.6 `data-modeler` (Données)
 - **Mission :** concevoir le schéma, les migrations et les requêtes.
 - **Fait :** normalisation adaptée, index, contraintes, migrations réversibles, seeds.
-- **Ne fait pas :** n'exécute jamais une migration sur une base de production ; ne supprime pas de données sans validation explicite.
+- **Ne fait pas :** n'exécute jamais une migration sur une base de production ; ne supprime ni ne transforme de façon irréversible des données réelles sans accord humain.
 - **Skills :** `db-schema-design`, `migrations`, skill ORM du langage (ex. `eloquent`, `prisma`, `sqlalchemy`).
 
 ### 3.7 `test-engineer` (Tests)
@@ -124,17 +125,17 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 
 ### 3.14 `devops-engineer` (CI/CD et déploiement)
 - **Mission :** pipelines CI, conteneurisation, configuration des environnements, scripts de déploiement.
-- **Ne fait pas :** ne déploie jamais en production et ne touche pas aux secrets réels sans validation explicite.
+- **Ne fait pas :** ne déploie jamais en production et ne touche pas aux secrets réels ; il prépare ces actions pour l'humain.
 - **Skills :** `ci-github-actions`, `docker`, `env-secrets`, `deployment-checklist`.
 
 ### 3.15 `orchestrator` (optionnel)
 - **Mission :** recevoir une demande, choisir le bon agent et enchaîner les phases (spec → plan → implémentation → tests → revue).
-- **Ne fait pas :** ne code pas lui-même. Choisit un profil : **léger** (implémentation + revue, validation au début et à la fin) ou **livraison** (contrôle indépendant complet, validation entre chaque phase).
-- **Fait aussi :** relaie à l'utilisateur les questions des agents, qui ne peuvent pas lui parler directement, et enregistre les rapports des agents de contrôle.
+- **Ne fait pas :** ne code pas lui-même. Choisit un profil : **léger** (implémentation + revue) ou **livraison** (contrôle indépendant complet) ; les deux s'enchaînent sans validation humaine entre les phases.
+- **Fait aussi :** tranche les blocages avec les agents arbitres, regroupe les rares décisions humaines en un seul message et enregistre les rapports des agents de contrôle.
 
 ### 3.16 `ui-ux-designer` (Expérience utilisateur)
 - **Mission :** parcours, architecture de l'information, maquettes, états d'écran, design system, accessibilité.
-- **Ne fait pas :** ne code pas l'application ; propose les librairies de composants sans les imposer.
+- **Ne fait pas :** ne code pas l'application ; aucune librairie de composants payante ou sous licence restrictive sans accord humain.
 - **Skills :** `ux-patterns`, `design-system`, `accessibility`.
 
 ### 3.17 `e2e-validator` (Validation de bout en bout) — indépendant
@@ -149,7 +150,7 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 
 ### 3.19 `seo-specialist` (Référencement) — sites publics uniquement
 - **Mission :** mots-clés, architecture des pages, exigences SEO par page avant le développement ; audit technique, performance et contenus avant la livraison.
-- **Ne fait pas :** ne modifie pas le code ; aucune technique contraire aux consignes des moteurs ; aucun outil payant sans accord.
+- **Ne fait pas :** ne modifie pas le code ; aucune technique contraire aux consignes des moteurs ; aucun outil payant sans accord humain.
 - **Skills :** `seo-technique`, `accessibility`.
 
 ### 3.20 Responsabilités intégrées aux agents existants
@@ -159,7 +160,7 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 | Intégration front / back | `test-engineer` + `e2e-validator` | tests de contrats d'API, vérification des appels réels |
 | Gestion des versions | `devops-engineer` | CI bloquante, staging, sauvegarde, liste de déploiement, retour arrière |
 | Réponse aux incidents | `debugger` (mode incident) | qualification, limitation de l'impact, analyse après coup |
-| Maintenance des dépendances | `security-auditor` + `refactorer` | audit et versions obsolètes, puis mise à jour après accord ; à lancer en routine périodique |
+| Maintenance des dépendances | `security-auditor` + `refactorer` | audit et versions obsolètes, puis mise à jour sur une branche de travail protégée par les tests ; à lancer en routine périodique |
 
 ### 3.21 Agents reportés (à créer selon le projet)
 - `sre-observability` : utile quand un projet est en production avec des outils de supervision accessibles.
@@ -182,8 +183,8 @@ Décision : un agent d'implémentation par framework utilisé. Les autres phases
 Les rôles détaillés des 25 agents sont dans `Agent/`.
 
 **Principes partagés :** un agent ne voit que son propre fichier. Les règles partagées sont maintenues à un seul endroit et recopiées dans chaque agent par `python3 scripts/sync-agents.py`. Ne jamais modifier une section générée directement dans un agent.
-- `Agent/_commun/principes-communs.md`, pour tous : posture senior, façon de poser une question (un sous-agent la renvoie dans son compte rendu), preuves et contrôle indépendant, choix des librairies validés par l'utilisateur, actions interdites, fichiers et skills absents, compte rendu avec exemple, suivi documentaire.
-- `Agent/_commun/principes-code.md`, pour les agents qui modifient du code : qualité du code, SOLID dès que c'est possible, zéro code mort, gestion des régressions.
+- `Agent/_commun/principes-communs.md`, pour tous : posture senior, autonomie et escalade (l'agent décide, consigne et ne remonte que les actions réservées ; un sous-agent les renvoie dans son compte rendu), preuves et contrôle indépendant, choix des librairies selon des critères, actions réservées à l'humain, fichiers et skills absents, compte rendu avec exemple, suivi documentaire.
+- `Agent/_commun/principes-code.md`, pour les agents qui modifient du code : qualité du code, SOLID dès que c'est possible, zéro code mort, régressions évaluées et réduites par l'agent lui-même.
 
 **Modèles :** `opus` pour `architect`, `security-auditor` et `quality-gatekeeper` ; `sonnet` pour `planner` et `doc-writer` ; les autres héritent du modèle de la session.
 
@@ -193,7 +194,7 @@ Les rôles détaillés des 25 agents sont dans `Agent/`.
 
 | Domaine | Skills |
 |---------|--------|
-| Socle | `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `agent-handoff`, `evidence-tracking`, `skill-validation` |
+| Socle | `autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `agent-handoff`, `evidence-tracking`, `skill-validation` |
 | Cadrage | `user-stories`, `acceptance-criteria` |
 | Conception | `adr`, `api-design` (REST/GraphQL), `architecture-patterns` |
 | Planification | `task-breakdown` |
@@ -246,11 +247,12 @@ Installation dans un projet : voir le README (Claude Code : `.claude/agents/` et
 3. L'`orchestrator` est conservé.
 4. Tous les agents sont conservés, sans fusion.
 5. Documentation de suivi par projet : voir `docs/doc-suivi-projet.md`.
-6. Tous les agents se comportent en seniors : code lisible, sans répétition ni code mort ; risque de régression évalué avant chaque modification, avec question à l'utilisateur en cas de doute ; aucune librairie installée sans que l'utilisateur ait choisi parmi des options proposées.
+6. Tous les agents se comportent en seniors : code lisible, sans répétition ni code mort ; risque de régression évalué et réduit avant chaque modification. (La version initiale prévoyait une question à l'utilisateur en cas de doute et un choix des librairies par l'utilisateur ; remplacée par la décision 14.)
 7. Équipe « version resserrée » : ajout de `ui-ux-designer`, `e2e-validator` et `quality-gatekeeper` ; les autres responsabilités proposées sont intégrées aux agents existants ou reportées (sections 3.20 et 3.21).
 8. Ajout de `seo-specialist`, activé pour les sites publics, et du skill `seo-technique` chargé par les agents Next.js et Angular.
-9. Corrections issues de la revue des prompts : l'orchestrateur peut lancer les agents (outil `Agent`), les sous-agents renvoient leurs questions au lieu d'attendre une réponse, les skills sont déclarés dans l'en-tête, les principes sont scindés (communs et code), les agents de contrôle sont sans outil d'écriture, deux profils de parcours (léger et livraison), génération Codex, exemples, modèles et règle sur les fichiers absents.
+9. Corrections issues de la revue des prompts : l'orchestrateur peut lancer les agents (outil `Agent`), les sous-agents renvoient leurs demandes de décision au lieu d'attendre une réponse, les skills sont déclarés dans l'en-tête, les principes sont scindés (communs et code), les agents de contrôle sont sans outil d'écriture, deux profils de parcours (léger et livraison), génération Codex, exemples, modèles et règle sur les fichiers absents.
 10. Les agents qui modifient du code appliquent SOLID dès que c'est possible ; `code-reviewer` le vérifie.
 11. Sources visuelles : `ui-ux-designer` a un mode « partir de l'existant » ; les agents qui touchent une interface lisent la spécification d'écran et comparent le rendu à la source ; `e2e-validator` rapporte les écarts avec le design. Le savoir est dans le skill `design-inputs`. Ces agents héritent des outils de la session (dont les outils MCP Figma ou navigateur) sauf `Agent`.
 12. Skills du socle rédigés (12) avec un contrat commun vérifié par `scripts/validate-skills.py`. Les principes gardent la règle courte et renvoient au skill pour la méthode.
 13. Sources visuelles : deux skills plutôt que cinq, `design-inputs` (lecture de toute source) et `design-fidelity-review` (comparaison du rendu). La transformation en code reste dans les principes des agents et les skills de framework.
+14. Autonomie et généricité : les agents décident seuls de tout ce qui est réversible, consignent chaque choix (journal, ADR, hypothèses H-xx) et ne sollicitent l'humain que pour les actions réservées, préparées et regroupées en un message. Le skill `autonomy-policy` porte la méthode (niveaux de décision, défaut quand une information manque, arbitrage, critères de choix d'une librairie). Le dépôt ne cite aucun produit particulier.
