@@ -21,9 +21,11 @@ docs/
   plan.md             ← tâches et leur état (planner)
   api.md              ← référence API (doc-writer)
   runbook.md          ← installer, lancer, déployer, dépanner (devops-engineer)
+  revues/             ← rapports de revue de code (code-reviewer)
+  securite/           ← rapports d'audit sécurité (security-auditor)
   livraisons/         ← un rapport de livraison par fonctionnalité (quality-gatekeeper)
   incidents/          ← une analyse par incident de production (debugger)
-  ux/                 ← parcours, écrans, design system (ui-ux-designer)
+  ux/                 ← sources visuelles, parcours, écrans, design system (ui-ux-designer)
   seo/                ← stratégie, spécifications par page, audits (seo-specialist, sites publics)
 ```
 
@@ -50,7 +52,8 @@ Sections fixes :
 | `PROJECT.md` | `doc-writer` | après chaque fonctionnalité livrée ou à la demande |
 | `api.md`, `runbook.md` | `doc-writer`, `devops-engineer` | quand l'API ou le déploiement change |
 | Release (versionner le changelog) | `doc-writer` | à chaque version |
-| `livraisons/*.md` | `quality-gatekeeper` | à chaque fin de fonctionnalité |
+| `revues/*.md`, `securite/*.md` | rapports de `code-reviewer` et `security-auditor`, enregistrés par l'orchestrateur | à chaque revue ou audit |
+| `livraisons/*.md` | rapport de `quality-gatekeeper`, enregistré par l'orchestrateur | à chaque fin de fonctionnalité |
 | `incidents/*.md` | `debugger` | après chaque incident |
 | `ux/` | `ui-ux-designer` | avant l'implémentation d'une interface |
 | `seo/` | `seo-specialist` | avant l'implémentation et avant la livraison d'un site public |
@@ -71,7 +74,7 @@ Sections fixes :
 ## 6. Comment l'intégrer techniquement
 
 1. **Une règle commune dans chaque agent** : la section « Suivi documentaire » présente dans tous les fichiers d'agents (déjà rédigée).
-2. **Un skill global `project-docs-tracking`** : contient les gabarits ci-dessus et la procédure. Chargé par tous les agents. Compatible Claude Code et Codex (même format `SKILL.md`).
+2. **Un skill global `project-docs-tracking`** (`Skills/Global/project-docs-tracking/SKILL.md`) : contient les gabarits ci-dessus et la procédure. Préchargé par tous les agents. Compatible Claude Code et Codex (même format `SKILL.md`).
 3. **Le fichier d'instructions du projet** (`CLAUDE.md` pour Claude Code, `AGENTS.md` pour Codex) contient trois lignes : lire `docs/PROJECT.md` au début de toute session, appliquer `project-docs-tracking` en fin de tâche, ne jamais supprimer d'entrée de journal.
 4. **Initialisation** : `scaffolder` crée le dossier `docs/` avec les gabarits vides au démarrage du projet.
 5. **Option Claude Code** : un hook de fin de session peut rappeler de mettre le journal à jour si des fichiers ont changé sans entrée de journal. À ajouter plus tard si la règle seule ne suffit pas.

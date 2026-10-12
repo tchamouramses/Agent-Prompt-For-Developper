@@ -1,4 +1,4 @@
-# Catalogue des agents et skills (v0.4)
+# Catalogue des agents et skills (v0.5)
 
 > Brouillon à valider.
 > Date : 2026-10-12
@@ -8,7 +8,7 @@
 1. **Un agent = un rôle, une phase.** Chaque agent a une mission étroite, des entrées et sorties claires, et une liste explicite de ce qu'il ne fait pas. C'est ce qui le rend fiable en vibe coding.
 2. **Les agents portent le comportement, les skills portent le savoir.** Un agent dit *comment travailler* (méthode, limites, format de sortie). Un skill apporte une *connaissance réutilisable* (checklist, convention, template, savoir propre à un langage).
 3. **Global d'abord, spécifique ensuite.** La plupart des agents sont globaux. La spécialisation par langage passe surtout par des skills de langage que l'agent global charge. On ne crée un agent spécifique à un langage que si sa méthode de travail change vraiment (ex. un intégrateur mobile Flutter).
-4. **Le moins de droits possible.** Les agents de contrôle (revue, sécurité, gatekeeper) ne modifient pas le code et n'écrivent que dans `docs/`. Les agents qui écrivent du code ne touchent qu'à leur périmètre.
+4. **Le moins de droits possible.** Les agents de contrôle (revue, sécurité, gatekeeper) n'ont aucun outil d'écriture : ils rendent leur rapport, que l'orchestrateur enregistre dans `docs/`. Les agents qui écrivent du code ne touchent qu'à leur périmètre.
 5. **L'humain garde la main sur l'irréversible.** Aucun agent ne déploie, ne supprime de données, ne pousse sur la branche principale ou n'ajoute de dépendance sans validation.
 6. **Produire et contrôler sont séparés.** L'agent qui produit ne valide jamais son propre travail. Des agents de contrôle indépendants vérifient, et `quality-gatekeeper` autorise ou refuse la livraison sur preuves.
 7. **Aucune affirmation sans preuve.** Un test, un build ou un parcours n'est « réussi » que si la commande a été exécutée et son résultat cité.
@@ -129,7 +129,8 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 
 ### 3.15 `orchestrator` (optionnel)
 - **Mission :** recevoir une demande, choisir le bon agent et enchaîner les phases (spec → plan → implémentation → tests → revue).
-- **Ne fait pas :** ne code pas lui-même ; s'arrête et demande validation entre chaque phase.
+- **Ne fait pas :** ne code pas lui-même. Choisit un profil : **léger** (implémentation + revue, validation au début et à la fin) ou **livraison** (contrôle indépendant complet, validation entre chaque phase).
+- **Fait aussi :** relaie à l'utilisateur les questions des agents, qui ne peuvent pas lui parler directement, et enregistre les rapports des agents de contrôle.
 
 ### 3.16 `ui-ux-designer` (Expérience utilisateur)
 - **Mission :** parcours, architecture de l'information, maquettes, états d'écran, design system, accessibilité.
@@ -180,7 +181,11 @@ Décision : un agent d'implémentation par framework utilisé. Les autres phases
 
 Les rôles détaillés des 25 agents sont dans `Agent/`.
 
-**Principes communs :** un agent ne voit que son propre fichier. Les règles partagées par tous (posture senior, qualité du code, zéro code mort, gestion des régressions, preuves et contrôle indépendant, choix des librairies validés par l'utilisateur, actions interdites, compte rendu, suivi documentaire) sont donc maintenues dans `Agent/_commun/principes-communs.md` et recopiées dans chaque agent par `python3 scripts/sync-agents.py`. Ne jamais modifier la section générée directement dans un agent.
+**Principes partagés :** un agent ne voit que son propre fichier. Les règles partagées sont maintenues à un seul endroit et recopiées dans chaque agent par `python3 scripts/sync-agents.py`. Ne jamais modifier une section générée directement dans un agent.
+- `Agent/_commun/principes-communs.md`, pour tous : posture senior, façon de poser une question (un sous-agent la renvoie dans son compte rendu), preuves et contrôle indépendant, choix des librairies validés par l'utilisateur, actions interdites, fichiers et skills absents, compte rendu avec exemple, suivi documentaire.
+- `Agent/_commun/principes-code.md`, pour les agents qui modifient du code : qualité du code, SOLID dès que c'est possible, zéro code mort, gestion des régressions.
+
+**Modèles :** `opus` pour `architect`, `security-auditor` et `quality-gatekeeper` ; `sonnet` pour `planner` et `doc-writer` ; les autres héritent du modèle de la session.
 
 ## 5. Skills
 
@@ -194,7 +199,7 @@ Les rôles détaillés des 25 agents sont dans `Agent/`.
 | Code | `git-workflow` (branches, commits conventionnels, PR), `error-handling`, `logging` |
 | Données | `db-schema-design`, `migrations`, `db-query-optimization` |
 | Tests | `testing-strategy`, `api-contracts`, `e2e-testing` |
-| Expérience utilisateur | `ux-patterns`, `design-system`, `accessibility` |
+| Expérience utilisateur | `design-inputs` (lire images, captures, croquis, PDF, HTML, URL, Figma et autres sources ; comparer le rendu à la maquette), `ux-patterns`, `design-system`, `accessibility` |
 | Référencement | `seo-technique` (rendu serveur, sitemap, robots, canoniques, données structurées, Open Graph, hreflang, Core Web Vitals) |
 | Qualité | `code-review-checklist`, `refactoring-patterns`, `debugging-method`, `quality-gates` (règles bloquantes, rapport de livraison) |
 | Sécurité | `owasp-checklist`, `env-secrets`, `dependency-audit` |
@@ -231,15 +236,18 @@ Skills/
 README.md               catalogue + guide d'installation
 ```
 
-Installation dans un projet : copier les agents voulus dans `.claude/agents/` et les skills dans `.claude/skills/` (un script d'installation pourra venir plus tard).
+Installation dans un projet : voir le README (Claude Code : `.claude/agents/` et `.claude/skills/` ; Codex : `AGENTS.md`, `.codex/agents/` et `.agents/skills/`).
 
 ## 7. Décisions prises (2026-10-12)
 
 1. Frameworks : Laravel, Symfony, Spring Boot, Angular, Next.js, React Native + Expo.
-2. Outils cibles : Claude Code et Codex. Les skills utilisent le format `SKILL.md`, commun aux deux. Les agents sont rédigés au format Claude Code (Markdown + en-tête YAML) ; leur déclinaison Codex sera produite à l'installation (format à confirmer à ce moment-là).
+2. Outils cibles : Claude Code et Codex. Les skills utilisent le format `SKILL.md`, commun aux deux. Les agents sont rédigés au format Claude Code (Markdown + en-tête YAML) ; `scripts/sync-agents.py` en génère la version Codex (`Codex/agents/*.toml` et `Codex/AGENTS.md`).
 3. L'`orchestrator` est conservé.
 4. Tous les agents sont conservés, sans fusion.
 5. Documentation de suivi par projet : voir `docs/doc-suivi-projet.md`.
 6. Tous les agents se comportent en seniors : code lisible, sans répétition ni code mort ; risque de régression évalué avant chaque modification, avec question à l'utilisateur en cas de doute ; aucune librairie installée sans que l'utilisateur ait choisi parmi des options proposées.
 7. Équipe « version resserrée » : ajout de `ui-ux-designer`, `e2e-validator` et `quality-gatekeeper` ; les autres responsabilités proposées sont intégrées aux agents existants ou reportées (sections 3.20 et 3.21).
 8. Ajout de `seo-specialist`, activé pour les sites publics, et du skill `seo-technique` chargé par les agents Next.js et Angular.
+9. Corrections issues de la revue des prompts : l'orchestrateur peut lancer les agents (outil `Agent`), les sous-agents renvoient leurs questions au lieu d'attendre une réponse, les skills sont déclarés dans l'en-tête, les principes sont scindés (communs et code), les agents de contrôle sont sans outil d'écriture, deux profils de parcours (léger et livraison), génération Codex, exemples, modèles et règle sur les fichiers absents.
+10. Les agents qui modifient du code appliquent SOLID dès que c'est possible ; `code-reviewer` le vérifie.
+11. Sources visuelles : `ui-ux-designer` a un mode « partir de l'existant » ; les agents qui touchent une interface lisent la spécification d'écran et comparent le rendu à la source ; `e2e-validator` rapporte les écarts avec le design. Le savoir est dans le skill `design-inputs`. Ces agents héritent des outils de la session (dont les outils MCP Figma ou navigateur) sauf `Agent`.
