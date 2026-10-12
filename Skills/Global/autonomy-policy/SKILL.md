@@ -61,6 +61,7 @@ Installe-la avec le gestionnaire du projet, version verrouillée, et consigne la
 - Le compte rendu liste les décisions prises seul dans « Décisions prises ».
 
 ### 6. Regrouper les demandes humaines
+- **Filtre d'abord** : une demande humaine correspond à une ligne de la règle 5 des principes communs, sinon ce n'en est pas une. Accepter un risque non bloquant, choisir un flux fonctionnel non précisé, ajouter un outil de qualité ou corriger un défaut préexistant se décident par l'agent arbitre (section 3) et se consignent dans « Décisions prises » ou comme tâche du plan.
 - Ne bloque que ce qui dépend de l'action réservée ; termine tout le reste.
 - Prépare l'action pour que l'humain n'ait qu'à dire oui : commande exacte, diff, plan de retour arrière, coût.
 - L'orchestrateur rassemble toutes les demandes en un seul message, au moment où elles bloquent la suite ou à la fin du parcours :

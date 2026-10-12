@@ -1,0 +1,88 @@
+# Actions réservées à l'humain (règle 5 des principes communs), interdites à Codex.
+# Codex charge ce fichier depuis .codex/rules/ quand le projet est approuvé.
+# Essai : codex execpolicy check --rules .codex/rules/actions-reservees.rules -- git push origin main
+
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f", "--mirror", "--all"]],
+    decision = "forbidden",
+    justification = "Push forcé ou massif : réservé à l'humain.",
+    match = ["git push --force origin feature/x", "git push -f"],
+    not_match = ["git push --force-with-lease origin feature/x"],
+)
+
+prefix_rule(
+    pattern = ["git", "push", ["origin", "upstream"], ["main", "master", "production", "HEAD:main", "HEAD:master"]],
+    decision = "forbidden",
+    justification = "Push vers la branche principale : passer par une PR, fusionnée par l'humain.",
+    match = ["git push origin main", "git push origin HEAD:main"],
+    not_match = ["git push origin feature/notes"],
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "merge"],
+    decision = "forbidden",
+    justification = "Fusion d'une PR : réservée à l'humain (gh pr create reste permis).",
+    match = ["gh pr merge 12 --squash"],
+    not_match = ["gh pr create --fill", "gh pr view 12"],
+)
+
+prefix_rule(
+    pattern = ["gh", ["release", "workflow"], ["create", "run"]],
+    decision = "forbidden",
+    justification = "Publication d'une version ou workflow distant : réservé à l'humain.",
+    match = ["gh release create v1.0.0", "gh workflow run deploy.yml"],
+)
+
+prefix_rule(
+    pattern = [["npm", "pnpm", "yarn"], "publish"],
+    decision = "forbidden",
+    justification = "Publication d'un paquet : réservée à l'humain.",
+)
+
+prefix_rule(
+    pattern = ["docker", "push"],
+    decision = "forbidden",
+    justification = "Publication d'une image : réservée à l'humain.",
+)
+
+prefix_rule(
+    pattern = [["terraform", "tofu"], ["apply", "destroy", "import"]],
+    decision = "forbidden",
+    justification = "Action sur une infrastructure réelle : réservée à l'humain.",
+)
+
+prefix_rule(
+    pattern = ["kubectl", ["apply", "create", "delete", "patch", "replace", "rollout", "scale", "edit"]],
+    decision = "forbidden",
+    justification = "Action sur un cluster : réservée à l'humain.",
+)
+
+prefix_rule(
+    pattern = ["helm", ["install", "upgrade", "uninstall", "rollback", "delete"]],
+    decision = "forbidden",
+    justification = "Action sur un cluster : réservée à l'humain.",
+)
+
+prefix_rule(
+    pattern = ["eas", ["submit", "update"]],
+    decision = "forbidden",
+    justification = "Publication mobile : réservée à l'humain.",
+)
+
+prefix_rule(
+    pattern = [["fly", "flyctl", "firebase", "serverless", "sls", "cdk", "vapor"], "deploy"],
+    decision = "forbidden",
+    justification = "Déploiement : réservé à l'humain.",
+)
+
+prefix_rule(
+    pattern = ["php", "artisan", ["migrate:fresh", "migrate:reset", "migrate:refresh", "db:wipe"]],
+    decision = "prompt",
+    justification = "Commande destructrice : permise seulement sur une base de test, à confirmer.",
+)
+
+prefix_rule(
+    pattern = [["cat", "less", "more", "head", "tail", "bat"], [".env", ".env.local", ".env.production", ".env.prod"]],
+    decision = "forbidden",
+    justification = "Lecture d'un fichier de secrets : réservée à l'humain.",
+)

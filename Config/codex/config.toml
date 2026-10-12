@@ -1,0 +1,8 @@
+# Réglages Codex du projet (.codex/config.toml), chargés quand le projet est approuvé.
+# Codex écrit seulement dans le dépôt (réseau permis pour installer les dépendances) et demande avant d'en sortir.
+# Les actions réservées sont interdites par .codex/rules/actions-reservees.rules.
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+[sandbox_workspace_write]
+network_access = true

@@ -5,9 +5,13 @@ Contrôles :
   - en-tête YAML : `name` égal au nom du dossier, `description` non vide (< 1024 caractères) ;
   - sections du contrat présentes dans SKILL.md ;
   - noms de skills uniques ;
-  - chaque skill cité dans le champ `skills:` d'un agent existe ou figure au catalogue.
+  - chaque skill cité par un agent ou un skill (champ `skills:` ou mention « skill `<nom>` »)
+    est rédigé ou listé dans Skills/PREVUS.md ;
+  - aucun skill de Skills/PREVUS.md n'est déjà rédigé.
 
-Usage : python3 scripts/validate-skills.py
+Usage :
+  python3 scripts/validate-skills.py            rapport rédigés / prévus / manquants
+  python3 scripts/validate-skills.py --strict   échoue aussi si un skill cité n'est que prévu
 """
 import re
 import sys
@@ -16,7 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = ROOT / "Skills"
 AGENTS_DIR = ROOT / "Agent"
-CATALOGUE = ROOT / "docs" / "catalogue.md"
+PREVUS = SKILLS_DIR / "PREVUS.md"
+MENTION = re.compile(r"skills? `([a-z0-9-]+)`")
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 DESCRIPTION_MAX = 1024
 SECTIONS = [
@@ -71,6 +76,7 @@ def check_skill(path: Path) -> list[str]:
 
 
 def main() -> int:
+    strict = "--strict" in sys.argv[1:]
     problems: list[str] = []
     skills: dict[str, Path] = {}
     for path in sorted(SKILLS_DIR.rglob("SKILL.md")):
@@ -82,18 +88,32 @@ def main() -> int:
             problems.append(f"{rel} : nom déjà utilisé par {skills[name].relative_to(ROOT)}")
         skills[name] = path
 
-    planned = set(re.findall(r"`([a-z0-9-]+)`", CATALOGUE.read_text(encoding="utf-8")))
-    for path in sorted(AGENTS_DIR.rglob("*.md")):
-        if "_commun" in path.parts:
-            continue
-        for skill in front_matter(path.read_text(encoding="utf-8")).get("skills", []):
-            if skill not in skills and skill not in planned:
-                problems.append(f"{path.relative_to(ROOT)} : skill « {skill} » ni rédigé ni prévu au catalogue")
+    planned = set(re.findall(r"^- `([a-z0-9-]+)`", PREVUS.read_text(encoding="utf-8"), re.MULTILINE))
+    for name in sorted(planned & skills.keys()):
+        problems.append(f"Skills/PREVUS.md : « {name} » est déjà rédigé, retire-le de la liste")
 
+    cited: dict[str, set[str]] = {}
+    sources = [p for p in sorted(AGENTS_DIR.rglob("*.md")) if "_commun" not in p.parts]
+    sources += sorted(SKILLS_DIR.rglob("SKILL.md"))
+    for path in sources:
+        text = path.read_text(encoding="utf-8")
+        names = set(front_matter(text).get("skills", [])) | set(MENTION.findall(text))
+        for name in names:
+            cited.setdefault(name, set()).add(str(path.relative_to(ROOT)))
+
+    waiting = {n: s for n, s in cited.items() if n not in skills and n in planned}
+    missing = {n: s for n, s in cited.items() if n not in skills and n not in planned}
+    for name, sources_ in sorted(missing.items()):
+        problems.append(f"skill « {name} » ni rédigé ni prévu (cité par {', '.join(sorted(sources_))})")
+    if strict:
+        for name, sources_ in sorted(waiting.items()):
+            problems.append(f"skill « {name} » seulement prévu (cité par {', '.join(sorted(sources_))})")
+
+    written_cited = len([n for n in cited if n in skills])
+    print(f"{len(skills)} skills rédigés ; skills cités : {written_cited} rédigés, {len(waiting)} prévus, {len(missing)} manquants.")
     if problems:
         print(*problems, sep="\n")
         return 1
-    print(f"{len(skills)} skills valides, références des agents correctes.")
     return 0
 
 

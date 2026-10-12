@@ -39,10 +39,11 @@ description: Règles bloquantes de livraison, preuves exigées par contrôle, co
 | Écart bloquant avec le design (skill `design-fidelity-review`) | — | bloquant |
 
    Un échec « intermittent » reste un échec : il est relancé une fois ; s'il échoue encore, il bloque.
+   Les règles portent sur le changement livré : un défaut préexistant dans du code que le changement ne touche pas (style, avertissement, outil absent du projet) n'est pas bloquant ; il est listé en réserve et ajouté comme tâche au plan. Seule une faille de sécurité critique ou haute préexistante dans la zone touchée reste bloquante.
 4. **Classer chaque exigence** : validée, non testée, en échec, risque accepté (décision tracée de l'utilisateur pour un point bloquant, d'un agent arbitre pour un point non bloquant).
 5. **Décider** : Accepté, Accepté sous réserve (points non bloquants listés), Refusé.
 6. **En cas de refus**, pour chaque anomalie : exigence, preuve d'échec, agent responsable, attendu pour lever le refus.
-7. **Après une correction**, refaire : la suite complète de tests et le lint (toujours), la revue du diff de la correction, et chaque contrôle spécialisé dont la zone a été touchée (sécurité, e2e, performance, design).
+7. **Après une correction**, refaire : la suite complète de tests et le lint (toujours), la revue du diff de la correction, et chaque contrôle spécialisé dont la zone a été touchée (sécurité, e2e, performance, design). La deuxième passe d'un agent de contrôle porte sur ce diff et sur ses anomalies précédentes, pas sur tout le livrable ; chaque agent de contrôle intervient au plus deux fois par parcours.
 
 ## Livrable
 Le rapport de livraison défini dans le rôle `quality-gatekeeper`, avec la matrice :
@@ -64,4 +65,5 @@ Le rapport de livraison défini dans le rôle `quality-gatekeeper`, avec la matr
 
 ## En cas de blocage
 - Rapport d'un agent de contrôle manquant : le demander avant de statuer, jamais le supposer favorable.
-- Contrôle impossible à ré-exécuter : statut « non vérifié », qui empêche « Accepté » en profil livraison.
+- Contrôle impossible à ré-exécuter alors que l'outil existe dans le projet : statut « non vérifié », qui empêche « Accepté » en profil livraison.
+- Outil absent du projet (pas d'analyse statique, pas de e2e) : statut « non vérifié », réserve listée et tâche ajoutée au plan ; ce n'est ni un refus ni une décision humaine.

@@ -1,6 +1,4 @@
-# Documentation de suivi par projet (proposition v0.1)
-
-> Réponse à : « je veux pour chaque projet un gros doc de suivi des mises à jour et de documentation ».
+# Documentation de suivi par projet
 
 ## 1. Idée
 
