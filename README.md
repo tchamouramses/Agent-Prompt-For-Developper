@@ -21,13 +21,13 @@ Skills/
   Global/        savoirs transverses (checklists, conventions, gabarits)
   PHP/ Java/ TypeScript/   savoirs propres à chaque langage et framework
   PREVUS.md      skills cités mais pas encore rédigés
-install.sh       installation en une commande sans clone, et commande agents-dev
+install.sh       installation en une commande, dans un projet (--projet) ou avec la commande agents-dev
 scripts/
-  install.py                     installe agents, skills et garde-fous dans un projet ou pour tous (--global)
-  test-install.py                cas d'essai de l'installation
+  install.mjs                    installe agents, skills et garde-fous dans un projet ou pour tous (--global), en Node.js
+  test-install.mjs               cas d'essai de l'installation
   sync-agents.py                 recopie les principes dans chaque agent et génère Codex/
   validate-skills.py             vérifie la forme des skills et les skills cités (--strict : tous rédigés)
-  test-hook-actions-reservees.py cas d'essai du hook Claude Code
+  test-hook-actions-reservees.mjs cas d'essai du hook Claude Code
 docs/
   catalogue.md          catalogue des agents et skills, principes et décisions
   doc-suivi-projet.md   documentation de suivi installée dans chaque projet
@@ -52,13 +52,32 @@ Les agents décident seuls de tout ce qui est réversible (choix par défaut, li
 
 ## Installation
 
-**Une seule fois sur la machine** (sans cloner ; Python 3.9+ et curl requis) :
+**Directement dans un projet**, sans rien installer ailleurs sur la machine (Node.js 18+, et git ou curl) :
+
+```
+curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh -s -- --projet
+curl -fsSL .../install.sh | sh -s -- --projet ~/mon-app --stack nextjs   # autre dossier, options de install.mjs
+```
+
+La bibliothèque est récupérée dans un dossier temporaire, installée dans le projet, puis effacée. Pour mettre à jour, relancer la même commande.
+
+**Ou une seule fois sur la machine**, pour avoir la commande `agents-dev` partout :
 
 ```
 curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh
 ```
 
-La bibliothèque est téléchargée dans `~/.local/share/agents-dev` et la commande `agents-dev` dans `~/.local/bin`.
+La bibliothèque est récupérée dans `~/.local/share/agents-dev` et la commande `agents-dev` dans `~/.local/bin`.
+
+**Dépôt privé** : `raw.githubusercontent.com` répond 404 sans authentification. Cloner le dépôt et lancer son `install.sh`, qui prend le clone comme source :
+
+```
+git clone https://github.com/tchamouramses/Agent-Prompt-For-Developper.git
+sh Agent-Prompt-For-Developper/install.sh --projet ~/mon-app   # dans un projet
+sh Agent-Prompt-For-Developper/install.sh                      # ou la commande agents-dev, qui utilise ce clone
+```
+
+Sans clone, `install.sh` passe d'abord par `git clone` (avec les identifiants Git de la machine), puis par l'archive publique. Avec un clone, `agents-dev maj` fait un `git pull`.
 
 **Dans un projet**, depuis sa racine :
 
@@ -86,13 +105,13 @@ Pour un projet partagé en équipe, l'installation dans le projet est recommand�
 
 Détection : `composer.json` (Laravel, Symfony), `pom.xml` ou `build.gradle` (Spring Boot), `package.json` (Angular, Next.js, Expo), à la racine et jusqu'à deux niveaux de sous-dossiers (`apps/web`). Un langage hors liste (Go, Python, .NET…) est signalé et reçoit les agents génériques. Les fichiers installés sont listés dans `.bibliotheque-agents.json` : la relance remplace ces fichiers et retire ceux devenus inutiles, mais ne remplace jamais un fichier du projet sans `--force`. `.claude/settings.json` est fusionné : refus des actions réservées, hook, et autorisation sans confirmation des commandes de développement générales (git, lecture de fichiers) puis de celles des stacks retenues (`Config/claude/autorisations-stacks.json`), pour que les agents avancent sans attendre ; les refus et le hook passent toujours avant. Les instructions Codex vont dans `AGENTS.md` entre marqueurs, et la commande liste les skills cités qui ne sont pas encore rédigés.
 
-Depuis un clone, la même commande est `python3 scripts/install.py [dossier] [options]`.
+Depuis un clone, la même commande est `node scripts/install.mjs [dossier] [options]`.
 
 Installation manuelle :
 
 **Claude Code**
 - Copier les fichiers de `Agent/*/` voulus dans `.claude/agents/` et les dossiers de skills (`Skills/*/<skill>/`) dans `.claude/skills/`.
-- Fusionner `Config/claude/settings.json` dans `.claude/settings.json` et copier `Config/claude/hooks/actions-reservees.py` dans `.claude/hooks/` (Python 3 requis). Le hook bloque push vers la branche principale ou forcé, fusion, déploiement, base destructrice hors test, lecture des secrets, et toute écriture hors de `/tmp` par les agents de contrôle.
+- Fusionner `Config/claude/settings.json` dans `.claude/settings.json` et copier `Config/claude/hooks/actions-reservees.mjs` dans `.claude/hooks/` (Node.js 18+ requis). Le hook bloque push vers la branche principale ou forcé, fusion, déploiement, base destructrice hors test, lecture des secrets, et toute écriture hors de `/tmp` par les agents de contrôle.
 - Chaque agent précharge ses skills (champ `skills`) ; un skill absent est ignoré avec un avertissement dans le journal de débogage.
 - Pour une demande sur plusieurs phases, lancer la session avec `claude --agent orchestrator` : c'est lui qui lance les autres agents et présente le bilan et les décisions humaines requises.
 

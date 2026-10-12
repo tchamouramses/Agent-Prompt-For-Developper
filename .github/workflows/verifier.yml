@@ -13,11 +13,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
       - name: Agents et version Codex synchronisés
         run: python3 scripts/sync-agents.py --check
       - name: Skills valides et références des agents
         run: python3 scripts/validate-skills.py
       - name: Cas d'essai du hook des actions réservées
-        run: python3 scripts/test-hook-actions-reservees.py
+        run: node scripts/test-hook-actions-reservees.mjs
       - name: Cas d'essai de l'installation
-        run: python3 scripts/test-install.py
+        run: node scripts/test-install.mjs
