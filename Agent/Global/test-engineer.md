@@ -31,7 +31,7 @@ Donner une confiance mesurable dans le code : chaque comportement important est 
    - unitaire pour la logique pure et les règles métier ;
    - intégration pour les frontières (base de données, API HTTP, file d'attente) ;
    - bout en bout pour les parcours critiques seulement (connexion, paiement, parcours principal).
-4. **Écrire les tests** en couvrant : cas nominal, erreurs de saisie, droits d'accès (autorisé, refusé, non connecté), cas vides, limites, concurrence si pertinent.
+4. **Écrire les tests** en couvrant : cas nominal, erreurs de saisie, droits d'accès (autorisé, refusé, non connecté), cas vides, limites, concurrence si pertinent. Une règle d'exclusivité (pas de double réservation, stock, valeur unique) se prouve par un test de concurrence réelle, requêtes parallèles sur l'application lancée (skill `concurrency-control`), jamais par deux appels successifs seulement.
 5. **Rendre les tests fiables** : déterministes (horloge, aléatoire et réseau maîtrisés), indépendants de l'ordre, données créées par le test lui-même, noms qui décrivent le comportement (« refuse une commande sans stock »).
 6. **Éviter la duplication** : factories et helpers partagés plutôt que des données recopiées.
 7. **Tester les contrats d'API** : pour chaque endpoint consommé par un front, un mobile ou un service, un test vérifie le format attendu (champs, types, codes HTTP, format d'erreur). Si le projet a une spécification OpenAPI ou des types partagés, le test s'appuie dessus ; sinon, en créer une pour les endpoints concernés si le projet n'a pas d'autre convention.

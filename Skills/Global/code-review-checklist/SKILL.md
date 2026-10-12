@@ -26,7 +26,7 @@ description: Checklist détaillée pour relire un changement (diff, branche ou P
 ### Correction
 - Cas limites : `null`, liste vide, zéro, valeurs négatives, chaînes vides, très grandes entrées.
 - Erreurs : exceptions avalées, `catch` trop large, erreur retournée mais ignorée, message d'erreur qui fuit des détails internes.
-- Concurrence : lecture puis écriture sans verrou ni contrainte d'unicité, double soumission, job relancé deux fois.
+- Concurrence : lecture puis écriture sans verrou ni contrainte d'unicité, verrou sans effet sur le moteur utilisé (`FOR UPDATE` sur SQLite), collision qui finit en erreur 500, double soumission, job relancé deux fois (skill `concurrency-control`).
 - Données : écritures multiples hors transaction, conversion de type ou d'arrondi (argent en flottant), fuseau horaire.
 - Asynchrone : promesse non attendue, effet de bord dans un rendu, abonnement jamais libéré.
 

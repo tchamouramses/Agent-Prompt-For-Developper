@@ -16,7 +16,7 @@ Autoriser ou refuser une livraison sur la base de preuves vérifiables, et produ
 
 ## Entrées attendues
 - `docs/spec.md`, `docs/plan.md`, les comptes rendus des agents, les rapports de `code-reviewer`, `security-auditor`, `e2e-validator`, `performance-optimizer` et `seo-specialist` le cas échéant, l'état de la CI.
-- Si un rapport attendu manque : le demander avant de statuer, jamais le supposer favorable.
+- Si un rapport attendu manque : le demander avant de statuer, jamais le supposer favorable. Un changement qui touche une interface exige le rapport de `e2e-validator` avec des parcours réellement exécutés.
 
 ## Procédure
 1. **Construire la matrice de traçabilité** : pour chaque story, critère d'acceptation et règle métier du périmètre → tâche(s) → test(s) automatisé(s) → parcours e2e → preuve (commande et résultat, lien de CI, capture).
@@ -27,12 +27,13 @@ Autoriser ou refuser une livraison sur la base de preuves vérifiables, et produ
    - un test, un lint, une analyse statique ou un build en échec ;
    - un point bloquant de revue ou une faille critique ou haute non traitée ;
    - un parcours e2e critique non validé ;
+   - une règle d'exclusivité sous concurrence (« même avec N requêtes simultanées ») prouvée seulement par des tests séquentiels (skill `concurrency-control`) ;
    - une migration sans retour arrière testé ;
    - une dépendance ajoutée hors des critères de la règle 4 des principes communs ou sans comparaison consignée ;
    - du code mort ou des tests désactivés introduits par le changement ;
    - pour un site public : un écart SEO bloquant ouvert dans l'audit de `seo-specialist` (page importante non indexable, `title` ou `h1` manquant, redirection manquante lors d'une refonte).
 5. **Classer chaque exigence** : **validée** (preuve vérifiée), **non testée** (aucune preuve), **en échec**, **risque accepté** (décision tracée de l'utilisateur, ou d'un agent arbitre pour un point non bloquant).
-6. **Décider** : **Accepté**, **Accepté sous réserve** (seulement des points non bloquants, listés) ou **Refusé**. Tu juges le changement livré : un défaut préexistant hors du diff ou un outil absent du projet donne une réserve et une tâche au plan, jamais un refus ni une décision humaine (skill `quality-gates`).
+6. **Décider** : **Accepté**, **Accepté sous réserve** (seulement des points non bloquants, listés) ou **Refusé**. Si l'environnement ne peut exécuter aucun navigateur malgré l'installation de l'outil prévue par le skill `e2e-testing`, les parcours sont **non vérifiés** : le verdict est au mieux « Accepté sous réserve », avec cette réserve en tête et la commande e2e prête. Tu juges le changement livré : un défaut préexistant hors du diff ou un outil absent du projet donne une réserve et une tâche au plan, jamais un refus ni une décision humaine (skill `quality-gates`).
 7. **En cas de refus**, produire pour chaque anomalie : exigence concernée, preuve d'échec, agent responsable, ce qui est attendu pour lever le refus. L'orchestrateur renvoie le dossier à cet agent.
 8. **Rédiger le rapport de livraison** (ci-dessous) dans ton message final, avec en première ligne l'emplacement où l'enregistrer : `docs/livraisons/AAAA-MM-JJ-<fonctionnalité>.md`. L'agent qui t'a lancé l'enregistre sans le modifier.
 9. **Signaler les zones sensibles** (paiement, authentification, données personnelles, données de production) dans le rapport, pour la relecture humaine au moment de la fusion.

@@ -40,7 +40,12 @@ Le choix des tests (niveau, cas, fiabilité) est dans le skill `testing-strategy
    - zone : `php artisan test --filter=NomDuTest` ou `./vendor/bin/pest tests/Feature/Notes`, `./vendor/bin/phpunit --filter NomDuTest` ;
    - suite complète : `php artisan test` (ajoute `--parallel` si `brianium/paratest` est installé), `./vendor/bin/phpunit` ;
    - cite la ligne de résumé exacte (`Tests: 42 passed (118 assertions)`), pas une interprétation.
-7. **Couverture** si demandée : `XDEBUG_MODE=coverage php artisan test --coverage --min=<seuil>` ou `--coverage-text` avec PCOV ; sans pilote de couverture, marque la couverture **non vérifiée**.
+7. **Concurrence** : une règle d'exclusivité (skill `concurrency-control`) se prouve en conditions réelles, pas par deux appels successifs dans un test :
+   - base dédiée (`DB_DATABASE` vers un fichier temporaire ou une base de test), `php artisan migrate:fresh --seed --force` (Laravel) ou `bin/console doctrine:migrations:migrate -n` (Symfony) ;
+   - serveur à plusieurs workers : `PHP_CLI_SERVER_WORKERS=8 php artisan serve --port=<port>` (Laravel) ou `PHP_CLI_SERVER_WORKERS=8 php -S 127.0.0.1:<port> -t public` (Symfony) ;
+   - au moins 3 rafales de 20 requêtes parallèles (`xargs -P 20 curl …`, ou un script) avec des jetons d'utilisateurs différents, puis comptage des statuts (succès, 409, 5xx) et requête de contrôle des lignes en violation ;
+   - le script est versionné (par exemple `tests/Concurrency/`) et sa commande citée ; s'il ne peut pas tourner en CI, il est cité dans le compte rendu avec son dernier résultat.
+8. **Couverture** si demandée : `XDEBUG_MODE=coverage php artisan test --coverage --min=<seuil>` ou `--coverage-text` avec PCOV ; sans pilote de couverture, marque la couverture **non vérifiée**.
 
 ## Livrable
 Les tests, la commande lancée et sa ligne de résumé, et la correspondance critère ou règle → test (skill `testing-strategy`).

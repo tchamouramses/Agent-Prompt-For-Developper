@@ -2,6 +2,8 @@
 
 Bibliothèque d'agents et de skills réutilisables pour le développement assisté par IA (vibe coding), compatibles Claude Code et Codex.
 
+L'outil se veut général dans un premier temps et spécifique par langage dans un second temps : chaque savoir est d'abord écrit en skill global, valable pour tous les langages, puis traduit dans les skills de langage et de framework qui y renvoient.
+
 ## Structure
 
 ```
@@ -35,8 +37,8 @@ docs/
 ## État
 
 - Agents : 25 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
-- Skills : socle (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills transverses (produit et design, architecture et données, journalisation, erreurs, performance, sécurité des dépendances et des secrets, documentation, CI, Docker, déploiement), skills d'architecture (`coverage-check`, `monorepo`, `architecture-patterns`, `background-jobs-events`, `multi-tenancy`, `realtime`), et les skills des six stacks : PHP (`laravel`, `symfony`, `coding-conventions-php`, `testing-php`, `security-php`, `lint-format-php`, `upgrade-laravel`, `upgrade-symfony`), Java (`spring-boot`, `coding-conventions-java`, `testing-java`, `security-java`, `lint-format-java`, `upgrade-spring-boot`), TypeScript (`react`, `angular`, `nextjs`, `expo`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `lint-format-typescript`, `upgrade-angular`, `upgrade-nextjs`, `upgrade-expo`). `Skills/PREVUS.md` liste les skills cités mais pas encore rédigés (aucun aujourd'hui).
-- Essai réel : Laravel, trois scénarios (fonctionnalité, bug, montée de version), voir `docs/essais/2026-10-12-laravel.md`. Les autres stacks sont à étendre sur le même modèle.
+- Skills : socle (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills transverses (produit et design, architecture et données, concurrence (`concurrency-control`), journalisation, erreurs, performance, sécurité des dépendances et des secrets, documentation, CI, Docker, déploiement), skills d'architecture (`coverage-check`, `monorepo`, `architecture-patterns`, `background-jobs-events`, `multi-tenancy`, `realtime`), et les skills des six stacks : PHP (`laravel`, `symfony`, `coding-conventions-php`, `testing-php`, `security-php`, `lint-format-php`, `upgrade-laravel`, `upgrade-symfony`), Java (`spring-boot`, `coding-conventions-java`, `testing-java`, `security-java`, `lint-format-java`, `upgrade-spring-boot`), TypeScript (`react`, `angular`, `nextjs`, `expo`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `lint-format-typescript`, `upgrade-angular`, `upgrade-nextjs`, `upgrade-expo`). `Skills/PREVUS.md` liste les skills cités mais pas encore rédigés (aucun aujourd'hui).
+- Essais réels : Laravel, trois scénarios (fonctionnalité, bug, montée de version), voir `docs/essais/2026-10-12-laravel.md` ; comparaison avec Superpowers sur une fonctionnalité Angular + Laravel, voir `docs/essais/2026-10-12-comparatif-superpowers.md`. Les autres stacks sont à étendre sur le même modèle.
 
 ## Fonctionnement autonome
 

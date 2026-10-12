@@ -38,7 +38,8 @@ Le choix des tests (niveau, cas, fiabilité) est dans le skill `testing-strategy
    - un test : `./mvnw test -Dtest=NomTest#methode` ou `./gradlew test --tests 'com.exemple.NomTest.methode'` ;
    - suite : `./mvnw verify` (inclut les tests d'intégration Failsafe `*IT`) ou `./gradlew check` ;
    - cite le résumé exact (`Tests run: 48, Failures: 0, Errors: 0, Skipped: 0`) ou la ligne Gradle, pas une interprétation.
-9. **Couverture** si demandée : JaCoCo s'il est configuré (`./mvnw verify` puis `target/site/jacoco/index.html`) ; sinon **non vérifiée**.
+9. **Concurrence** : une règle d'exclusivité (skill `concurrency-control`) se prouve sur le vrai moteur (Testcontainers) par un test `@SpringBootTest(webEnvironment = RANDOM_PORT)` qui lance au moins 20 appels HTTP simultanés (`ExecutorService` et `CountDownLatch` pour un départ commun), sur plusieurs rafales ; il vérifie le nombre de succès, l'absence de 5xx et l'absence de ligne en violation en base.
+10. **Couverture** si demandée : JaCoCo s'il est configuré (`./mvnw verify` puis `target/site/jacoco/index.html`) ; sinon **non vérifiée**.
 
 ## Livrable
 Les tests, la commande lancée et son résumé, et la correspondance critère ou règle → test (skill `testing-strategy`).

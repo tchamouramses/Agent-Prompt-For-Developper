@@ -32,18 +32,20 @@ description: Règles bloquantes de livraison, preuves exigées par contrôle, co
 | Dépendance ajoutée hors critères ou sans comparaison consignée | bloquant | bloquant |
 | Critère d'acceptation Must sans test ni preuve | bloquant | bloquant |
 | Code mort introduit | important | bloquant |
-| Parcours e2e critique non validé | — | bloquant |
+| Parcours e2e critique non validé (ou `e2e-validator` non lancé sur un changement d'interface) | — | bloquant |
+| Règle d'exclusivité sous concurrence sans test de concurrence réelle (skill `concurrency-control`) | — | bloquant |
 | Faille critique ou haute ouverte (`security-auditor`) | — | bloquant |
 | Migration sans retour arrière testé ou plan de correction | — | bloquant |
 | Objectif de performance défini et non atteint | — | bloquant |
 | Écart bloquant avec le design (skill `design-fidelity-review`) | — | bloquant |
 
    Un échec « intermittent » reste un échec : il est relancé une fois ; s'il échoue encore, il bloque.
+   Seule exception aux parcours e2e : si l'environnement ne peut exécuter aucun navigateur malgré l'installation de l'outil (skill `e2e-testing`), les parcours sont **non vérifiés** et le verdict est au mieux « Accepté sous réserve », avec cette réserve en tête du rapport et la commande prête.
    Les règles portent sur le changement livré : un défaut préexistant dans du code que le changement ne touche pas (style, avertissement, outil absent du projet) n'est pas bloquant ; il est listé en réserve et ajouté comme tâche au plan. Seule une faille de sécurité critique ou haute préexistante dans la zone touchée reste bloquante.
 4. **Classer chaque exigence** : validée, non testée, en échec, risque accepté (décision tracée de l'utilisateur pour un point bloquant, d'un agent arbitre pour un point non bloquant).
 5. **Décider** : Accepté, Accepté sous réserve (points non bloquants listés), Refusé.
 6. **En cas de refus**, pour chaque anomalie : exigence, preuve d'échec, agent responsable, attendu pour lever le refus.
-7. **Après une correction**, refaire : la suite complète de tests et le lint (toujours), la revue du diff de la correction, et chaque contrôle spécialisé dont la zone a été touchée (sécurité, e2e, performance, design). La deuxième passe d'un agent de contrôle porte sur ce diff et sur ses anomalies précédentes, pas sur tout le livrable ; chaque agent de contrôle intervient au plus deux fois par parcours.
+7. **Après une correction**, refaire : la suite complète de tests et le lint (toujours), la revue du diff de la correction, et chaque contrôle spécialisé dont la zone a été touchée (sécurité, e2e, performance, design). La deuxième passe d'un agent de contrôle porte sur ce diff et sur ses anomalies précédentes, pas sur tout le livrable ; chaque agent de contrôle intervient au plus deux fois par parcours. Un contrôle qui a accepté et dont la zone n'est pas touchée par la correction n'est pas refait.
 
 ## Livrable
 Le rapport de livraison défini dans le rôle `quality-gatekeeper`, avec la matrice :
