@@ -91,6 +91,28 @@ def fusionner_reglages_claude(projet: Path, journal: list[str]) -> None:
     journal.append(f"fusionné : {cible}")
 
 
+DEBUT_BLOC = "<!-- BIBLIOTHEQUE-AGENTS:DEBUT -->"
+FIN_BLOC = "<!-- BIBLIOTHEQUE-AGENTS:FIN -->"
+
+
+def fusionner_agents_md(projet: Path, journal: list[str]) -> None:
+    """Ajoute les instructions Codex dans AGENTS.md entre marqueurs, sans effacer celles du projet."""
+    bloc = f"{DEBUT_BLOC}\n{(ROOT / 'Codex' / 'AGENTS.md').read_text(encoding='utf-8').strip()}\n{FIN_BLOC}\n"
+    cible = projet / "AGENTS.md"
+    actuel = cible.read_text(encoding="utf-8") if cible.exists() else ""
+    if DEBUT_BLOC in actuel and FIN_BLOC in actuel:
+        avant, reste = actuel.split(DEBUT_BLOC, 1)
+        apres = reste.split(FIN_BLOC, 1)[1].lstrip("\n")
+        nouveau = avant + bloc + apres
+    else:
+        nouveau = (actuel.rstrip() + "\n\n" if actuel.strip() else "") + bloc
+    cible.write_text(nouveau, encoding="utf-8")
+    taille = len(nouveau.encode("utf-8"))
+    journal.append(f"fusionné : {cible} ({taille} octets)")
+    if taille > 32 * 1024:
+        journal.append("attention : AGENTS.md dépasse 32 Kio, limite par défaut de Codex (project_doc_max_bytes)")
+
+
 def installer_claude(projet, agents, skills, rediges, force, journal) -> None:
     for agent in agents:
         copier(agent, projet / ".claude" / "agents" / agent.name, force, journal)
@@ -102,7 +124,7 @@ def installer_claude(projet, agents, skills, rediges, force, journal) -> None:
 
 
 def installer_codex(projet, agents, skills, rediges, force, journal) -> None:
-    copier(ROOT / "Codex" / "AGENTS.md", projet / "AGENTS.md", force, journal)
+    fusionner_agents_md(projet, journal)
     for agent in agents:
         toml = ROOT / "Codex" / "agents" / f"{agent.stem}.toml"
         copier(toml, projet / ".codex" / "agents" / toml.name, force, journal)
@@ -136,6 +158,11 @@ def main() -> int:
     if args.outil in ("codex", "les-deux"):
         installer_codex(args.projet, agents, skills, rediges, args.force, journal)
 
+    a_relire = ["CLAUDE.md"] + (["AGENTS.md"] if args.outil == "claude" else [])
+    for fichier in a_relire:
+        if (args.projet / fichier).exists():
+            journal.append(f"à relire : {fichier} existe déjà ; ses consignes s'appliquent aussi aux agents "
+                           "(principes communs, règle 1)")
     print(*journal, sep="\n")
     print(f"\n{len(agents)} agents et {len(skills)} skills installés pour : {', '.join(stacks) or 'aucune stack'}.")
     if absents:
