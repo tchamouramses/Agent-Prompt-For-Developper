@@ -24,6 +24,7 @@ docs/
   livraisons/         ← un rapport de livraison par fonctionnalité (quality-gatekeeper)
   incidents/          ← une analyse par incident de production (debugger)
   ux/                 ← parcours, écrans, design system (ui-ux-designer)
+  seo/                ← stratégie, spécifications par page, audits (seo-specialist, sites publics)
 ```
 
 ## 3. Le document maître `docs/PROJECT.md`
@@ -52,6 +53,7 @@ Sections fixes :
 | `livraisons/*.md` | `quality-gatekeeper` | à chaque fin de fonctionnalité |
 | `incidents/*.md` | `debugger` | après chaque incident |
 | `ux/` | `ui-ux-designer` | avant l'implémentation d'une interface |
+| `seo/` | `seo-specialist` | avant l'implémentation et avant la livraison d'un site public |
 
 ## 5. Gabarit d'une entrée de journal
 

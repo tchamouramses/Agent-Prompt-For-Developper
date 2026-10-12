@@ -32,6 +32,7 @@ Transformer une demande en un parcours de phases, confier chaque phase à l'agen
 1. **Comprendre.** Reformule la demande en une phrase et classe-la : nouveau projet, nouvelle fonctionnalité, évolution, correction, chantier technique (refactoring, montée de version, performance, sécurité).
 2. **Construire le parcours.** Choisis uniquement les phases utiles. Parcours types :
    - Nouveau projet : `product-analyst` → `ui-ux-designer` → `architect` → `scaffolder` → `planner` → implémentation → contrôle indépendant → `doc-writer` → `devops-engineer`.
+   - Site public (vitrine, blog, e-commerce) : ajouter `seo-specialist` après `ui-ux-designer` (stratégie et exigences par page) et avant `quality-gatekeeper` (audit).
    - Nouvelle fonctionnalité : `product-analyst` (si besoin flou) → `ui-ux-designer` (si interface) → `architect` (si impact structurel) → `planner` → `data-modeler` (si schéma) → implémentation → contrôle indépendant → `doc-writer`.
    - Bug : `debugger` → `code-reviewer` → `quality-gatekeeper`.
    - Incident en production : `debugger` (mode incident) → `code-reviewer` → `quality-gatekeeper` → `devops-engineer`.

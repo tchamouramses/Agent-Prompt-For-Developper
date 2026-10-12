@@ -34,6 +34,7 @@
 | 13 | Documentation | `doc-writer` |
 | 14 | CI/CD, versions et déploiement | `devops-engineer` |
 | 15 | Autorisation de livraison | `quality-gatekeeper` |
+| conditionnelle | Référencement (sites publics) | `seo-specialist` |
 | transverse | Coordination | `orchestrator` |
 
 ## 3. Agents globaux
@@ -145,7 +146,12 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 - **Ne fait pas :** ne code pas, ne corrige pas, n'accepte aucune affirmation sans preuve.
 - **Skills :** `quality-gates`, `acceptance-criteria`.
 
-### 3.19 Responsabilités intégrées aux agents existants
+### 3.19 `seo-specialist` (Référencement) — sites publics uniquement
+- **Mission :** mots-clés, architecture des pages, exigences SEO par page avant le développement ; audit technique, performance et contenus avant la livraison.
+- **Ne fait pas :** ne modifie pas le code ; aucune technique contraire aux consignes des moteurs ; aucun outil payant sans accord.
+- **Skills :** `seo-technique`, `accessibility`.
+
+### 3.20 Responsabilités intégrées aux agents existants
 | Responsabilité proposée | Intégrée dans | Comment |
 |-------------------------|---------------|---------|
 | Acceptation produit | `quality-gatekeeper` + `e2e-validator` | matrice critère → test → parcours → preuve |
@@ -154,7 +160,7 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 | Réponse aux incidents | `debugger` (mode incident) | qualification, limitation de l'impact, analyse après coup |
 | Maintenance des dépendances | `security-auditor` + `refactorer` | audit et versions obsolètes, puis mise à jour après accord ; à lancer en routine périodique |
 
-### 3.20 Agents reportés (à créer selon le projet)
+### 3.21 Agents reportés (à créer selon le projet)
 - `sre-observability` : utile quand un projet est en production avec des outils de supervision accessibles.
 - `ai-engineer` : utile pour un projet avec des fonctionnalités IA (LLM, RAG, embeddings).
 - `product-analytics` : utile quand des données d'usage réelles sont disponibles.
@@ -172,7 +178,7 @@ Décision : un agent d'implémentation par framework utilisé. Les autres phases
 | `Agent/TypeScript/` | `nextjs-implementer` | Next.js |
 | `Agent/TypeScript/` | `expo-mobile-implementer` | React Native + Expo |
 
-Les rôles détaillés des 24 agents sont dans `Agent/`.
+Les rôles détaillés des 25 agents sont dans `Agent/`.
 
 **Principes communs :** un agent ne voit que son propre fichier. Les règles partagées par tous (posture senior, qualité du code, zéro code mort, gestion des régressions, preuves et contrôle indépendant, choix des librairies validés par l'utilisateur, actions interdites, compte rendu, suivi documentaire) sont donc maintenues dans `Agent/_commun/principes-communs.md` et recopiées dans chaque agent par `python3 scripts/sync-agents.py`. Ne jamais modifier la section générée directement dans un agent.
 
@@ -189,6 +195,7 @@ Les rôles détaillés des 24 agents sont dans `Agent/`.
 | Données | `db-schema-design`, `migrations`, `db-query-optimization` |
 | Tests | `testing-strategy`, `api-contracts`, `e2e-testing` |
 | Expérience utilisateur | `ux-patterns`, `design-system`, `accessibility` |
+| Référencement | `seo-technique` (rendu serveur, sitemap, robots, canoniques, données structurées, Open Graph, hreflang, Core Web Vitals) |
 | Qualité | `code-review-checklist`, `refactoring-patterns`, `debugging-method`, `quality-gates` (règles bloquantes, rapport de livraison) |
 | Sécurité | `owasp-checklist`, `env-secrets`, `dependency-audit` |
 | Performance | `profiling`, `caching` |
@@ -234,4 +241,5 @@ Installation dans un projet : copier les agents voulus dans `.claude/agents/` et
 4. Tous les agents sont conservés, sans fusion.
 5. Documentation de suivi par projet : voir `docs/doc-suivi-projet.md`.
 6. Tous les agents se comportent en seniors : code lisible, sans répétition ni code mort ; risque de régression évalué avant chaque modification, avec question à l'utilisateur en cas de doute ; aucune librairie installée sans que l'utilisateur ait choisi parmi des options proposées.
-7. Équipe « version resserrée » : ajout de `ui-ux-designer`, `e2e-validator` et `quality-gatekeeper` ; les autres responsabilités proposées sont intégrées aux agents existants ou reportées (section 3.19 et 3.20).
+7. Équipe « version resserrée » : ajout de `ui-ux-designer`, `e2e-validator` et `quality-gatekeeper` ; les autres responsabilités proposées sont intégrées aux agents existants ou reportées (sections 3.20 et 3.21).
+8. Ajout de `seo-specialist`, activé pour les sites publics, et du skill `seo-technique` chargé par les agents Next.js et Angular.

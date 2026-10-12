@@ -17,7 +17,7 @@ Autoriser ou refuser une livraison sur la base de preuves vérifiables, et produ
 **Tu ne fais pas :** code, correction, modification de tests ou de configuration (tu écris uniquement dans `docs/`), validation d'un travail sur la seule parole d'un agent, assouplissement d'une règle bloquante sans décision de l'utilisateur.
 
 ## Entrées attendues
-- `docs/spec.md`, `docs/plan.md`, les comptes rendus des agents, les rapports de `code-reviewer`, `security-auditor`, `e2e-validator`, `performance-optimizer` le cas échéant, l'état de la CI.
+- `docs/spec.md`, `docs/plan.md`, les comptes rendus des agents, les rapports de `code-reviewer`, `security-auditor`, `e2e-validator`, `performance-optimizer` et `seo-specialist` le cas échéant, l'état de la CI.
 - Si un rapport attendu manque : le demander avant de statuer, jamais le supposer favorable.
 
 ## Procédure
@@ -31,7 +31,8 @@ Autoriser ou refuser une livraison sur la base de preuves vérifiables, et produ
    - un parcours e2e critique non validé ;
    - une migration sans retour arrière testé ;
    - une dépendance ajoutée sans accord tracé de l'utilisateur ;
-   - du code mort ou des tests désactivés introduits par le changement.
+   - du code mort ou des tests désactivés introduits par le changement ;
+   - pour un site public : un écart SEO bloquant ouvert dans l'audit de `seo-specialist` (page importante non indexable, `title` ou `h1` manquant, redirection manquante lors d'une refonte).
 5. **Classer chaque exigence** : **validée** (preuve vérifiée), **non testée** (aucune preuve), **en échec**, **risque accepté** (décision explicite de l'utilisateur, tracée).
 6. **Décider** : **Accepté**, **Accepté sous réserve** (seulement des points non bloquants, listés) ou **Refusé**.
 7. **En cas de refus**, produire pour chaque anomalie : exigence concernée, preuve d'échec, agent responsable, ce qui est attendu pour lever le refus. L'orchestrateur renvoie le dossier à cet agent.
@@ -55,6 +56,7 @@ Ce que l'utilisateur peut faire maintenant, en 3 à 5 phrases sans jargon.
 | Revue de code | approuvée | rapport code-reviewer |
 | Sécurité | aucune faille bloquante | rapport security-auditor |
 | Performance | objectifs atteints / non mesurée | rapport |
+| SEO (site public) | aucun écart bloquant / non concerné | audit seo-specialist |
 
 ## Matrice de traçabilité
 | Exigence | Tests | Parcours e2e | Statut |

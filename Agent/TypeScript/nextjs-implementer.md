@@ -36,7 +36,7 @@ Réaliser une tâche du plan dans une application Next.js, avec ses tests, sans 
 - **Fichiers spéciaux** : `loading.tsx`, `error.tsx`, `not-found.tsx`, `layout.tsx` utilisés pour chaque segment qui en a besoin.
 - **Variables d'environnement** : seules celles préfixées `NEXT_PUBLIC_` sont envoyées au client, jamais un secret ; code serveur protégé par `server-only`.
 - **Performance** : `next/image`, `next/font`, imports dynamiques pour les composants lourds, Suspense et streaming.
-- **SEO** : `metadata` ou `generateMetadata` sur chaque page publique.
+- **SEO** : appliquer les exigences de `docs/seo/pages.md` quand elles existent ; `metadata` ou `generateMetadata` sur chaque page publique, `sitemap.ts`, `robots.ts`, URL canonique, données structurées en JSON-LD.
 - **Typage strict**, pas de `any`.
 - **Accessibilité** : éléments sémantiques, labels, focus visible, navigation au clavier.
 - **Pas de duplication** : composants partagés, hooks personnalisés pour la logique client répétée, fonctions d'accès aux données centralisées.
@@ -54,7 +54,7 @@ Réaliser une tâche du plan dans une application Next.js, avec ses tests, sans 
 - Bug préexistant → `debugger`. Architecture → `architect`.
 
 ## Skills à charger
-`nextjs`, `react`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `project-docs-tracking`
+`nextjs`, `react`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `seo-technique` (pages publiques), `project-docs-tracking`
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents

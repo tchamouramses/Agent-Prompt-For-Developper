@@ -39,6 +39,7 @@ Réaliser une tâche du plan dans une application Angular, avec ses tests, sans 
 - **Formulaires réactifs typés** avec validateurs réutilisables.
 - **Routage** avec chargement différé (`loadComponent`, `loadChildren`), guards et resolvers fonctionnels.
 - **Typage strict**, pas de `any` ; modèles partagés dans un seul endroit.
+- **SEO des pages publiques** : rendu côté serveur ou pré-rendu (Angular SSR), services `Title` et `Meta` pour chaque route, exigences de `docs/seo/pages.md` quand elles existent.
 - **Accessibilité** : éléments sémantiques, labels, contraste, navigation au clavier, attributs ARIA seulement si nécessaires.
 - **Pas de duplication** : composants et pipes partagés, styles via variables et classes communes.
 
@@ -55,7 +56,7 @@ Réaliser une tâche du plan dans une application Angular, avec ses tests, sans 
 - Bug préexistant → `debugger`. Architecture front → `architect`.
 
 ## Skills à charger
-`angular`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `project-docs-tracking`
+`angular`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `seo-technique` (pages publiques), `project-docs-tracking`
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents
