@@ -64,6 +64,14 @@ Les standards de base (Server Components par défaut, `"use client"` au plus bas
 - Après une suppression, retire aussi la route, le composant, la Server Action, la variable d'environnement, le style et les tests devenus inutiles.
 - Montée de version : skill `upgrade-nextjs`. Lint et formatage : skill `lint-format-typescript`. Composants : skill `react`.
 
+### 7. Internationalisation (projet multilingue)
+Règles communes, contrôles et livrable : skill `i18n`. Spécifique à Next.js (App Router) :
+- **`next-intl`** par défaut : segment `app/[locale]/`, `routing` défini une fois (`defineRouting` : langues, langue par défaut, préfixe d'URL) et partagé par le middleware (ou `proxy.ts` selon la version) et la navigation (`Link`, `redirect`, `useRouter` issus de `createNavigation`, pas ceux de `next/link` directement).
+- Server Components : `getTranslations()` ; Client Components : `useTranslations()` avec seulement les messages nécessaires transmis par `NextIntlClientProvider`. `setRequestLocale(locale)` dans les layouts et pages rendus statiquement, avec `generateStaticParams` sur les langues.
+- Formats : `useFormatter()` / `getFormatter()` avec le fuseau horaire fixé dans la configuration de requête (`timeZone`), sinon serveur et client formatent différemment et l'hydratation échoue.
+- Messages typés (déclaration du type `Messages` d'après le fichier de référence) : une clé inconnue casse `tsc`. Texte enrichi : `t.rich`, jamais `dangerouslySetInnerHTML`.
+- Métadonnées par langue dans `generateMetadata` (titre, description, `alternates.languages`, skill `seo-technique`) ; `<html lang={locale} dir=…>` dans le layout racine de `[locale]`.
+
 ## Livrable
 Le code de la tâche conforme à la version et au routeur installés, et dans le compte rendu : version de Next.js, routeur, stratégie de cache retenue pour les données touchées, contrôles d'accès des actions ajoutées.
 

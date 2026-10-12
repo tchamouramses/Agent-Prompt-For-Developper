@@ -136,12 +136,12 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 ### 3.16 `ui-ux-designer` (Expérience utilisateur)
 - **Mission :** parcours, architecture de l'information, maquettes, états d'écran, design system, accessibilité.
 - **Ne fait pas :** ne code pas l'application ; aucune librairie de composants payante ou sous licence restrictive sans accord humain.
-- **Skills :** `ux-patterns`, `design-system`, `accessibility`.
+- **Skills :** `ux-patterns`, `design-system`, `accessibility`, `i18n`.
 
 ### 3.17 `e2e-validator` (Validation de bout en bout) — indépendant
 - **Mission :** utiliser l'application comme un vrai utilisateur (Playwright, Maestro ou Detox), vérifier les critères d'acceptation et l'intégration réelle front / back, fournir des preuves.
 - **Ne fait pas :** ne modifie pas le code de l'application ; ne valide jamais par simple lecture du code.
-- **Skills :** `e2e-testing`, `api-contracts`, `acceptance-criteria`.
+- **Skills :** `e2e-testing`, `api-contracts`, `acceptance-criteria`, `i18n`.
 
 ### 3.18 `quality-gatekeeper` (Autorisation de livraison) — indépendant
 - **Mission :** confronter chaque exigence aux preuves, ré-exécuter les contrôles clés, appliquer les règles bloquantes, rendre un verdict et produire le rapport de livraison lu par l'utilisateur à la place du code.
@@ -203,6 +203,7 @@ Les rôles détaillés des 25 agents sont dans `Agent/`.
 | Données | `db-schema-design`, `migrations`, `db-query-optimization` |
 | Tests | `testing-strategy`, `api-contracts`, `e2e-testing` |
 | Expérience utilisateur | `design-inputs` (lire images, captures, croquis, PDF, HTML, URL, Figma et autres sources, en tirer les spécifications d'écran), `design-fidelity-review` (comparer le rendu à la référence, classer les écarts, vérifier les corrections), `ux-patterns`, `design-system`, `accessibility` |
+| Internationalisation | `i18n` (langues de la spec, aucun texte en dur, clés stables, pluriels ICU, formats localisés, choix de la langue, RTL, contrôle de parité des clés et des textes en dur ; détails par stack dans les skills de framework) |
 | Référencement | `seo-technique` (rendu serveur, sitemap, robots, canoniques, données structurées, Open Graph, hreflang, Core Web Vitals) |
 | Qualité | `code-review-checklist`, `refactoring-patterns`, `debugging-method`, `quality-gates` (règles bloquantes, rapport de livraison) |
 | Sécurité | `owasp-checklist`, `env-secrets`, `dependency-audit` |

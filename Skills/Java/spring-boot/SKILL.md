@@ -60,6 +60,14 @@ Les standards de base (injection par constructeur, DTO en records, `ProblemDetai
 - Après une suppression, retire aussi les beans, propriétés de configuration, migrations non appliquées, DTO, tests et dépendances devenus inutiles.
 - Formatage et analyse statique : skill `lint-format-java`. Montée de version de Spring Boot : skill `upgrade-spring-boot`.
 
+### 5. Internationalisation (projet multilingue)
+Règles communes, contrôles et livrable : skill `i18n`. Spécifique à Spring Boot :
+- `MessageSource` auto-configuré : `spring.messages.basename` (`messages`, ou plusieurs bases séparées par des virgules), `spring.messages.encoding=UTF-8`, `spring.messages.fallback-to-system-locale=false` pour que le repli soit `messages.properties` et pas la langue du serveur. Variables positionnelles `{0}` ; pluriels et choix par `{0,choice,0#…|1#…|1<…}` ou ICU4J si le projet l'a adopté.
+- Langue par `LocaleResolver` : `AcceptHeaderLocaleResolver` (API sans état, langues supportées déclarées) ou `CookieLocaleResolver` avec `LocaleChangeInterceptor` (application à session) ; `LocaleContextHolder.getLocale()` dans le code de service, jamais `Locale.getDefault()`.
+- Validation : messages de Bean Validation en clés (`{order.quantity.min}`) résolus par le `MessageSource` (`LocalValidatorFactoryBean` lié au `MessageSource`) ; erreurs d'API renvoyées avec un code stable et le message traduit (`ProblemDetail`, skill `error-handling`).
+- E-mails et documents dans la langue du destinataire (langue stockée sur l'utilisateur, passée au moteur de templates : Thymeleaf `#messages`, contexte `Locale`).
+- Formats : `DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)`, `NumberFormat.getCurrencyInstance(locale)`. Parité des fichiers `messages_<langue>.properties` : script du skill `i18n`.
+
 ## Livrable
 Le code de la tâche conforme à la génération installée, et dans le compte rendu : versions de Spring Boot et de Java relevées, outils d'inspection utilisés, pièges vérifiés qui s'appliquaient.
 

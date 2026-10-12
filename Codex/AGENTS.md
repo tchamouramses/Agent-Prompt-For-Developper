@@ -158,6 +158,7 @@ Si ta tâche touche un écran, une page, un composant visuel ou un e-mail :
 - Avant de coder, lis `docs/ux/ecrans/<écran>.md`, `docs/ux/design-system.md` et les sources visuelles citées (maquettes, captures, PDF, HTML, Figma…). Si tu n'as qu'une source brute sans spécification d'écran, analyse-la avec le skill `design-inputs` et indique dans ton compte rendu les valeurs estimées et les états que la source ne montre pas.
 - Réutilise les composants et jetons du design system ; ne recopie jamais tel quel le HTML ou le CSS d'une source, reconstruis-le avec les conventions du projet.
 - Après l'implémentation, compare le rendu à la source selon le skill `design-fidelity-review`, avec l'outil de capture déjà présent dans le projet. Sans outil, marque la comparaison **non vérifiée**.
+- Projet multilingue (section « Langues » de `docs/spec.md`, ou fichiers de traduction présents) : aucun texte visible en dur, y compris attributs, messages du back et e-mails ; chaque clé ajoutée, modifiée ou supprimée dans toutes les langues ; pluriels, dates et montants par l'outil de traduction ou `Intl` ; contrôle de parité des clés lancé avant de livrer (skill `i18n`).
 
 ### 4. Architecture du projet
 - Suis le modèle d'organisation du code consigné dans `docs/architecture.md` ou reconnu dans le code (couches, modules, hexagonale, DDD) : place chaque fichier dans la couche et le module prévus, et respecte les dépendances autorisées (skill `architecture-patterns`).

@@ -25,6 +25,7 @@ Produire une spécification claire, priorisée et testable, dont chaque hypothè
    - problème résolu et mesure du succès ;
    - parcours principaux ;
    - règles métier, contraintes légales (données personnelles), contraintes de délai ou de budget ;
+   - langues et régions : langues de l'interface, langue par défaut, langues de droite à gauche, devises et fuseaux ; à défaut d'indice, une seule langue, celle de la demande (skill `i18n`) ;
    - hors périmètre.
 3. **Reformuler** le besoin en une phrase en tête de la spec.
 4. **Écrire les user stories** : « En tant que <rôle>, je veux <action> afin de <bénéfice> ». Une story = une valeur livrable indépendamment.
@@ -44,6 +45,7 @@ Produire une spécification claire, priorisée et testable, dont chaque hypothè
 Critères d'acceptation :
 - Given … When … Then …
 ## Règles métier (RG-xx)
+## Langues (langue par défaut, autres langues, RTL, devises et fuseaux)
 ## Hors périmètre
 ## Hypothèses (H-xx, avec raison)
 ## Décisions humaines requises (s'il y en a)

@@ -60,6 +60,14 @@ La règle « outils natifs avant toute librairie » et les standards de base son
 - Génère avec `php artisan make:*` (le modèle avec `-mfs` si migration, factory et seeder sont utiles), puis supprime les méthodes générées vides que tu n'utilises pas.
 - Après une suppression, retire aussi la route, la vue, la traduction, la Policy, le test et la factory devenus inutiles (principes de code, zéro code mort).
 
+### 5. Internationalisation (projet multilingue)
+Règles communes, contrôles et livrable : skill `i18n`. Spécifique à Laravel :
+- Textes par `__('checkout.total')` ou `@lang` dans Blade, pluriels par `trans_choice('cart.items', $n, ['count' => $n])` (`{0} …|{1} …|[2,*] …`) ; clés courtes groupées dans `lang/<langue>/<domaine>.php`, ou phrases en clés dans `lang/<langue>.json` : une seule convention par projet. Variables `:name`, jamais de concaténation.
+- Messages de validation : `lang/<langue>/validation.php` (`custom` et `attributes`) publié pour chaque langue (`php artisan lang:publish` en Laravel 11+) ; Form Requests sans message en dur (`messages()` renvoie des appels à `__()`).
+- Langue de la requête fixée par un middleware (`App::setLocale()`) selon l'ordre du skill `i18n` ; `fallback_locale` défini ; mails et notifications envoyés dans la langue du destinataire (`Mail::to($user)->locale($user->locale)` ou `HasLocalePreference` sur le modèle), y compris en file d'attente.
+- Formats : `Carbon::translatedFormat()` et `isoFormat()` avec la langue active ; `Number::format()`, `Number::currency()` (extension `intl`).
+- Front Inertia ou SPA : les clés envoyées au client passent par l'outil du front, pas par une copie manuelle des fichiers PHP. Parité : convertis les fichiers en JSON (commande du skill `i18n`) puis lance le script de parité.
+
 ## Livrable
 Le code de la tâche conforme à la structure de la version installée, et dans le compte rendu : la version de Laravel relevée, les commandes d'inspection lancées, les pièges vérifiés qui s'appliquaient à la tâche.
 
