@@ -1,0 +1,67 @@
+{
+  "_commentaire": "Commandes de développement autorisées sans confirmation pour chaque stack, ajoutées par scripts/install.py aux autorisations générales de settings.json. Les refus et le hook des actions réservées s'appliquent toujours avant.",
+  "laravel": [
+    "Bash(php:*)",
+    "Bash(composer:*)",
+    "Bash(./vendor/bin/pest:*)",
+    "Bash(./vendor/bin/phpunit:*)",
+    "Bash(./vendor/bin/pint:*)",
+    "Bash(./vendor/bin/phpstan:*)",
+    "Bash(vendor/bin/pest:*)",
+    "Bash(vendor/bin/phpunit:*)",
+    "Bash(vendor/bin/pint:*)",
+    "Bash(vendor/bin/phpstan:*)",
+    "Bash(npm:*)",
+    "Bash(npx vite:*)"
+  ],
+  "symfony": [
+    "Bash(php:*)",
+    "Bash(composer:*)",
+    "Bash(symfony console:*)",
+    "Bash(./vendor/bin/phpunit:*)",
+    "Bash(./vendor/bin/php-cs-fixer:*)",
+    "Bash(./vendor/bin/phpstan:*)",
+    "Bash(vendor/bin/phpunit:*)",
+    "Bash(vendor/bin/php-cs-fixer:*)",
+    "Bash(vendor/bin/phpstan:*)"
+  ],
+  "spring-boot": [
+    "Bash(./mvnw:*)",
+    "Bash(./gradlew:*)",
+    "Bash(mvn:*)",
+    "Bash(gradle:*)",
+    "Bash(java -version:*)"
+  ],
+  "angular": [
+    "Bash(npm:*)",
+    "Bash(node:*)",
+    "Bash(ng:*)",
+    "Bash(npx ng:*)",
+    "Bash(npx tsc:*)",
+    "Bash(npx eslint:*)",
+    "Bash(npx prettier:*)",
+    "Bash(npx playwright test:*)",
+    "Bash(npx vitest:*)"
+  ],
+  "nextjs": [
+    "Bash(npm:*)",
+    "Bash(pnpm:*)",
+    "Bash(node:*)",
+    "Bash(npx next:*)",
+    "Bash(npx tsc:*)",
+    "Bash(npx eslint:*)",
+    "Bash(npx prettier:*)",
+    "Bash(npx playwright test:*)",
+    "Bash(npx vitest:*)",
+    "Bash(npx prisma:*)"
+  ],
+  "expo": [
+    "Bash(npm:*)",
+    "Bash(node:*)",
+    "Bash(npx expo:*)",
+    "Bash(npx tsc:*)",
+    "Bash(npx eslint:*)",
+    "Bash(npx prettier:*)",
+    "Bash(npx jest:*)"
+  ]
+}

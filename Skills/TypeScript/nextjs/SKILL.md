@@ -52,6 +52,7 @@ Les standards de base (Server Components par défaut, `"use client"` au plus bas
 - **Chaque Server Action et chaque route handler** : valide l'entrée avec le schéma du projet, vérifie l'authentification et l'autorisation sur la ressource, renvoie une erreur maîtrisée. La vérification d'accès vit dans la couche d'accès aux données (ou au début de l'action), pas seulement dans le middleware ou le proxy, ni dans la page.
 - Les arguments d'une Server Action viennent du client, y compris les identifiants « cachés » dans un formulaire : ne leur fais jamais confiance pour l'autorisation.
 - `redirect()` et `notFound()` lèvent une exception de contrôle : appelle-les hors d'un `try/catch`, ou relance l'erreur.
+- Règle d'exclusivité (réservation, stock, valeur unique) : méthode générale du skill `concurrency-control` ; avec l'ORM du projet, transaction interactive et verrou de la ligne parente (`SELECT … FOR UPDATE` en requête brute avec Prisma, `.for('update')` avec Drizzle) ou contrainte unique traduite en 409.
 - Redirection vers une URL reçue (`?next=`) : chemin relatif seulement.
 - Route handler qui lit des cookies et modifie des données : vérifie l'origine (les Server Actions le font nativement, pas les route handlers).
 

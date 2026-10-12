@@ -41,7 +41,8 @@ with tempfile.TemporaryDirectory() as tmp:
     ecrire(lara / "composer.json", '{"require": {"laravel/framework": "^11"}}')
     ecrire(lara / "package.json", '{"devDependencies": {"vite": "^5"}}')
     ecrire(lara / ".claude" / "agents" / "planner.md", "agent du projet\n")
-    ecrire(lara / ".claude" / "settings.json", '{"permissions": {"deny": ["Bash(rm -rf:*)"]}}')
+    ecrire(lara / ".claude" / "settings.json",
+           '{"permissions": {"allow": ["Bash(make:*)"], "deny": ["Bash(rm -rf:*)"]}}')
     ecrire(lara / "AGENTS.md", "# Règles du projet\n")
     sortie = lancer("--outil", "les-deux", home=home, cwd=lara)
     verifier("stacks détectées : laravel" in sortie, "détection de Laravel")
@@ -51,6 +52,10 @@ with tempfile.TemporaryDirectory() as tmp:
              "fichier du projet conservé sans --force")
     verifier((lara / ".codex" / "agents" / "laravel-implementer.toml").exists(), "agent Codex installé")
     verifier("Règles du projet" in (lara / "AGENTS.md").read_text(), "AGENTS.md du projet conservé")
+    permis = json.loads((lara / ".claude" / "settings.json").read_text())["permissions"]["allow"]
+    verifier({"Bash(make:*)", "Bash(git status:*)", "Bash(php:*)"} <= set(permis),
+             "autorisations générales, de la stack et du projet")
+    verifier("Bash(./mvnw:*)" not in permis, "pas d'autorisation d'une stack absente")
 
     # Relance sans option : même installation, mise à jour sur place.
     sortie = lancer(home=home, cwd=lara)
@@ -62,7 +67,8 @@ with tempfile.TemporaryDirectory() as tmp:
     verifier(restants == [".claude/agents/planner.md", ".claude/settings.json", "AGENTS.md",
                           "composer.json", "package.json"], f"désinstallation propre ({restants})")
     reglages = json.loads((lara / ".claude" / "settings.json").read_text())
-    verifier(reglages["permissions"]["deny"] == ["Bash(rm -rf:*)"] and "hooks" not in reglages,
+    verifier(reglages["permissions"] == {"allow": ["Bash(make:*)"], "deny": ["Bash(rm -rf:*)"]}
+             and "hooks" not in reglages,
              "réglages du projet rendus")
     verifier((lara / "AGENTS.md").read_text().strip() == "# Règles du projet", "bloc AGENTS.md retiré")
 

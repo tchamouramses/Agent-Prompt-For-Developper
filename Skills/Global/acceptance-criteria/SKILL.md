@@ -32,7 +32,7 @@ description: Rédiger ou vérifier des critères d'acceptation testables (Given/
    - droits : non connecté, rôle insuffisant, ressource d'un autre utilisateur ou d'une autre organisation ;
    - données vides, une seule, beaucoup (pagination, limites) ;
    - doublon et double soumission ;
-   - concurrence (deux utilisateurs modifient la même ressource) ;
+   - concurrence (deux utilisateurs modifient la même ressource) ; pour une règle d'exclusivité, le critère dit « même avec N requêtes simultanées » pour exiger un test de concurrence réelle (skill `concurrency-control`) ;
    - échec d'un service externe (paiement refusé, délai dépassé) ;
    - états de l'objet (une commande annulée peut-elle être payée ?) ;
    - temps : fuseaux, dates passées ou futures, expiration.

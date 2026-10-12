@@ -2,6 +2,8 @@
 
 Bibliothèque d'agents et de skills réutilisables pour le développement assisté par IA (vibe coding), compatibles Claude Code et Codex.
 
+L'outil se veut général dans un premier temps et spécifique par langage dans un second temps : chaque savoir est d'abord écrit en skill global, valable pour tous les langages, puis traduit dans les skills de langage et de framework qui y renvoient.
+
 ## Structure
 
 ```
@@ -35,8 +37,8 @@ docs/
 ## État
 
 - Agents : 25 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
-- Skills : socle (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills transverses (produit et design, architecture et données, journalisation, erreurs, performance, sécurité des dépendances et des secrets, documentation, CI, Docker, déploiement), skills d'architecture (`coverage-check`, `monorepo`, `architecture-patterns`, `background-jobs-events`, `multi-tenancy`, `realtime`), et les skills des six stacks : PHP (`laravel`, `symfony`, `coding-conventions-php`, `testing-php`, `security-php`, `lint-format-php`, `upgrade-laravel`, `upgrade-symfony`), Java (`spring-boot`, `coding-conventions-java`, `testing-java`, `security-java`, `lint-format-java`, `upgrade-spring-boot`), TypeScript (`react`, `angular`, `nextjs`, `expo`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `lint-format-typescript`, `upgrade-angular`, `upgrade-nextjs`, `upgrade-expo`). `Skills/PREVUS.md` liste les skills cités mais pas encore rédigés (aucun aujourd'hui).
-- Essai réel : Laravel, trois scénarios (fonctionnalité, bug, montée de version), voir `docs/essais/2026-10-12-laravel.md`. Les autres stacks sont à étendre sur le même modèle.
+- Skills : socle (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills transverses (produit et design, architecture et données, concurrence (`concurrency-control`), journalisation, erreurs, performance, sécurité des dépendances et des secrets, documentation, CI, Docker, déploiement), skills d'architecture (`coverage-check`, `monorepo`, `architecture-patterns`, `background-jobs-events`, `multi-tenancy`, `realtime`), et les skills des six stacks : PHP (`laravel`, `symfony`, `coding-conventions-php`, `testing-php`, `security-php`, `lint-format-php`, `upgrade-laravel`, `upgrade-symfony`), Java (`spring-boot`, `coding-conventions-java`, `testing-java`, `security-java`, `lint-format-java`, `upgrade-spring-boot`), TypeScript (`react`, `angular`, `nextjs`, `expo`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `lint-format-typescript`, `upgrade-angular`, `upgrade-nextjs`, `upgrade-expo`). `Skills/PREVUS.md` liste les skills cités mais pas encore rédigés (aucun aujourd'hui).
+- Essais réels : Laravel, trois scénarios (fonctionnalité, bug, montée de version), voir `docs/essais/2026-10-12-laravel.md` ; comparaison avec Superpowers sur une fonctionnalité Angular + Laravel, voir `docs/essais/2026-10-12-comparatif-superpowers.md`. Les autres stacks sont à étendre sur le même modèle.
 
 ## Fonctionnement autonome
 
@@ -72,7 +74,7 @@ agents-dev --desinstaller           # retire ce que la commande a installé
 
 **Mise à jour** : `agents-dev maj` télécharge la dernière version et met à jour l'installation globale ; relancer `agents-dev` sans option dans un projet le met à jour avec les mêmes stacks et outils.
 
-Détection : `composer.json` (Laravel, Symfony), `pom.xml` ou `build.gradle` (Spring Boot), `package.json` (Angular, Next.js, Expo), à la racine et jusqu'à deux niveaux de sous-dossiers (`apps/web`). Un langage hors liste (Go, Python, .NET…) est signalé et reçoit les agents génériques. Les fichiers installés sont listés dans `.bibliotheque-agents.json` : la relance remplace ces fichiers et retire ceux devenus inutiles, mais ne remplace jamais un fichier du projet sans `--force`. `.claude/settings.json` est fusionné, les instructions Codex vont dans `AGENTS.md` entre marqueurs, et la commande liste les skills cités qui ne sont pas encore rédigés.
+Détection : `composer.json` (Laravel, Symfony), `pom.xml` ou `build.gradle` (Spring Boot), `package.json` (Angular, Next.js, Expo), à la racine et jusqu'à deux niveaux de sous-dossiers (`apps/web`). Un langage hors liste (Go, Python, .NET…) est signalé et reçoit les agents génériques. Les fichiers installés sont listés dans `.bibliotheque-agents.json` : la relance remplace ces fichiers et retire ceux devenus inutiles, mais ne remplace jamais un fichier du projet sans `--force`. `.claude/settings.json` est fusionné : refus des actions réservées, hook, et autorisation sans confirmation des commandes de développement générales (git, lecture de fichiers) puis de celles des stacks retenues (`Config/claude/autorisations-stacks.json`), pour que les agents avancent sans attendre ; les refus et le hook passent toujours avant. Les instructions Codex vont dans `AGENTS.md` entre marqueurs, et la commande liste les skills cités qui ne sont pas encore rédigés.
 
 Depuis un clone, la même commande est `python3 scripts/install.py [dossier] [options]`.
 
