@@ -42,6 +42,8 @@ Pour un nouveau projet, l'inventaire vient de la spec et des décisions de `arch
 
 Classe chaque élément : **couvert**, **partiel** (agent présent mais skill du framework absent, ou l'inverse), **non couvert**.
 
+Si une stack que la bibliothèque couvre (Laravel, Symfony, Spring Boot, Angular, Next.js, Expo) est présente sans son agent installé, typiquement une application ajoutée au dépôt après l'installation, relance `agents-dev` sans option à la racine : la commande garde les stacks déjà installées et ajoute celles détectées. Les nouveaux agents ne sont chargés qu'à la session suivante ; d'ici là, la partie concernée suit le mode dégradé de l'étape 3. Consigne-le dans la section « Couverture ».
+
 ### 3. Appliquer le mode dégradé à ce qui n'est pas couvert
 Le projet continue ; seule la façon de travailler change.
 1. **Agent** : l'implémentation va à `implementer` (générique), avec le chemin de l'application dans le brief. Les agents transverses (`architect`, `test-engineer`, `code-reviewer`, `security-auditor`…) restent utilisables.

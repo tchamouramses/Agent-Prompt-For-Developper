@@ -36,6 +36,7 @@
       "Bash(sort:*)",
       "Bash(jq:*)",
       "Bash(python3:*)",
+      "Bash(agents-dev:*)",
       "Bash(docker compose ps:*)",
       "Bash(docker compose logs:*)"
     ],
