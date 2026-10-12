@@ -33,7 +33,7 @@ docs/
 ## État
 
 - Agents : 25 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
-- Skills : socle rédigé (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills de design `design-inputs` et `design-fidelity-review`, `migrations`, `git-workflow`, et la stack Laravel complète (`laravel`, `testing-php`, `security-php`, `coding-conventions-php`). Les skills restants sont listés dans `Skills/PREVUS.md`.
+- Skills : socle rédigé (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills de design `design-inputs` et `design-fidelity-review`, `migrations`, `git-workflow`, `debugging-method`, `owasp-checklist`, `e2e-testing`, `api-contracts`, et la stack Laravel complète (`laravel`, `testing-php`, `security-php`, `coding-conventions-php`). Les skills restants sont listés dans `Skills/PREVUS.md`.
 - Essai réel : Laravel, trois scénarios (fonctionnalité, bug, montée de version), voir `docs/essais/2026-10-12-laravel.md`. Les autres stacks sont à étendre sur le même modèle.
 
 ## Fonctionnement autonome
