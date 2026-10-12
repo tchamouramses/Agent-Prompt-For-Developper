@@ -29,30 +29,4 @@ Liste des skills cités par les agents ou le catalogue mais pas encore rédigés
 
 ## PHP
 
-- `lint-format-php`
-- `symfony`
 - `upgrade-laravel`
-- `upgrade-symfony`
-
-## Java
-
-- `coding-conventions-java`
-- `testing-java`
-- `lint-format-java`
-- `security-java`
-- `spring-boot`
-- `upgrade-spring-boot`
-
-## TypeScript
-
-- `coding-conventions-typescript`
-- `testing-typescript`
-- `lint-format-typescript`
-- `security-typescript`
-- `react`
-- `angular`
-- `nextjs`
-- `expo`
-- `upgrade-angular`
-- `upgrade-nextjs`
-- `upgrade-expo`
