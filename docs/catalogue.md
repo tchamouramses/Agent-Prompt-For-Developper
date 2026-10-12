@@ -193,13 +193,14 @@ Les rôles détaillés des 25 agents sont dans `Agent/`.
 
 | Domaine | Skills |
 |---------|--------|
+| Socle | `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `agent-handoff`, `evidence-tracking`, `skill-validation` |
 | Cadrage | `user-stories`, `acceptance-criteria` |
 | Conception | `adr`, `api-design` (REST/GraphQL), `architecture-patterns` |
 | Planification | `task-breakdown` |
 | Code | `git-workflow` (branches, commits conventionnels, PR), `error-handling`, `logging` |
 | Données | `db-schema-design`, `migrations`, `db-query-optimization` |
 | Tests | `testing-strategy`, `api-contracts`, `e2e-testing` |
-| Expérience utilisateur | `design-inputs` (lire images, captures, croquis, PDF, HTML, URL, Figma et autres sources ; comparer le rendu à la maquette), `ux-patterns`, `design-system`, `accessibility` |
+| Expérience utilisateur | `design-inputs` (lire images, captures, croquis, PDF, HTML, URL, Figma et autres sources, en tirer les spécifications d'écran), `design-fidelity-review` (comparer le rendu à la référence, classer les écarts, vérifier les corrections), `ux-patterns`, `design-system`, `accessibility` |
 | Référencement | `seo-technique` (rendu serveur, sitemap, robots, canoniques, données structurées, Open Graph, hreflang, Core Web Vitals) |
 | Qualité | `code-review-checklist`, `refactoring-patterns`, `debugging-method`, `quality-gates` (règles bloquantes, rapport de livraison) |
 | Sécurité | `owasp-checklist`, `env-secrets`, `dependency-audit` |
@@ -251,3 +252,5 @@ Installation dans un projet : voir le README (Claude Code : `.claude/agents/` et
 9. Corrections issues de la revue des prompts : l'orchestrateur peut lancer les agents (outil `Agent`), les sous-agents renvoient leurs questions au lieu d'attendre une réponse, les skills sont déclarés dans l'en-tête, les principes sont scindés (communs et code), les agents de contrôle sont sans outil d'écriture, deux profils de parcours (léger et livraison), génération Codex, exemples, modèles et règle sur les fichiers absents.
 10. Les agents qui modifient du code appliquent SOLID dès que c'est possible ; `code-reviewer` le vérifie.
 11. Sources visuelles : `ui-ux-designer` a un mode « partir de l'existant » ; les agents qui touchent une interface lisent la spécification d'écran et comparent le rendu à la source ; `e2e-validator` rapporte les écarts avec le design. Le savoir est dans le skill `design-inputs`. Ces agents héritent des outils de la session (dont les outils MCP Figma ou navigateur) sauf `Agent`.
+12. Skills du socle rédigés (12) avec un contrat commun vérifié par `scripts/validate-skills.py`. Les principes gardent la règle courte et renvoient au skill pour la méthode.
+13. Sources visuelles : deux skills plutôt que cinq, `design-inputs` (lecture de toute source) et `design-fidelity-review` (comparaison du rendu). La transformation en code reste dans les principes des agents et les skills de framework.

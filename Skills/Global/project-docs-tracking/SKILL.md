@@ -5,18 +5,34 @@ description: Tenue de la documentation de suivi du projet dans docs/ (journal, C
 
 # Suivi documentaire du projet
 
-Le dossier `docs/` est la mémoire du projet. Une nouvelle session ou un nouvel agent doit pouvoir lire `docs/PROJECT.md` et les dernières entrées de `docs/journal/` et savoir immédiatement où en est le projet, sans relire le code.
+Le dossier `docs/` est la mémoire du projet. Une nouvelle session ou un nouvel agent doit pouvoir lire `docs/PROJECT.md` et les dernières entrées de `docs/journal/` et savoir immédiatement où en est le projet, sans relire le code. La règle est dans les principes communs (« Suivi documentaire ») ; ce skill donne la procédure et les gabarits.
 
-## Au début d'une tâche
+## Quand l'utiliser
+- Au début d'une tâche, pour savoir où en est le projet.
+- En fin de chaque tâche qui modifie le projet.
+- `scaffolder`, `doc-writer`, `orchestrator` : initialiser `docs/` sur un projet qui n'en a pas.
+
+## Ce que l'agent rate sans ce skill
+- Il oublie le journal, ou écrit une entrée vague (« corrections diverses ») inutile à la session suivante.
+- Il réécrit ou supprime des entrées passées.
+- Il met dans le CHANGELOG des détails internes (refactoring, tests) au lieu des changements visibles.
+- Il marque une tâche « terminée » sans preuve de son critère.
+
+## Entrées
+- `docs/` du projet, la tâche réalisée et son compte rendu.
+
+## Procédure
+
+### Au début d'une tâche
 1. Lis `docs/PROJECT.md` (état actuel, décisions clés, dette et risques).
 2. Lis les 5 dernières entrées de `docs/journal/` (tri par nom de fichier, qui commence par la date).
 3. Si ta tâche vient de `docs/plan.md`, lis sa ligne : identifiant, critère « terminé », dépendances, risque.
 
 Si `docs/` n'existe pas, ne crée pas l'arborescence de ta propre initiative : signale-le dans ton compte rendu. Seuls `scaffolder` (nouveau projet), `doc-writer` et `orchestrator` (avec l'accord de l'utilisateur) la créent, à partir des gabarits ci-dessous.
 
-## En fin de tâche
+### En fin de tâche
 
-### 1. Entrée de journal (toujours, si tu as modifié quelque chose)
+#### 1. Entrée de journal (toujours, si tu as modifié quelque chose)
 Fichier `docs/journal/AAAA-MM-JJ-<sujet-court>.md`. Si le fichier existe déjà pour ce sujet et cette date, ajoute une section ; ne réécris ni ne supprime jamais une entrée existante.
 
 ```markdown
@@ -32,7 +48,7 @@ Fichier `docs/journal/AAAA-MM-JJ-<sujet-court>.md`. Si le fichier existe déjà 
 
 Si tu n'as pas d'outil d'écriture (agent de contrôle), mets cette entrée à la fin de ton compte rendu ; l'agent qui t'a lancé l'enregistre.
 
-### 2. CHANGELOG (si le comportement visible change)
+#### 2. CHANGELOG (si le comportement visible change)
 Ajoute une ligne dans `docs/CHANGELOG.md`, section `## [Unreleased]`, sous la bonne rubrique (format Keep a Changelog) :
 - `Added` : nouvelle fonctionnalité ;
 - `Changed` : comportement modifié ;
@@ -43,13 +59,13 @@ Ajoute une ligne dans `docs/CHANGELOG.md`, section `## [Unreleased]`, sous la bo
 
 Une ligne = une phrase compréhensible par un utilisateur du produit, suivie de la référence (`(T4)`, `(US-03)`). Pas de ligne pour un refactoring sans effet visible, des tests seuls ou de la documentation interne.
 
-### 3. Plan (si la tâche vient du plan)
+#### 3. Plan (si la tâche vient du plan)
 Dans `docs/plan.md`, mets à jour le statut de la tâche : `à faire` → `en cours` → `terminée` (ou `bloquée : <raison>`). Une tâche n'est `terminée` que si son critère « terminé » est prouvé.
 
-### 4. PROJECT.md (seulement `doc-writer`, ou l'agent que l'utilisateur désigne)
+#### 4. PROJECT.md (seulement `doc-writer`, ou l'agent que l'utilisateur désigne)
 Les autres agents ne modifient pas `docs/PROJECT.md` : ils signalent dans leur compte rendu ce qui devrait y changer (nouvelle décision, nouveau risque, fonctionnalité livrée).
 
-## Gabarits pour initialiser `docs/`
+### Gabarits pour initialiser `docs/`
 
 ```
 docs/
@@ -107,3 +123,16 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions : [S
 
 ## [Unreleased]
 ```
+
+## Livrable
+- Une entrée de journal par tâche, une ligne de CHANGELOG si le comportement visible change, le statut de la tâche à jour dans `docs/plan.md`.
+
+## Vérifications
+- L'entrée de journal cite l'agent, la tâche, les fichiers et les vérifications exactes.
+- Aucune entrée existante n'a été modifiée ni supprimée (`git diff docs/journal/` ne montre que des ajouts).
+
+## Limites
+- Pas de secret, de donnée personnelle ni de sortie complète de commande dans `docs/`.
+
+## En cas de blocage
+- `docs/` absent et rôle qui ne prévoit pas de le créer : mettre l'entrée de journal dans le compte rendu et signaler l'absence.
