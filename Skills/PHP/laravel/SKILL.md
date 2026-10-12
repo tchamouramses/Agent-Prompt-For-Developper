@@ -41,7 +41,7 @@ La règle « outils natifs avant toute librairie » et les standards de base son
 ### 2. Outils d'inspection à utiliser avant de coder
 - `php artisan route:list --path=<préfixe>` : routes, noms, middlewares et contrôleurs touchés.
 - `php artisan model:show <Modèle>` : colonnes, casts, relations, observers.
-- `php artisan about` et `php artisan config:show <fichier>` : pilotes réels (cache, file, session, base).
+- `php artisan about` et `php artisan config:show <fichier>` (fichiers sans secret seulement, skill `env-secrets`) : pilotes réels (cache, file, session, base).
 - `php artisan event:list` : écouteurs déclenchés par un événement que tu modifies.
 
 ### 3. Pièges à éviter

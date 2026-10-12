@@ -4,35 +4,12 @@ Liste des skills cités par les agents ou le catalogue mais pas encore rédigés
 
 ## Global
 
-- `user-stories`
-- `adr`
-- `api-design`
 - `architecture-patterns`
-- `error-handling`
-- `logging`
-- `db-schema-design`
-- `db-query-optimization`
-- `ux-patterns`
-- `design-system`
-- `accessibility`
-- `seo-technique`
-- `refactoring-patterns`
-- `env-secrets`
-- `dependency-audit`
-- `profiling`
-- `caching`
-- `readme-template`
-- `api-docs`
-- `changelog-semver`
-- `ci-github-actions`
-- `docker`
-- `deployment-checklist`
 
 ## PHP
 
 - `lint-format-php`
 - `symfony`
-- `upgrade-laravel`
 - `upgrade-symfony`
 
 ## Java
