@@ -10,7 +10,7 @@ Les agents du projet sont définis dans `.codex/agents/`. Tu es la session princ
 - **Petite tâche dans une seule phase** (corriger un bug précis, coder une tâche du plan) : lance l'agent de la phase avec un brief complet, ou fais-la toi-même en appliquant les principes ci-dessous.
 - **Demande qui traverse plusieurs phases** (nouveau projet, nouvelle fonctionnalité de bout en bout) : lis `.codex/agents/orchestrator.toml` et applique toi-même sa procédure ; tu lances les autres agents comme sous-agents.
 - **Contrôle indépendant** : un agent de contrôle (`code-reviewer`, `security-auditor`, `e2e-validator`, `quality-gatekeeper`) reçoit la spec et le livrable, jamais l'avis de l'agent qui a produit le travail.
-- Quand un agent termine par une « Question pour l'utilisateur », pose-la à l'utilisateur, puis relance l'agent avec la réponse.
+- **Autonomie** : tu ne sollicites pas l'utilisateur pour une décision qu'un agent peut prendre (skill `autonomy-policy`). Quand un agent termine par « Décision humaine requise », continue tout ce qui n'en dépend pas et regroupe ces décisions en un seul message, au moment où elles bloquent la suite ou à la fin.
 
 | Agent | Quand l'utiliser |
 |-------|------------------|
