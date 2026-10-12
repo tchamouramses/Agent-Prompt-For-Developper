@@ -10,12 +10,13 @@ Agent/
   PHP/           Laravel, Symfony
   Java/          Spring Boot
   TypeScript/    Angular, Next.js, React Native + Expo
-  _commun/       principes partagés par tous les agents (source unique)
+  _commun/       principes partagés (source unique) : communs à tous, et code pour les agents qui modifient du code
+Codex/           version Codex générée : AGENTS.md et agents/*.toml (ne pas modifier à la main)
 Skills/
   Global/        savoirs transverses (checklists, conventions, gabarits)
   PHP/ Java/ TypeScript/   savoirs propres à chaque langage et framework
 scripts/
-  sync-agents.py        recopie les principes communs dans chaque agent
+  sync-agents.py        recopie les principes dans chaque agent et génère Codex/
 docs/
   catalogue.md          catalogue des agents et skills, principes et décisions
   doc-suivi-projet.md   documentation de suivi installée dans chaque projet
@@ -24,9 +25,20 @@ docs/
 ## État
 
 - Agents : 25 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
-- Skills : à rédiger.
-- Installation dans un projet : à venir (copie dans `.claude/agents/` et `.claude/skills/` pour Claude Code ; déclinaison Codex à définir).
+- Skills : `project-docs-tracking` et `design-inputs` rédigés, les autres à rédiger.
 
-## Modifier les principes communs
+## Installation dans un projet
 
-Éditer `Agent/_commun/principes-communs.md`, puis lancer `python3 scripts/sync-agents.py`. L'option `--check` échoue si un agent n'est pas synchronisé.
+**Claude Code**
+- Copier les fichiers de `Agent/*/` voulus dans `.claude/agents/` et les dossiers de skills (`Skills/*/<skill>/`) dans `.claude/skills/`.
+- Chaque agent précharge ses skills (champ `skills`) ; un skill absent est ignoré avec un avertissement dans le journal de débogage.
+- Pour une demande sur plusieurs phases, lancer la session avec `claude --agent orchestrator` : c'est lui qui parle à l'utilisateur et lance les autres agents.
+
+**Codex**
+- Copier `Codex/AGENTS.md` à la racine du projet, `Codex/agents/*.toml` dans `.codex/agents/` et les dossiers de skills dans `.agents/skills/`.
+- La session principale applique la procédure de l'orchestrateur ; les agents de contrôle n'ont pas d'outil d'écriture dans Claude Code, mais dans Codex cette restriction repose sur leurs consignes.
+
+## Modifier les agents ou les principes
+
+- Principes : éditer `Agent/_commun/principes-communs.md` (tous les agents) ou `Agent/_commun/principes-code.md` (agents qui modifient du code, liste `CODE_AGENTS` du script).
+- Puis lancer `python3 scripts/sync-agents.py`, qui met à jour les agents et régénère `Codex/`. L'option `--check` échoue si un fichier n'est pas synchronisé.

@@ -1,0 +1,109 @@
+---
+name: project-docs-tracking
+description: Tenue de la documentation de suivi du projet dans docs/ (journal, CHANGELOG, plan, PROJECT.md). À appliquer en fin de chaque tâche qui modifie le projet, et au début d'une session pour savoir où en est le projet.
+---
+
+# Suivi documentaire du projet
+
+Le dossier `docs/` est la mémoire du projet. Une nouvelle session ou un nouvel agent doit pouvoir lire `docs/PROJECT.md` et les dernières entrées de `docs/journal/` et savoir immédiatement où en est le projet, sans relire le code.
+
+## Au début d'une tâche
+1. Lis `docs/PROJECT.md` (état actuel, décisions clés, dette et risques).
+2. Lis les 5 dernières entrées de `docs/journal/` (tri par nom de fichier, qui commence par la date).
+3. Si ta tâche vient de `docs/plan.md`, lis sa ligne : identifiant, critère « terminé », dépendances, risque.
+
+Si `docs/` n'existe pas, ne crée pas l'arborescence de ta propre initiative : signale-le dans ton compte rendu. Seuls `scaffolder` (nouveau projet), `doc-writer` et `orchestrator` (avec l'accord de l'utilisateur) la créent, à partir des gabarits ci-dessous.
+
+## En fin de tâche
+
+### 1. Entrée de journal (toujours, si tu as modifié quelque chose)
+Fichier `docs/journal/AAAA-MM-JJ-<sujet-court>.md`. Si le fichier existe déjà pour ce sujet et cette date, ajoute une section ; ne réécris ni ne supprime jamais une entrée existante.
+
+```markdown
+# AAAA-MM-JJ · <Titre lisible>
+- Agent : <nom de l'agent>
+- Tâche : plan.md#<Tx> (ou « hors plan : <demande> »)
+- Fait : <ce qui a changé, en une à trois lignes>
+- Fichiers : <chemins principaux>
+- Décisions : <choix faits et par qui ; « aucune » sinon>
+- Vérifications : <commandes et résultats exacts ; ce qui n'a pas été vérifié>
+- Reste à faire / risques : <…>
+```
+
+Si tu n'as pas d'outil d'écriture (agent de contrôle), mets cette entrée à la fin de ton compte rendu ; l'agent qui t'a lancé l'enregistre.
+
+### 2. CHANGELOG (si le comportement visible change)
+Ajoute une ligne dans `docs/CHANGELOG.md`, section `## [Unreleased]`, sous la bonne rubrique (format Keep a Changelog) :
+- `Added` : nouvelle fonctionnalité ;
+- `Changed` : comportement modifié ;
+- `Fixed` : bug corrigé ;
+- `Removed` : fonctionnalité retirée ;
+- `Security` : correction de sécurité ;
+- `Deprecated` : fonctionnalité appelée à disparaître.
+
+Une ligne = une phrase compréhensible par un utilisateur du produit, suivie de la référence (`(T4)`, `(US-03)`). Pas de ligne pour un refactoring sans effet visible, des tests seuls ou de la documentation interne.
+
+### 3. Plan (si la tâche vient du plan)
+Dans `docs/plan.md`, mets à jour le statut de la tâche : `à faire` → `en cours` → `terminée` (ou `bloquée : <raison>`). Une tâche n'est `terminée` que si son critère « terminé » est prouvé.
+
+### 4. PROJECT.md (seulement `doc-writer`, ou l'agent que l'utilisateur désigne)
+Les autres agents ne modifient pas `docs/PROJECT.md` : ils signalent dans leur compte rendu ce qui devrait y changer (nouvelle décision, nouveau risque, fonctionnalité livrée).
+
+## Gabarits pour initialiser `docs/`
+
+```
+docs/
+  PROJECT.md      document maître
+  CHANGELOG.md    format Keep a Changelog
+  journal/        une entrée par tâche
+  adr/            une décision technique par fichier (NNNN-titre.md)
+  spec.md         besoin (product-analyst)
+  architecture.md conception (architect)
+  plan.md         tâches et état (planner)
+  api.md          référence API (doc-writer)
+  runbook.md      installer, lancer, déployer, dépanner (devops-engineer)
+  revues/         rapports de code-reviewer
+  securite/       rapports de security-auditor
+  livraisons/     rapports de quality-gatekeeper
+  incidents/      analyses d'incident (debugger)
+  ux/             parcours, écrans, design system (ui-ux-designer)
+  seo/            stratégie et audits (seo-specialist, sites publics)
+```
+
+`docs/PROJECT.md` :
+
+```markdown
+# <Nom du projet>
+
+## Résumé
+Ce que fait le projet, pour qui.
+
+## État actuel
+Version, date de dernière mise à jour, ce qui marche, ce qui est en cours.
+
+## Stack et architecture
+Résumé ; détail dans [architecture.md](architecture.md).
+
+## Fonctionnalités
+| Fonctionnalité | Statut (prévu, en cours, livré) | Spec |
+
+## Décisions clés
+- [ADR-0001](adr/0001-…md) : une ligne.
+
+## Dernières mises à jour
+Les 10 dernières entrées du journal, en liens.
+
+## Dette technique et risques connus
+
+## Index
+Liens vers les autres fichiers de `docs/`.
+```
+
+`docs/CHANGELOG.md` :
+
+```markdown
+# Changelog
+Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versions : [SemVer](https://semver.org/lang/fr/).
+
+## [Unreleased]
+```
