@@ -1,4 +1,4 @@
-# Catalogue des agents et skills (brouillon v0.2)
+# Catalogue des agents et skills (v0.3)
 
 > Brouillon à valider.
 > Date : 2026-10-12
@@ -138,9 +138,9 @@ Décision : un agent d'implémentation par framework utilisé. Les autres phases
 | `Agent/TypeScript/` | `nextjs-implementer` | Next.js |
 | `Agent/TypeScript/` | `expo-mobile-implementer` | React Native + Expo |
 
-Les rôles détaillés des 21 agents sont rédigés dans `Agent/` (même arborescence que le futur dépôt).
+Les rôles détaillés des 21 agents sont dans `Agent/`.
 
-**Point technique :** un agent Claude Code ne voit que son propre fichier. Les règles communes (« hérite de `implementer` ») devront donc être recopiées dans chaque agent framework lors de la publication dans le dépôt, idéalement par un petit script de génération pour ne les maintenir qu'à un seul endroit.
+**Principes communs :** un agent ne voit que son propre fichier. Les règles partagées par tous (posture senior, qualité du code, zéro code mort, gestion des régressions, choix des librairies validés par l'utilisateur, actions interdites, compte rendu, suivi documentaire) sont donc maintenues dans `Agent/_commun/principes-communs.md` et recopiées dans chaque agent par `python3 scripts/sync-agents.py`. Ne jamais modifier la section générée directement dans un agent.
 
 ## 5. Skills
 
@@ -198,3 +198,4 @@ Installation dans un projet : copier les agents voulus dans `.claude/agents/` et
 3. L'`orchestrator` est conservé.
 4. Tous les agents sont conservés, sans fusion.
 5. Documentation de suivi par projet : voir `docs/doc-suivi-projet.md`.
+6. Tous les agents se comportent en seniors : code lisible, sans répétition ni code mort ; risque de régression évalué avant chaque modification, avec question à l'utilisateur en cas de doute ; aucune librairie installée sans que l'utilisateur ait choisi parmi des options proposées.
