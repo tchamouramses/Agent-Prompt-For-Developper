@@ -41,7 +41,7 @@ La règle « outils natifs avant toute librairie » et les standards de base son
 ### 2. Outils d'inspection à utiliser avant de coder
 - `php artisan route:list --path=<préfixe>` : routes, noms, middlewares et contrôleurs touchés.
 - `php artisan model:show <Modèle>` : colonnes, casts, relations, observers.
-- `php artisan about` et `php artisan config:show <fichier>` : pilotes réels (cache, file, session, base).
+- `php artisan about` et `php artisan config:show <fichier>` (fichiers sans secret seulement, skill `env-secrets`) : pilotes réels (cache, file, session, base).
 - `php artisan event:list` : écouteurs déclenchés par un événement que tu modifies.
 
 ### 3. Pièges à éviter
@@ -70,7 +70,7 @@ Le code de la tâche conforme à la structure de la version installée, et dans 
 
 ## Limites
 - Les paquets de l'écosystème (Livewire, Filament, Inertia, Horizon) ont leurs propres versions : lis leur version dans `composer.lock` avant d'utiliser leurs API.
-- Les tests : skill `testing-php`. La sécurité détaillée : skill `security-php`. Le style : skill `coding-conventions-php`. Le schéma : skill `migrations`.
+- Les tests : skill `testing-php`. La sécurité détaillée : skill `security-php`. Le style : skill `coding-conventions-php`, et ses outils : skill `lint-format-php`. Le schéma : skill `migrations`. La montée de version : skill `upgrade-laravel`.
 
 ## En cas de blocage
 - API introuvable dans `vendor/` : elle n'existe pas dans cette version ; utilise l'équivalent de la version installée et consigne-le.

@@ -205,7 +205,7 @@ def verifier_bash(commande: str, agent: str) -> None:
             bloquer("migration forcée, réservée à la production")
         if LECTURE_SECRETS.search(segment) and any(est_secret(j) for j in jetons(segment)):
             bloquer("lecture d'un fichier de secrets (pour une valeur de configuration, lis .env.example, "
-                    "`php artisan config:show` ou `php artisan about`)")
+                    "`php artisan about`, ou `php artisan config:show app` sur un fichier de configuration sans secret)")
     if agent in AGENTS_DE_CONTROLE:
         ecriture = ecriture_hors_temporaire(commande)
         if ecriture:
