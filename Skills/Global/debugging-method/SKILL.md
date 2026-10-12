@@ -45,7 +45,7 @@ L'agent `debugger` définit les étapes (reproduire, isoler, prouver, corriger, 
 7. **Tenir un journal d'hypothèses** : une hypothèse à la fois, avec l'observation qui la confirmerait ou l'infirmerait. Observer avant de modifier : valeur intermédiaire journalisée, point d'arrêt, requête SQL réellement exécutée, réponse HTTP brute. Une hypothèse infirmée est rayée, jamais « corrigée quand même ».
 8. **Remonter à l'origine de la donnée fausse** : la cause est l'endroit où la valeur devient incorrecte (requête sans filtre, conversion de type, fuseau horaire, état partagé), pas celui où elle provoque l'erreur.
 9. **Corriger à l'origine, un seul changement**, puis relancer le test de reproduction. S'il ne passe pas, annule le changement avant d'en essayer un autre.
-10. **Vérifier les voisins du correctif** : entrées mal formées, absentes, d'un autre utilisateur, limites. Ajoute un test pour chaque voisin que le correctif touche, notamment le code HTTP renvoyé pour une entrée invalide.
+10. **Vérifier les voisins du correctif avant de le rendre** : entrée mal formée (identifiant non numérique ou hors bornes), absente, d'un autre utilisateur, aux limites. Ajoute un test pour chaque voisin que le correctif touche, notamment le code HTTP renvoyé pour une entrée invalide : un correctif qui transforme un 404 en 500 est une régression.
 11. **Chercher les jumeaux** : recherche le même pattern dans tout le dépôt (`rg` sur l'appel ou la construction fautive). Corrige ceux de la même cause dans le même changement ; les autres deviennent des tâches du plan.
 12. **Nettoyer** : retire journaux de diagnostic, points d'arrêt et code temporaire ; le test de reproduction reste dans la suite.
 
