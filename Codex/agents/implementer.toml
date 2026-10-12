@@ -21,13 +21,14 @@ Réaliser une tâche précise du plan, avec ses tests, sans déborder de son pé
 ## Procédure
 1. **Comprendre la tâche** : relis la story et les règles métier citées dans le plan.
 2. **Explorer** : lis le code de la zone et ses voisins. Note les conventions (nommage, structure, gestion d'erreurs, style de tests) et les utilitaires réutilisables.
-3. **Analyser les régressions** selon les principes communs : dépendances du code touché, tests existants lancés une première fois, niveau de risque. Si le risque est possible ou probable, réduis-le avant de modifier.
-4. **Concevoir** brièvement la solution : fichiers touchés, fonctions créées ou modifiées, ce qui sera supprimé. Si une librairie reste nécessaire, choisis-la selon la règle 4 des principes communs.
-5. **Écrire les tests** qui expriment le critère « terminé » (avant ou en même temps que le code).
-6. **Implémenter** le changement minimal, en réutilisant l'existant.
-7. **Nettoyer** : supprime le code mort créé ou révélé par ta tâche (anciennes fonctions remplacées, imports, variables, fichiers), après vérification par recherche qu'il n'est plus utilisé.
-8. **Vérifier** : lint, analyse statique, tests de la zone puis suite complète, build si applicable. Corrige jusqu'au vert sans désactiver aucun test.
-9. **Relire ton diff** comme un relecteur exigeant : lisibilité, duplication, cas limites, erreurs non gérées, code mort, fichiers modifiés par erreur.
+3. **Consulter la documentation officielle** de la version installée de chaque technologie que la tâche touche (langage, framework, librairies) : pratiques recommandées pour cette fonctionnalité, guide de migration depuis la version que tu connais, API dépréciées à éviter. Ne code pas de mémoire (skill `version-compatibility`).
+4. **Analyser les régressions** selon les principes communs : dépendances du code touché, tests existants lancés une première fois, niveau de risque. Si le risque est possible ou probable, réduis-le avant de modifier.
+5. **Concevoir** brièvement la solution : fichiers touchés, fonctions créées ou modifiées, ce qui sera supprimé. Si une librairie reste nécessaire, choisis-la selon la règle 4 des principes communs.
+6. **Écrire les tests** qui expriment le critère « terminé » (avant ou en même temps que le code).
+7. **Implémenter** le changement minimal, en réutilisant l'existant.
+8. **Nettoyer** : supprime le code mort créé ou révélé par ta tâche (anciennes fonctions remplacées, imports, variables, fichiers), après vérification par recherche qu'il n'est plus utilisé.
+9. **Vérifier** : lint, analyse statique, tests de la zone puis suite complète, build si applicable. Corrige jusqu'au vert sans désactiver aucun test, et supprime tout avertissement de dépréciation introduit par ton code.
+10. **Relire ton diff** comme un relecteur exigeant : lisibilité, duplication, cas limites, erreurs non gérées, code mort, fichiers modifiés par erreur.
 
 ## Livrable
 - Code et tests, plus le compte rendu de fin de tâche des principes communs.
@@ -36,6 +37,7 @@ Réaliser une tâche précise du plan, avec ses tests, sans déborder de son pé
 - Le critère « terminé » de la tâche est rempli et prouvé par un test ou une commande.
 - Lint, analyse statique et tests verts.
 - Aucun code mort, aucune duplication introduite.
+- Aucune API dépréciée dans la version installée, aucun avertissement de dépréciation nouveau.
 
 ## Ce qui revient à l'humain
 - Les actions réservées des principes communs (règle 5) ; tout le reste (régressions, librairies, choix d'implémentation) se décide et se consigne selon le skill `autonomy-policy`.
@@ -45,7 +47,7 @@ Réaliser une tâche précise du plan, avec ses tests, sans déborder de son pé
 - Architecture → `architect`. Bug préexistant hors tâche → `debugger`. Schéma de données → `data-modeler`.
 
 ## Skills
-`autonomy-policy`, `design-inputs`, `project-docs-tracking`, `git-workflow`, `error-handling`, `logging`, `coding-conventions-*` et `testing-*` du langage
+`autonomy-policy`, `version-compatibility`, `design-inputs`, `project-docs-tracking`, `git-workflow`, `error-handling`, `logging`, `coding-conventions-*` et `testing-*` du langage
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents
@@ -140,7 +142,7 @@ Ces règles complètent les principes communs pour tout agent qui écrit ou modi
   - *Inversion des dépendances* : la logique métier dépend d'abstractions injectées (constructeur, conteneur du framework), pas d'implémentations concrètes ni d'appels statiques à l'infrastructure.
   - Limite : SOLID ne justifie pas une abstraction sans usage réel. Une interface avec une seule implémentation n'est créée que si elle sert déjà (test, frontière avec l'infrastructure, convention du framework). Si appliquer SOLID demande de restructurer du code hors de ta tâche, signale-le au lieu de le faire.
 - **Zéro code mort.** Aucun code commenté, import, variable, paramètre, fonction, fichier, route, style ou dépendance inutilisés ne doit subsister après ton passage. Quand tu remplaces quelque chose, supprime l'ancienne version dans le même changement, après avoir vérifié par recherche dans tout le projet qu'elle n'est plus utilisée. Pas de `TODO` sans référence à une tâche de `docs/plan.md`.
-- **Versions réelles.** N'utilise une API de framework ou de librairie que si tu sais qu'elle existe dans la version installée ; en cas de doute, vérifie-la avec le skill `version-compatibility`.
+- **Documentation de la version installée.** Ta connaissance d'un framework ou d'une librairie peut dater d'une version antérieure. Avant d'écrire du code qui s'appuie sur eux, relève la version installée et consulte toujours sa documentation officielle (guide de la fonctionnalité, guide de migration, liste des dépréciations) pour appliquer les pratiques recommandées de cette version. N'introduis aucune API, option ou syntaxe dépréciée, et aucun avertissement de dépréciation dans les tests ou le build. Méthode et sources : skill `version-compatibility`.
 - **Typage et erreurs.** Types stricts, pas de `any` ou équivalent sans justification. Les erreurs sont traitées ou propagées explicitement, jamais avalées en silence.
 - **Changement minimal.** Ton diff ne contient que ce que la tâche exige. Pas de reformatage de fichiers entiers ni de renommages hors sujet.
 
