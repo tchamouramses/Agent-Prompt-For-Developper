@@ -39,7 +39,7 @@ Les règles générales (lisibilité, SOLID, zéro code mort, changement minimal
 4. **Dépendances** : injection par le constructeur (promotion des propriétés). Dans Laravel, façades et helpers acceptés dans les contrôleurs, commandes et vues si le projet les utilise ; dans un service métier, préfère l'injection pour pouvoir le tester. Pas de `new` d'un service d'infrastructure au milieu de la logique métier.
 5. **Erreurs** : exceptions métier nommées (`NoteDejaArchiveeException`) ; capture seulement là où tu sais quoi faire (réessayer, traduire en réponse HTTP, compenser) ; jamais d'opérateur `@` ; jamais de bloc `catch` vide.
 6. **Nommage** : selon le framework et le projet. Laravel : modèles au singulier (`Note`), tables au pluriel en `snake_case` (`notes`), colonnes en `snake_case`, méthodes en `camelCase`, contrôleurs `NoteController`, Form Requests `StoreNoteRequest`. Symfony : services et classes selon PSR-4, entités au singulier, repositories `NoteRepository`.
-7. **Style et analyse** :
+7. **Style et analyse** (mise en place et baseline : skill `lint-format-php`) :
    - Laravel : `./vendor/bin/pint` sur tes fichiers seulement (`./vendor/bin/pint app/Models/Note.php`), `--test` pour vérifier.
    - Symfony ou PHP pur : `./vendor/bin/php-cs-fixer fix <fichiers>` ; `--dry-run --diff` pour vérifier.
    - PHPStan ou Larastan : `./vendor/bin/phpstan analyse` au niveau configuré ; corrige les erreurs de tes fichiers ; n'ajoute à la baseline que des erreurs préexistantes, jamais les tiennes ; ne monte pas le niveau dans une tâche sans rapport.
