@@ -23,7 +23,8 @@ description: Vérifier un skill de cette bibliothèque avant de le publier - str
    - en-tête YAML avec `name` identique au nom du dossier (minuscules, chiffres, tirets) et `description` non vide de moins de 1 024 caractères ;
    - présence des sections du contrat : « Quand l'utiliser », « Ce que l'agent rate sans ce skill », « Entrées », « Procédure », « Livrable », « Vérifications », « Limites », « En cas de blocage » ;
    - noms de skills uniques dans toute la bibliothèque ;
-   - chaque skill cité dans le champ `skills:` d'un agent existe ou figure au catalogue (`docs/catalogue.md`) comme prévu.
+   - chaque skill cité par un agent ou un skill (champ `skills:` ou mention « skill `<nom>` ») est rédigé ou listé dans `Skills/PREVUS.md` ; un skill rédigé ne doit plus y figurer ;
+   - avec `--strict`, chaque skill cité doit être rédigé.
 2. **Relire la description** comme le modèle qui doit choisir : elle dit *ce que fait* le skill et *quand l'utiliser*, avec les mots que l'utilisateur ou l'agent emploieront. Elle ne recouvre pas celle d'un autre skill.
 3. **Relire « Ce que l'agent rate »** : chaque point doit être une erreur réelle et fréquente. Si la section est vide ou générique, le skill n'apporte probablement rien : le fusionner ou l'abandonner.
 4. **Vérifier la cohérence avec les principes** : le skill détaille une règle des principes sans la contredire ni la réécrire ; il la cite.
@@ -35,7 +36,7 @@ description: Vérifier un skill de cette bibliothèque avant de le publier - str
 Le skill corrigé, la sortie de `scripts/validate-skills.py`, et les cas d'essai avec leur résultat (ou « non vérifié » si aucun projet d'essai n'était disponible).
 
 ## Vérifications
-- `python3 scripts/validate-skills.py` termine sans erreur.
+- `python3 scripts/validate-skills.py` termine sans erreur, et le skill rédigé a été retiré de `Skills/PREVUS.md`.
 - `python3 scripts/sync-agents.py --check` termine sans erreur si des agents ont été modifiés.
 
 ## Limites
