@@ -54,6 +54,14 @@ Les standards de base (composants standalone, `OnPush`, contrôle de flux modern
 - Génère avec `ng generate` (schémas du projet). Après une suppression, retire aussi la route, le service, les styles, les clés de traduction et les tests devenus inutiles.
 - Montée de version : skill `upgrade-angular`. Lint et formatage : skill `lint-format-typescript`.
 
+### 4. Internationalisation (projet multilingue)
+Règles communes, contrôles et livrable : skill `i18n`. Spécifique à Angular :
+- **`@angular/localize`** (outil natif) : textes marqués dans les templates (`i18n="@@checkout.submit"`, `i18n-placeholder`, `i18n-aria-label`, `i18n-title`) et dans le code (`` $localize`:@@checkout.total:Total` ``) ; identifiants `@@` explicites et stables ; pluriels et choix en ICU dans le template (`{count, plural, =0 {…} one {…} other {…}}`). `ng extract-i18n --format=xlf2 --output-path src/locale` met à jour la source ; chaque fichier `messages.<langue>.xlf` reçoit toutes les cibles. Un build par langue (`localize: true` dans `angular.json`) : changer de langue recharge l'application sur l'URL de la langue.
+- **Transloco** (si le projet l'utilise ou si la langue change sans rechargement) : pipe `transloco` ou directive structurelle dans les templates, `TranslocoService.translate()` seulement hors template, portées (`scope`) par fonctionnalité chargées à la demande ; `@jsverse/transloco-keys-manager` (`find` et `extract`) pour les clés manquantes et inutilisées ; `@jsverse/transloco-messageformat` pour les pluriels ICU.
+- **Formats** : pipes `date`, `number`, `currency`, `percent` avec la langue active (`LOCALE_ID`, données de locale enregistrées par `registerLocaleData` ou fournies par `@angular/localize`) ; jamais de format écrit à la main dans un template.
+- **Lint** : règle `@angular-eslint/template/i18n` (avec `@angular/localize`) sur les templates modifiés, pour repérer textes et attributs non marqués.
+- **SSR** : la langue vient de l'URL ou de la requête, pas de `navigator.language` au rendu serveur.
+
 ## Livrable
 Le code de la tâche conforme à la version installée, et dans le compte rendu : version d'Angular, mode standalone ou modules, zone ou sans zone, pièges vérifiés qui s'appliquaient.
 

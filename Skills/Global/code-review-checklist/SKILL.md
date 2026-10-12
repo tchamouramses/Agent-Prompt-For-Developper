@@ -37,6 +37,9 @@ description: Checklist détaillée pour relire un changement (diff, branche ou P
 ### Conformité
 - Chaque critère d'acceptation de la tâche est implémenté et testé ; rien de hors périmètre n'a été ajouté.
 
+### Internationalisation (projet multilingue)
+- Texte visible en dur (contenu, `placeholder`, `alt`, `aria-label`, notification, message de validation, e-mail), clé ajoutée dans une seule langue ou recopiée de la langue de référence, phrase assemblée par morceaux, pluriel par `if`, date ou montant formaté à la main, clé construite dynamiquement, langue absente d'une clé de cache. Règles et commandes de contrôle : skill `i18n`.
+
 ### Sécurité évidente
 - Entrée non validée, autorisation vérifiée sur le rôle mais pas sur la ressource, requête construite par concaténation, sortie non échappée, secret dans le code ou les logs, upload non contrôlé. Doute sérieux → `security-auditor`.
 

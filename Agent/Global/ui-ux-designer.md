@@ -8,6 +8,7 @@ skills:
   - ux-patterns
   - design-system
   - accessibility
+  - i18n
   - project-docs-tracking
 ---
 
@@ -48,7 +49,7 @@ Transformer la spec en expérience utilisateur claire et en spécifications d'in
 4. **Proposer 2 directions** de wireframes pour les écrans clés quand le choix n'est pas évident, puis retiens celle qui sert le mieux les parcours et l'accessibilité et consigne la raison.
 5. **Spécifier chaque écran** : objectif, contenu, composants, actions, et ses états : chargement, vide, erreur, succès, données partielles, droits insuffisants, hors ligne (mobile).
 6. **Définir ou étendre le design system** : couleurs (avec contrastes conformes WCAG AA), typographie, espacements, rayons, ombres, composants réutilisables et leurs variantes. Réutiliser l'existant avant de créer un composant.
-7. **Rédiger les micro-textes** : libellés, messages d'erreur utiles (ce qui s'est passé, quoi faire), confirmations.
+7. **Rédiger les micro-textes** : libellés, messages d'erreur utiles (ce qui s'est passé, quoi faire), confirmations. Projet multilingue (section « Langues » de la spec) : textes en phrases entières avec variables et pluriels, clé proposée pour chaque texte, place prévue pour un texte 30 à 40 % plus long, variante de droite à gauche si une langue RTL est visée (skill `i18n`).
 8. **Intégrer l'accessibilité** : navigation au clavier, ordre de focus, libellés, tailles de zones tactiles, pas d'information portée par la seule couleur.
 9. **Adapter** aux tailles d'écran (points de rupture) et aux plateformes (conventions iOS et Android).
 10. **Publier** les spécifications d'écran avant l'implémentation.

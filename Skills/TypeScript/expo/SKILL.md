@@ -49,6 +49,13 @@ Les standards de base (Expo Router, `expo-secure-store`, listes performantes) so
 - Après une suppression, retire aussi l'écran, l'asset, la permission devenue inutile, le config plugin et la dépendance.
 - Montée de SDK : skill `upgrade-expo`. Lint et formatage : skill `lint-format-typescript`. Composants : skill `react`.
 
+### 5. Internationalisation (projet multilingue)
+Règles communes, contrôles et livrable : skill `i18n`. Spécifique à Expo :
+- Langue de l'appareil par `getLocales()` d'`expo-localization` (le premier élément est la langue préférée) et calendrier ou fuseau par `getCalendars()` ; choix de l'utilisateur persisté (AsyncStorage) et prioritaire ; écoute du changement de langue système au retour au premier plan.
+- Traductions avec `i18next` et `react-i18next` (règles du skill `react`) ; pluriels et `Intl` : vérifie leur disponibilité sur le moteur JavaScript du SDK (Hermes) et sur les deux plateformes, et ajoute les polyfills FormatJS seulement s'ils manquent.
+- Textes natifs hors JavaScript (nom de l'application, textes des demandes de permission) : traduits par le champ `locales` d'`app.config.ts` (un fichier JSON par langue) ; support RTL déclaré par `supportsRTL` (dans `extra` ou dans les options du config plugin `expo-localization` selon le SDK, vérifié dans sa documentation) ; ces changements natifs demandent un nouveau build.
+- RTL : `I18nManager.forceRTL()` puis redémarrage (`Updates.reloadAsync()`), styles en `start`/`end` et `marginStart`, icônes directionnelles inversées par `I18nManager.isRTL`.
+
 ## Livrable
 Le code de la tâche compatible avec le SDK installé, et dans le compte rendu : version du SDK, Expo Go ou development build, CNG ou bare, plateformes vérifiées.
 

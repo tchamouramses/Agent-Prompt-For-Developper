@@ -62,6 +62,14 @@ Les standards de base (injection par constructeur, contrôleurs fins, Voters) so
 - Génère avec `bin/console make:*` si MakerBundle est installé, puis supprime les méthodes générées inutiles.
 - Après une suppression, retire aussi la route, le template, la traduction, le Voter, le test, la fixture et la configuration devenus inutiles.
 
+### 5. Internationalisation (projet multilingue)
+Règles communes, contrôles et livrable : skill `i18n`. Spécifique à Symfony :
+- Composant Translation : `{{ 'checkout.total'|trans }}` ou `{% trans %}` dans Twig, `TranslatorInterface::trans()` dans le code, `TranslatableMessage` (`t()`) pour un message construit hors de la requête ; fichiers `translations/<domaine>+intl-icu.<langue>.xlf` (ou `.yaml`) pour les pluriels et choix ICU ; un domaine par usage (`messages`, `validators`, `security`, `emails`).
+- Contraintes de validation : messages sous forme de clés traduites dans le domaine `validators`.
+- Langue : `framework.default_locale` et `framework.enabled_locales`, `{_locale}` dans les routes (avec `requirements`) ou résolution par un écouteur selon l'ordre du skill `i18n` ; `framework.translator.fallbacks` défini. E-mails rendus dans la langue du destinataire (`locale` du `TemplatedEmail` ou `LocaleSwitcher::runWithLocale()`).
+- Formats Twig : filtres `format_date`, `format_datetime`, `format_currency`, `format_number` (`twig/intl-extra`) avec la langue active.
+- Contrôles : `bin/console debug:translation <langue> --only-missing` et `--only-unused` pour chaque langue, `bin/console translation:extract --dump-messages <langue>` pour voir les clés non extraites, `bin/console lint:xliff translations` ou `lint:yaml translations`.
+
 ## Livrable
 Le code de la tâche conforme à la version installée, et dans le compte rendu : versions de Symfony et Doctrine relevées, commandes d'inspection lancées, pièges vérifiés qui s'appliquaient.
 

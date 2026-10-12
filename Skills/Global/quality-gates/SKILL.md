@@ -30,6 +30,7 @@ description: Règles bloquantes de livraison, preuves exigées par contrôle, co
 | Test supprimé, sauté ou affaibli par le changement | bloquant | bloquant |
 | Point bloquant de `code-reviewer` ouvert | bloquant | bloquant |
 | Dépendance ajoutée hors critères ou sans comparaison consignée | bloquant | bloquant |
+| Projet multilingue : clé manquante, vide ou en trop dans une langue, ou texte visible en dur dans le diff (skill `i18n`) | bloquant | bloquant |
 | Critère d'acceptation Must sans test ni preuve | bloquant | bloquant |
 | Code mort introduit | important | bloquant |
 | Parcours e2e critique non validé (ou `e2e-validator` non lancé sur un changement d'interface) | — | bloquant |
