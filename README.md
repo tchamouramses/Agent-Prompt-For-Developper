@@ -10,9 +10,12 @@ Agent/
   PHP/           Laravel, Symfony
   Java/          Spring Boot
   TypeScript/    Angular, Next.js, React Native + Expo
+  _commun/       principes partagés par tous les agents (source unique)
 Skills/
   Global/        savoirs transverses (checklists, conventions, gabarits)
   PHP/ Java/ TypeScript/   savoirs propres à chaque langage et framework
+scripts/
+  sync-agents.py        recopie les principes communs dans chaque agent
 docs/
   catalogue.md          catalogue des agents et skills, principes et décisions
   doc-suivi-projet.md   documentation de suivi installée dans chaque projet
@@ -20,6 +23,10 @@ docs/
 
 ## État
 
-- Agents : rôles rédigés (brouillon, en relecture).
+- Agents : rôles détaillés rédigés (en relecture).
 - Skills : à rédiger.
 - Installation dans un projet : à venir (copie dans `.claude/agents/` et `.claude/skills/` pour Claude Code ; déclinaison Codex à définir).
+
+## Modifier les principes communs
+
+Éditer `Agent/_commun/principes-communs.md`, puis lancer `python3 scripts/sync-agents.py`. L'option `--check` échoue si un agent n'est pas synchronisé.
