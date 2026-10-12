@@ -116,7 +116,7 @@ Appliquées d'abord en global, puis par langage (principe 3 du catalogue, décis
    - un contrôle qui a accepté n'est relancé que si une correction touche sa zone ;
    - petite fonctionnalité d'une seule application en profil léger ;
    - `quality-gatekeeper` sur Sonnet (Opus reste pour `architect` et `security-auditor`).
-4. **En attente** : autoriser à l'installation les commandes de développement générales puis celles de chaque stack, pour supprimer les refus de permission. Cette autorisation élargit ce que les agents exécutent sans confirmation ; elle attend l'accord explicite du propriétaire du dépôt.
+4. **Permissions** : l'installateur autorise sans confirmation les commandes de développement générales (`Config/claude/settings.json`) puis celles de chaque stack retenue (`Config/claude/autorisations-stacks.json`), pour supprimer les refus de permission. Les refus et le hook des actions réservées passent toujours avant ; Codex n'en a pas besoin (bac à sable `workspace-write`).
 
 ## Reproduire
 

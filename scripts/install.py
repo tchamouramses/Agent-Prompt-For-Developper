@@ -3,7 +3,9 @@
 
 Installe les agents globaux, l'agent d'implémentation de chaque stack retenue, tous les skills
 rédigés qu'ils citent (directement ou par un autre skill), et les réglages qui imposent les
-actions réservées. Les stacks sont détectées dans le projet si aucune n'est donnée.
+actions réservées. Pour Claude Code, il autorise aussi sans confirmation les commandes de
+développement générales puis celles des stacks retenues (Config/claude/autorisations-stacks.json),
+pour que les agents avancent sans attendre l'humain ; les refus et le hook passent toujours avant. Les stacks sont détectées dans le projet si aucune n'est donnée.
 
 Un manifeste (.bibliotheque-agents.json) liste ce qui a été installé : relancer la commande met
 à jour ces fichiers et retire ceux devenus inutiles ; --desinstaller les retire tous. Un fichier
@@ -176,6 +178,7 @@ class Installation:
         self.anciens = set(ancien.get("fichiers", []))
         self.fichiers: list[str] = []
         self.refus_ajoutes: list[str] = list(ancien.get("refus_ajoutes", []))
+        self.autorisations_ajoutees: list[str] = list(ancien.get("autorisations_ajoutees", []))
         self.journal: list[str] = []
 
     def rel(self, cible: Path) -> str:
@@ -219,15 +222,34 @@ def commande_hook(global_: bool) -> str:
     return f"python3 {racine}/.claude/hooks/actions-reservees.py"
 
 
-def fusionner_reglages_claude(inst: Installation, global_: bool) -> None:
+def autorisations(modele: dict, stacks: list[str]) -> list[str]:
+    """Commandes générales de settings.json, puis celles des stacks retenues (autorisations-stacks.json)."""
+    par_stack = lire_json(ROOT / "Config" / "claude" / "autorisations-stacks.json")
+    regles = list(modele["permissions"]["allow"])
+    for stack in stacks:
+        regles += [r for r in par_stack.get(stack, []) if r not in regles]
+    return regles
+
+
+def fusionner_reglages_claude(inst: Installation, global_: bool, stacks: list[str]) -> None:
     modele = json.loads((ROOT / "Config" / "claude" / "settings.json").read_text(encoding="utf-8"))
     cible = inst.base / ".claude" / "settings.json"
     actuel = lire_json(cible) if cible.exists() else {}
-    refus = actuel.setdefault("permissions", {}).setdefault("deny", [])
+    permissions = actuel.setdefault("permissions", {})
+    refus = permissions.setdefault("deny", [])
     for regle in modele["permissions"]["deny"]:
         if regle not in refus:
             refus.append(regle)
             inst.refus_ajoutes.append(regle)
+    # Les autorisations suivent les stacks : celles d'une stack retirée disparaissent à la relance.
+    voulues = autorisations(modele, stacks)
+    permis = [r for r in permissions.get("allow", []) if r not in inst.autorisations_ajoutees or r in voulues]
+    inst.autorisations_ajoutees = [r for r in inst.autorisations_ajoutees if r in voulues]
+    for regle in voulues:
+        if regle not in permis:
+            permis.append(regle)
+            inst.autorisations_ajoutees.append(regle)
+    permissions["allow"] = permis
     pre = actuel.setdefault("hooks", {}).setdefault("PreToolUse", [])
     pre[:] = [h for h in pre if "actions-reservees.py" not in json.dumps(h)]
     hook = json.loads(json.dumps(modele["hooks"]["PreToolUse"]))
@@ -240,7 +262,8 @@ def fusionner_reglages_claude(inst: Installation, global_: bool) -> None:
     inst.journal.append(f"fusionné : {cible}")
 
 
-def retirer_reglages_claude(base: Path, refus_ajoutes: list[str], journal: list[str]) -> None:
+def retirer_reglages_claude(base: Path, refus_ajoutes: list[str], autorisations_ajoutees: list[str],
+                            journal: list[str]) -> None:
     cible = base / ".claude" / "settings.json"
     if not cible.exists():
         return
@@ -248,10 +271,12 @@ def retirer_reglages_claude(base: Path, refus_ajoutes: list[str], journal: list[
     permissions = actuel.get("permissions", {})
     if "deny" in permissions:
         permissions["deny"] = [r for r in permissions["deny"] if r not in refus_ajoutes]
+    if "allow" in permissions:
+        permissions["allow"] = [r for r in permissions["allow"] if r not in autorisations_ajoutees]
     pre = actuel.get("hooks", {}).get("PreToolUse")
     if pre is not None:
         actuel["hooks"]["PreToolUse"] = [h for h in pre if "actions-reservees.py" not in json.dumps(h)]
-    for cle, enfant in (("permissions", "deny"), ("hooks", "PreToolUse")):
+    for cle, enfant in (("permissions", "allow"), ("permissions", "deny"), ("hooks", "PreToolUse")):
         if actuel.get(cle, {}).get(enfant) == []:
             del actuel[cle][enfant]
         if actuel.get(cle) == {}:
@@ -312,14 +337,14 @@ def fusionner_agents_md(inst: Installation, global_: bool) -> None:
         inst.journal.append("attention : AGENTS.md dépasse 32 Kio, limite par défaut de Codex (project_doc_max_bytes)")
 
 
-def installer_claude(inst, agents, skills, rediges, global_) -> None:
+def installer_claude(inst, agents, skills, rediges, global_, stacks) -> None:
     for agent in agents:
         inst.copier(agent, inst.base / ".claude" / "agents" / agent.name)
     for nom in sorted(skills):
         inst.copier(rediges[nom], inst.base / ".claude" / "skills" / nom)
     inst.copier(ROOT / "Config" / "claude" / "hooks" / "actions-reservees.py",
                 inst.base / ".claude" / "hooks" / "actions-reservees.py", toujours=True)
-    fusionner_reglages_claude(inst, global_)
+    fusionner_reglages_claude(inst, global_, stacks)
 
 
 def installer_codex(inst, agents, skills, rediges, global_) -> None:
@@ -363,7 +388,7 @@ def desinstaller(base: Path, ancien: dict) -> int:
     journal: list[str] = []
     for rel in ancien.get("fichiers", []):
         supprimer(base / rel, journal)
-    retirer_reglages_claude(base, ancien.get("refus_ajoutes", []), journal)
+    retirer_reglages_claude(base, ancien.get("refus_ajoutes", []), ancien.get("autorisations_ajoutees", []), journal)
     retirer_bloc_agents_md(base, journal)
     retirer_dossiers_vides(base)
     (base / MANIFESTE).unlink()
@@ -418,20 +443,22 @@ def main() -> int:
     skills, absents = fermeture_skills(agents, rediges)
     inst = Installation(base, args.force, ancien)
     if outil in ("claude", "les-deux"):
-        installer_claude(inst, agents, skills, rediges, args.global_)
+        installer_claude(inst, agents, skills, rediges, args.global_, stacks)
     if outil in ("codex", "les-deux"):
         installer_codex(inst, agents, skills, rediges, args.global_)
     inst.retirer_obsoletes()
     ancien_outil = ancien.get("outil", "")
     if ancien_outil in ("claude", "les-deux") and outil == "codex":
-        retirer_reglages_claude(base, inst.refus_ajoutes, inst.journal)
+        retirer_reglages_claude(base, inst.refus_ajoutes, inst.autorisations_ajoutees, inst.journal)
         inst.refus_ajoutes = []
+        inst.autorisations_ajoutees = []
     if ancien_outil in ("codex", "les-deux") and outil == "claude":
         retirer_bloc_agents_md(base, inst.journal)
     retirer_dossiers_vides(base)
     inst.ecrire(base / MANIFESTE, json.dumps({
         "outil": outil, "stacks": stacks, "global": args.global_,
         "fichiers": sorted(inst.fichiers), "refus_ajoutes": sorted(set(inst.refus_ajoutes)),
+        "autorisations_ajoutees": sorted(set(inst.autorisations_ajoutees)),
     }, ensure_ascii=False, indent=2) + "\n")
 
     if not args.global_:
