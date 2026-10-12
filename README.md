@@ -72,7 +72,17 @@ agents-dev --desinstaller           # retire ce que la commande a installé
 
 **Pour tous les projets** : `agents-dev --global` installe toutes les stacks dans `~/.claude/` (agents, skills, hook, réglages fusionnés) et pour Codex dans `~/.codex/` (bloc `AGENTS.md`, agents, règles) et `~/.agents/skills/`. Le `~/.codex/config.toml` de l'utilisateur n'est pas modifié. Une installation dans un projet reste prioritaire sur l'installation globale.
 
-**Mise à jour** : `agents-dev maj` télécharge la dernière version et met à jour l'installation globale ; relancer `agents-dev` sans option dans un projet le met à jour avec les mêmes stacks et outils.
+**Mise à jour** : `agents-dev maj` télécharge la dernière version et met à jour l'installation globale ; relancer `agents-dev` sans option dans un projet le met à jour avec les mêmes outils, les mêmes stacks et celles apparues depuis dans le dépôt. Pour retirer une stack, la relancer avec `--stack`.
+
+### Choisir le mode de déploiement
+
+| Situation | Commande | Ce qui se passe ensuite |
+|-----------|----------|-------------------------|
+| **Nouveau projet** (dossier vide ou sans code) | `agents-dev` dans le dossier, puis `claude --agent orchestrator` avec la description du produit | Aucune stack n'est détectée : toutes sont installées, car c'est `architect` qui choisira. Après la création du squelette, `scaffolder` relance `agents-dev`, qui ne garde que les stacks créées. `docs/` est créé par `scaffolder`. |
+| **Projet existant** | `agents-dev` à la racine, puis `claude --agent orchestrator` avec la première demande | Les stacks sont détectées. À la première demande, l'orchestrateur crée la structure minimale de `docs/`, décrit le dépôt (skill `repository-discovery`) et établit la couverture (skill `coverage-check`). Si une application est ajoutée plus tard, `coverage-check` relance `agents-dev` pour installer son agent, chargé à la session suivante. Les fichiers du projet (`CLAUDE.md`, agents du même nom) ne sont jamais écrasés sans `--force`. |
+| **Global** (tous les projets de la machine) | `agents-dev --global` | Toutes les stacks sont disponibles partout, sans rien ajouter aux dépôts, ce qui convient pour essayer la bibliothèque ou travailler sur beaucoup de petits projets. En contrepartie, les commandes de développement de toutes les stacks sont autorisées sans confirmation dans tous les projets, et la version installée n'est pas versionnée avec le projet. Un projet qui a sa propre installation prend le dessus. |
+
+Pour un projet partagé en équipe, l'installation dans le projet est recommandée : les agents, skills et garde-fous sont versionnés avec le code, et chacun travaille avec la même version.
 
 Détection : `composer.json` (Laravel, Symfony), `pom.xml` ou `build.gradle` (Spring Boot), `package.json` (Angular, Next.js, Expo), à la racine et jusqu'à deux niveaux de sous-dossiers (`apps/web`). Un langage hors liste (Go, Python, .NET…) est signalé et reçoit les agents génériques. Les fichiers installés sont listés dans `.bibliotheque-agents.json` : la relance remplace ces fichiers et retire ceux devenus inutiles, mais ne remplace jamais un fichier du projet sans `--force`. `.claude/settings.json` est fusionné : refus des actions réservées, hook, et autorisation sans confirmation des commandes de développement générales (git, lecture de fichiers) puis de celles des stacks retenues (`Config/claude/autorisations-stacks.json`), pour que les agents avancent sans attendre ; les refus et le hook passent toujours avant. Les instructions Codex vont dans `AGENTS.md` entre marqueurs, et la commande liste les skills cités qui ne sont pas encore rédigés.
 

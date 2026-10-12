@@ -26,6 +26,10 @@ def verifier(condition: bool, cas: str) -> None:
         echecs.append(cas)
 
 
+def lire_manifeste(projet: Path) -> dict:
+    return json.loads((projet / ".bibliotheque-agents.json").read_text(encoding="utf-8"))
+
+
 def ecrire(chemin: Path, contenu: str) -> None:
     chemin.parent.mkdir(parents=True, exist_ok=True)
     chemin.write_text(contenu, encoding="utf-8")
@@ -61,6 +65,14 @@ with tempfile.TemporaryDirectory() as tmp:
     sortie = lancer(home=home, cwd=lara)
     verifier("outil : les-deux, stacks : laravel" in sortie, "relance réutilise le manifeste")
 
+    # Projet existant : une application ajoutée au dépôt est prise en compte à la relance.
+    ecrire(lara / "front" / "package.json", '{"dependencies": {"next": "15"}}')
+    sortie = lancer(home=home, cwd=lara)
+    verifier("stacks : laravel, nextjs" in sortie, "relance : stack ajoutée au dépôt")
+    verifier("stacks ajoutées depuis la dernière installation : nextjs" in sortie, "relance : ajout signalé")
+    (lara / "front" / "package.json").unlink()
+    (lara / "front").rmdir()
+
     # Désinstallation : il ne reste que les fichiers du projet.
     lancer("--desinstaller", home=home, cwd=lara)
     restants = sorted(str(p.relative_to(lara)) for p in lara.rglob("*") if p.is_file())
@@ -79,6 +91,19 @@ with tempfile.TemporaryDirectory() as tmp:
     verifier("stacks détectées : nextjs" in sortie, "détection dans un sous-dossier")
     verifier("non couvert : Go" in sortie, "langage non couvert signalé")
 
+    # Nouveau projet : sans code, toutes les stacks ; après le squelette, seulement la sienne.
+    neuf = tmp / "neuf"
+    ecrire(neuf / "README.md", "# Projet\n")
+    sortie = lancer("--outil", "claude", home=home, cwd=neuf)
+    verifier("projet sans code détecté" in sortie and "25 agents" in sortie, "nouveau projet : toutes les stacks")
+    verifier(lire_manifeste(neuf)["nouveau"] is True, "nouveau projet : marqué dans le manifeste")
+    ecrire(neuf / "composer.json", '{"require": {"symfony/framework-bundle": "^7"}}')
+    sortie = lancer(home=home, cwd=neuf)
+    verifier("stacks : symfony" in sortie, "nouveau projet : relance après le squelette")
+    verifier(not (neuf / ".claude" / "agents" / "laravel-implementer.md").exists(),
+             "nouveau projet : agents des autres stacks retirés")
+    verifier(lire_manifeste(neuf)["nouveau"] is False, "nouveau projet : devenu projet existant")
+
     # Langage : toutes les stacks TypeScript ; langage ou stack inconnus refusés.
     vide = tmp / "vide"
     vide.mkdir()
@@ -96,6 +121,10 @@ with tempfile.TemporaryDirectory() as tmp:
     verifier("~/.codex/agents/" in (home / ".codex" / "AGENTS.md").read_text(), "global : chemins Codex")
     verifier('$HOME' in (home / ".claude" / "settings.json").read_text(), "global : chemin du hook")
     verifier((home / ".codex" / "config.toml").read_text() == 'model = "perso"\n', "global : config.toml intact")
+    sortie = lancer(home=home, cwd=neuf)
+    verifier("installation globale présente" in sortie, "projet : installation globale signalée")
+    lancer("--global", "--stack", "laravel", home=home, cwd=vide)
+    verifier("stacks : laravel" in lancer("--global", home=home, cwd=vide), "global : relance à l'identique")
     lancer("--global", "--desinstaller", home=home, cwd=vide)
     verifier(sorted(str(p.relative_to(home)) for p in home.rglob("*") if p.is_file()) == [".codex/config.toml"],
              "global : désinstallation propre")

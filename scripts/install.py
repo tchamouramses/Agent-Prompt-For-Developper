@@ -362,9 +362,14 @@ def installer_codex(inst, agents, skills, rediges, global_) -> None:
 
 # --- Commande -------------------------------------------------------------------------------
 
-def choisir_stacks(args, projet: Path) -> tuple[list[str], list[str]]:
-    """Retourne les stacks retenues et les remarques à afficher."""
+def choisir_stacks(args, projet: Path, precedent: dict) -> tuple[list[str], list[str], bool]:
+    """Retourne les stacks retenues, les remarques à afficher et si le projet est encore sans code.
+
+    `precedent` est le manifeste d'une installation que l'on relance sans option ; ses stacks sont
+    gardées et complétées par celles détectées depuis (une application ajoutée au dépôt).
+    """
     remarques: list[str] = []
+    nouveau = False
     if args.stack == "aucune":
         stacks: list[str] = []
     elif args.stack == "toutes" or (args.stack == "auto" and args.global_ and not args.langage):
@@ -374,11 +379,23 @@ def choisir_stacks(args, projet: Path) -> tuple[list[str], list[str]]:
         remarques.append(f"stacks détectées : {', '.join(stacks) or 'aucune'}")
         for langage, fichier in autres.items():
             remarques.append(f"non couvert : {langage} ({fichier}), agents génériques seulement")
+        if precedent and not precedent.get("nouveau"):
+            ajoutees = [s for s in stacks if s not in precedent.get("stacks", [])]
+            stacks = sorted(set(stacks) | set(precedent.get("stacks", [])))
+            if ajoutees:
+                remarques.append(f"stacks ajoutées depuis la dernière installation : {', '.join(ajoutees)}")
+        elif not stacks and not autres:
+            # Projet sans code : la stack sera choisie par architect, toutes restent disponibles
+            # jusqu'à la relance qui suit la création du squelette.
+            stacks = list(STACKS)
+            nouveau = True
+            remarques.append("projet sans code détecté : toutes les stacks sont installées ; relance la commande "
+                             "après la création du squelette pour ne garder que les stacks retenues")
     else:
         stacks = [] if args.stack == "auto" else [s.strip() for s in args.stack.split(",")]
     for langage in filter(None, (l.strip().lower() for l in (args.langage or "").split(","))):
         stacks += LANGAGES[langage]
-    return sorted(set(stacks), key=list(STACKS).index), remarques
+    return sorted(set(stacks), key=list(STACKS).index), remarques, nouveau
 
 
 def desinstaller(base: Path, ancien: dict) -> int:
@@ -402,7 +419,8 @@ def main() -> int:
     parser.add_argument("projet", type=Path, nargs="?", default=Path.cwd(),
                         help="dossier du projet (défaut : dossier courant)")
     parser.add_argument("--stack",
-                        help="auto (défaut, détectée ; à la relance, celles de l'installation), toutes, aucune, ou liste : " + ", ".join(STACKS))
+                        help="auto (défaut) : détectées, toutes dans un projet sans code ; à la relance, celles de "
+                             "l'installation plus celles apparues depuis. Sinon toutes, aucune, ou liste : " + ", ".join(STACKS))
     parser.add_argument("--langage", help="ajoute les stacks d'un langage : " + ", ".join(
         f"{l} ({', '.join(s)})" for l, s in LANGAGES.items()))
     parser.add_argument("--outil", choices=["auto", "claude", "codex", "les-deux"],
@@ -422,9 +440,13 @@ def main() -> int:
     ancien = lire_json(base / MANIFESTE)
     if args.desinstaller:
         return desinstaller(base, ancien)
-    if args.stack is None:
-        # Relancer la commande sans option met à jour l'installation existante à l'identique.
-        args.stack = (",".join(ancien["stacks"]) or "aucune") if ancien and not args.langage else "auto"
+    # Relancer la commande sans option met à jour l'installation existante : mêmes stacks, plus
+    # celles apparues depuis ; après un projet sans code, seulement celles du squelette créé.
+    # En global, la relance garde les stacks choisies à l'identique.
+    relance = bool(ancien) and args.stack is None and not args.langage
+    if relance and args.global_:
+        args.stack = ",".join(ancien["stacks"]) or "aucune"
+    args.stack = args.stack or "auto"
     args.outil = args.outil or ancien.get("outil", "auto")
 
     mots_cles = ("auto", "toutes", "aucune")
@@ -436,7 +458,7 @@ def main() -> int:
               "Pour un autre langage, lance --stack aucune : les agents génériques s'appliquent.")
         return 1
 
-    stacks, remarques = choisir_stacks(args, base)
+    stacks, remarques, nouveau = choisir_stacks(args, base, ancien if relance else {})
     outil = outils_detectes() if args.outil == "auto" else args.outil
     rediges = skills_rediges()
     agents = agents_choisis(stacks)
@@ -456,11 +478,14 @@ def main() -> int:
         retirer_bloc_agents_md(base, inst.journal)
     retirer_dossiers_vides(base)
     inst.ecrire(base / MANIFESTE, json.dumps({
-        "outil": outil, "stacks": stacks, "global": args.global_,
+        "outil": outil, "stacks": stacks, "global": args.global_, "nouveau": nouveau,
         "fichiers": sorted(inst.fichiers), "refus_ajoutes": sorted(set(inst.refus_ajoutes)),
         "autorisations_ajoutees": sorted(set(inst.autorisations_ajoutees)),
     }, ensure_ascii=False, indent=2) + "\n")
 
+    if not args.global_ and base != Path.home() and (Path.home() / MANIFESTE).exists():
+        remarques.append("installation globale présente : les agents de ce projet prennent le dessus "
+                         "sur ceux du même nom installés pour tous les projets")
     if not args.global_:
         a_relire = ["CLAUDE.md"] + (["AGENTS.md"] if outil == "claude" else [])
         for fichier in a_relire:

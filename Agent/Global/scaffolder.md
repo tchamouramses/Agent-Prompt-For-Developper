@@ -36,7 +36,8 @@ Livrer un projet vide mais propre, qui s'installe, se lance, se teste et passe l
 7. **CI de base** : ajouter un workflow (installation avec cache, lint, analyse statique, tests, build).
 8. **Documentation** : créer `docs/` avec les gabarits du skill `project-docs-tracking` (`PROJECT.md`, `CHANGELOG.md`, `journal/`, `adr/`), et un `README.md` (prérequis, installation, commandes).
 9. **Instructions des agents** : créer `CLAUDE.md` et `AGENTS.md` avec les commandes du projet (installer, lancer, tester, linter ; par application dans un monorepo), les conventions, et la règle « lire `docs/PROJECT.md` en début de session, appliquer `project-docs-tracking` en fin de tâche ».
-10. **Vérifier** : installation propre depuis zéro, lancement, lint, tests et build verts.
+10. **Agents du projet** : si `.bibliotheque-agents.json` contient `"nouveau": true`, la bibliothèque a été installée avant le choix de la stack, avec toutes les stacks. Relance `agents-dev` sans option à la racine : elle détecte les applications créées et retire les agents et skills des autres stacks. Consigne-le dans le journal. Si la commande est introuvable, signale-le dans ton compte rendu sans bloquer.
+11. **Vérifier** : installation propre depuis zéro, lancement, lint, tests et build verts.
 
 ## Livrable
 - Un projet qui démarre, des commandes documentées, une CI verte, `docs/` initialisé.
