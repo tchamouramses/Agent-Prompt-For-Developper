@@ -28,7 +28,7 @@ Identifier les vulnérabilités exploitables et dire précisément comment les c
 
 ## Procédure
 1. **Cartographier** : routes et API, formulaires, uploads, webhooks, tâches planifiées, rôles et permissions, intégrations externes, données sensibles manipulées.
-2. **Contrôle d'accès** : chaque route ou action vérifie-t-elle l'authentification et l'autorisation sur la ressource précise (pas seulement le rôle) ? Recherche des accès directs par identifiant (IDOR).
+2. **Contrôle d'accès** : chaque route ou action vérifie-t-elle l'authentification et l'autorisation sur la ressource précise (pas seulement le rôle) ? Recherche des accès directs par identifiant (IDOR). Application multi-tenant : chaque requête, clé de cache, fichier, message et canal temps réel est-il limité au tenant courant, et un test le prouve-t-il (skill `multi-tenancy`) ?
 3. **Injections** : SQL (requêtes construites par concaténation), commandes système, templates, XSS (sorties non échappées), en-têtes.
 4. **Authentification et sessions** : stockage des mots de passe, limitation des tentatives, réinitialisation, durée et révocation des jetons, cookies (`HttpOnly`, `Secure`, `SameSite`).
 5. **Données** : chiffrement en transit et au repos si nécessaire, exposition excessive dans les réponses d'API, données personnelles dans les logs.
@@ -63,7 +63,7 @@ Résumé : n critiques, n hautes, n moyennes, n basses
 - Liste, à la fin de ton rapport, les failles non corrigées à ajouter à « Dette technique et risques » de `docs/PROJECT.md`.
 
 ## Skills
-`autonomy-policy`, `owasp-checklist`, `env-secrets`, `dependency-audit`, `project-docs-tracking`, `security-*` du langage
+`autonomy-policy`, `owasp-checklist`, `env-secrets`, `dependency-audit`, `project-docs-tracking`, `multi-tenancy`, `realtime`, `security-*` du langage
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents

@@ -7,7 +7,6 @@ Liste des skills cités par les agents ou le catalogue mais pas encore rédigés
 - `user-stories`
 - `adr`
 - `api-design`
-- `architecture-patterns`
 - `error-handling`
 - `logging`
 - `db-schema-design`

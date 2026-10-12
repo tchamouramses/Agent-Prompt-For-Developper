@@ -27,10 +27,11 @@ Lis dans cet ordre et arrête-toi dès que tu as la réponse ; ne lis pas tout l
 1. **Documentation du projet** : `README*`, `docs/PROJECT.md`, `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING*`, dernières entrées de `docs/journal/`.
 2. **Manifestes et versions** : `composer.json`, `package.json` (et le gestionnaire réel d'après le fichier de verrouillage : `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `bun.lockb`), `pom.xml` ou `build.gradle*`, `.nvmrc`, `.tool-versions`, `Dockerfile`, `docker-compose*`. Note les versions du langage et du framework (voir le skill `version-compatibility`).
 3. **Commandes réelles** : scripts de `package.json`, `composer.json` (`scripts`), `Makefile`, `justfile`, tâches Gradle ou Maven, et surtout les workflows de CI (`.github/workflows/`, `.gitlab-ci.yml`) : la CI montre les commandes qui font foi pour installer, linter, typer, tester et construire.
-4. **Structure** : arborescence sur deux ou trois niveaux (hors `vendor/`, `node_modules/`, `build/`, `dist/`, `.git/`). Repère les couches (contrôleurs, services, domaine, composants, routes) et les points d'entrée.
-5. **Conventions** : ouvre deux ou trois fichiers représentatifs par couche et un ou deux tests. Note le nommage, l'organisation, la gestion des erreurs, le style de tests, la configuration du lint et du formatage.
-6. **Historique** : `git log --oneline -20` et les branches actives, pour savoir ce qui bouge en ce moment.
-7. **État de départ** : lance le lint et les tests (zone concernée, ou suite complète si elle est rapide) avec les commandes trouvées à l'étape 3. Note le résultat exact, y compris les échecs déjà présents.
+4. **Structure** : arborescence sur deux ou trois niveaux (hors `vendor/`, `node_modules/`, `build/`, `dist/`, `.git/`). Repère les couches (contrôleurs, services, domaine, composants, routes), les points d'entrée et le modèle d'organisation du code (skill `architecture-patterns`). Si le dépôt contient plusieurs applications ou un fichier de workspace, dresse la carte des applications (skill `monorepo`) et relève les commandes de chacune.
+5. **Couverture** : confronte les stacks et traits d'architecture trouvés aux agents et skills installés (skill `coverage-check`).
+6. **Conventions** : ouvre deux ou trois fichiers représentatifs par couche et un ou deux tests. Note le nommage, l'organisation, la gestion des erreurs, le style de tests, la configuration du lint et du formatage.
+7. **Historique** : `git log --oneline -20` et les branches actives, pour savoir ce qui bouge en ce moment.
+8. **État de départ** : lance le lint et les tests (zone concernée, ou suite complète si elle est rapide) avec les commandes trouvées à l'étape 3. Note le résultat exact, y compris les échecs déjà présents.
 
 ## Livrable
 Une fiche courte, dans ton compte rendu (ou dans `docs/PROJECT.md` si tu es `doc-writer` ou si l'utilisateur le demande) :
@@ -40,14 +41,16 @@ Une fiche courte, dans ton compte rendu (ou dans `docs/PROJECT.md` si tu es `doc
 - Stack : PHP 8.3, Laravel 11.x, MySQL 8 ; front Vite + Livewire 3
 - Gestionnaires : composer, npm (package-lock.json)
 - Commandes : installer `composer install && npm ci` ; tests `php artisan test` ; lint `./vendor/bin/pint --test` ; analyse `./vendor/bin/phpstan analyse` ; build `npm run build`
-- Structure : app/Actions (logique métier), app/Http (contrôleurs fins), tests/Feature et tests/Unit (Pest)
+- Applications : une seule (sinon la carte du skill `monorepo`)
+- Structure : app/Actions (logique métier), app/Http (contrôleurs fins), tests/Feature et tests/Unit (Pest) ; modèle : couches du framework
+- Couverture : Laravel couvert (laravel-implementer, skill laravel) ; front Livewire sans skill dédié
 - Conventions : actions invocables, Form Requests, Resources pour l'API, enums PHP pour les statuts
 - État de départ : 212 tests, 210 réussis, 2 en échec (tests/Feature/ExportTest.php, déjà en échec sur main) ; lint propre
 - À savoir : pas de CI configurée ; .env.example incomplet (MAIL_*)
 ```
 
 ## Vérifications
-- Chaque commande de la fiche a été trouvée dans un fichier du dépôt (cite lequel en cas de doute) et celles de l'étape 7 ont été lancées.
+- Chaque commande de la fiche a été trouvée dans un fichier du dépôt (cite lequel en cas de doute) et celles de l'étape 8 ont été lancées.
 - Les échecs de départ sont listés avec leurs fichiers.
 
 ## Limites

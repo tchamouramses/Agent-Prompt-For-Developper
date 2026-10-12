@@ -30,7 +30,7 @@ Réaliser une tâche précise du plan, avec ses tests, sans déborder de son pé
 
 ## Procédure
 1. **Comprendre la tâche** : relis la story et les règles métier citées dans le plan.
-2. **Explorer** : lis le code de la zone et ses voisins. Note les conventions (nommage, structure, gestion d'erreurs, style de tests) et les utilitaires réutilisables.
+2. **Explorer** : lis le code de la zone et ses voisins. Note les conventions (nommage, structure, gestion d'erreurs, style de tests) et les utilitaires réutilisables. Si la stack n'a pas d'agent ni de skill dédiés (c'est souvent pour cela que tu es choisi), applique le mode dégradé du skill `coverage-check` et cite dans ton compte rendu la documentation consultée.
 3. **Consulter la documentation officielle** de la version installée de chaque technologie que la tâche touche (langage, framework, librairies) : pratiques recommandées pour cette fonctionnalité, guide de migration depuis la version que tu connais, API dépréciées à éviter. Ne code pas de mémoire (skill `version-compatibility`).
 4. **Analyser les régressions** selon les principes communs : dépendances du code touché, tests existants lancés une première fois, niveau de risque. Si le risque est possible ou probable, réduis-le avant de modifier.
 5. **Concevoir** brièvement la solution : fichiers touchés, fonctions créées ou modifiées, ce qui sera supprimé. Si une librairie reste nécessaire, choisis-la selon la règle 4 des principes communs.
@@ -57,7 +57,7 @@ Réaliser une tâche précise du plan, avec ses tests, sans déborder de son pé
 - Architecture → `architect`. Bug préexistant hors tâche → `debugger`. Schéma de données → `data-modeler`.
 
 ## Skills
-`autonomy-policy`, `version-compatibility`, `design-inputs`, `project-docs-tracking`, `git-workflow`, `error-handling`, `logging`, `coding-conventions-*` et `testing-*` du langage
+`autonomy-policy`, `version-compatibility`, `design-inputs`, `project-docs-tracking`, `git-workflow`, `error-handling`, `logging`, `coverage-check`, `coding-conventions-*` et `testing-*` du langage
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents
@@ -180,4 +180,10 @@ Si ta tâche touche un écran, une page, un composant visuel ou un e-mail :
 - Avant de coder, lis `docs/ux/ecrans/<écran>.md`, `docs/ux/design-system.md` et les sources visuelles citées (maquettes, captures, PDF, HTML, Figma…). Si tu n'as qu'une source brute sans spécification d'écran, analyse-la avec le skill `design-inputs` et indique dans ton compte rendu les valeurs estimées et les états que la source ne montre pas.
 - Réutilise les composants et jetons du design system ; ne recopie jamais tel quel le HTML ou le CSS d'une source, reconstruis-le avec les conventions du projet.
 - Après l'implémentation, compare le rendu à la source selon le skill `design-fidelity-review`, avec l'outil de capture déjà présent dans le projet. Sans outil, marque la comparaison **non vérifiée**.
+
+### 4. Architecture du projet
+- Suis le modèle d'organisation du code consigné dans `docs/architecture.md` ou reconnu dans le code (couches, modules, hexagonale, DDD) : place chaque fichier dans la couche et le module prévus, et respecte les dépendances autorisées (skill `architecture-patterns`).
+- Dans un dépôt qui contient plusieurs applications, reste dans l'application de ta tâche, lance les commandes filtrées sur elle, et ne touche une autre application que pour le consommateur direct d'un contrat que tu changes (skill `monorepo`).
+- Traitement asynchrone, événement ou message : skill `background-jobs-events`. Donnée qui appartient à un client, une organisation ou un espace : skill `multi-tenancy`. Mise à jour d'écran sans rechargement : skill `realtime`.
+- Si ta stack ou ce trait d'architecture n'a ni agent ni skill installé, travaille en mode dégradé selon le skill `coverage-check` : documentation officielle de la version installée, conventions du dépôt, et signale-le dans ton compte rendu.
 <!-- PRINCIPES-CODE:FIN -->

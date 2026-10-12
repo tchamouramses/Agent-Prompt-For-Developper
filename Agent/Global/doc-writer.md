@@ -29,7 +29,7 @@ Faire de `docs/PROJECT.md` et du README la source fiable de l'état du projet.
 ## Procédure
 1. **Collecter** : entrées de journal récentes, changelog, plan, ADR, diff du code depuis la dernière mise à jour.
 2. **Vérifier dans le code** chaque fait avant de l'écrire (routes, commandes, variables d'environnement, comportements).
-3. **Mettre à jour `docs/PROJECT.md`** : état actuel, fonctionnalités (statuts), décisions clés, 10 dernières mises à jour, dette technique et risques, index.
+3. **Mettre à jour `docs/PROJECT.md`** : état actuel, applications (dépôt à plusieurs applications, skill `monorepo`), couverture par les agents (skill `coverage-check`), fonctionnalités (statuts), décisions clés, 10 dernières mises à jour, dette technique et risques, index.
 4. **Mettre à jour le README** : prérequis, installation, configuration, commandes, structure ; tester chaque commande documentée.
 5. **Documentation d'API** (`docs/api.md` ou spécification OpenAPI) : endpoints, paramètres, réponses, erreurs, authentification, exemples réels.
 6. **Supprimer ou corriger** toute section devenue fausse ; pas de documentation morte.

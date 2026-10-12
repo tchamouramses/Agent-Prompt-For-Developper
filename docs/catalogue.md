@@ -1,4 +1,4 @@
-# Catalogue des agents et skills (v0.6)
+# Catalogue des agents et skills (v0.7)
 
 > Brouillon à valider.
 > Date : 2026-10-12
@@ -196,7 +196,8 @@ Les rôles détaillés des 25 agents sont dans `Agent/`.
 |---------|--------|
 | Socle | `autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `agent-handoff`, `evidence-tracking`, `skill-validation` |
 | Cadrage | `user-stories`, `acceptance-criteria` |
-| Conception | `adr`, `api-design` (REST/GraphQL), `architecture-patterns` |
+| Socle (couverture) | `coverage-check` (stacks et architectures couvertes, mode dégradé sinon) |
+| Conception | `adr`, `api-design` (REST/GraphQL), `architecture-patterns` (couches, monolithe modulaire, hexagonale, Clean, DDD, CQRS, services séparés), `monorepo`, `background-jobs-events`, `multi-tenancy`, `realtime` |
 | Planification | `task-breakdown` |
 | Code | `git-workflow` (branches, commits conventionnels, PR), `error-handling`, `logging` |
 | Données | `db-schema-design`, `migrations`, `db-query-optimization` |
@@ -258,3 +259,4 @@ Installation dans un projet : voir le README (Claude Code : `.claude/agents/` et
 14. Autonomie et généricité : les agents décident seuls de tout ce qui est réversible, consignent chaque choix (journal, ADR, hypothèses H-xx) et ne sollicitent l'humain que pour les actions réservées, préparées et regroupées en un message. Le skill `autonomy-policy` porte la méthode (niveaux de décision, défaut quand une information manque, arbitrage, critères de choix d'une librairie). Le dépôt ne cite aucun produit particulier.
 15. Garde-fous techniques : les actions réservées sont aussi bloquées par l'outil (hook et permissions Claude Code dans `Config/claude/`, règles execpolicy Codex dans `Config/codex/`), les agents de contrôle ne peuvent écrire que dans `/tmp`. CI de vérification sur chaque PR, installateur `scripts/install.py`, skills prévus listés dans `Skills/PREVUS.md`.
 16. Essai réel sur Laravel (voir `docs/essais/2026-10-12-laravel.md`) : profil léger pour un changement localisé même en zone sensible (avec `security-auditor`), bug toujours confié à `debugger`, au plus deux passes par agent de contrôle, défauts préexistants et outils absents traités en réserve, demandes humaines filtrées sur la règle 5, commits au fil des tâches. Les autres stacks s'étendent sur le modèle Laravel, avec leur propre essai.
+17. Architectures (2026-10-12) : le système reconnaît ce qu'il ne couvre pas. `coverage-check` (appliqué par `orchestrator`, `architect` et `repository-discovery`) consigne la couverture dans `docs/PROJECT.md` et fait passer toute partie non couverte par `implementer` en mode dégradé, avec les contrôles du profil livraison. Monorepo : un seul `docs/` à la racine, carte des applications, une tâche par application, contrats changés dans l'ordre producteur rétrocompatible puis consommateurs. Skills transverses ajoutés : `architecture-patterns`, `background-jobs-events`, `multi-tenancy`, `realtime`.
