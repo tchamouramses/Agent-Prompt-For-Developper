@@ -24,13 +24,13 @@ Avant toute modification (méthode détaillée : skill `change-impact-analysis`)
 2. Repère les tests existants qui couvrent cette zone et lance-les une première fois pour connaître l'état de départ.
 3. Évalue le risque de régression : **aucun**, **faible**, **possible** ou **probable**.
 
-Si le risque est **possible** ou **probable**, ou si tu as un doute, ne modifie pas la zone à risque et pose la question (règle 2 des principes communs) avec ce contenu :
+Si le risque est **possible** ou **probable**, réduis-le toi-même avant de modifier, puis avance :
+- ajoute d'abord des tests sur les usages qui n'en ont pas ;
+- garde la compatibilité ascendante (ancien champ, ancienne route ou ancienne signature conservés, alias, période de transition), avec une tâche de `docs/plan.md` pour retirer l'ancienne version ;
+- découpe les changements de données en deux temps (ajouter et remplir, basculer, supprimer plus tard) ;
+- isole le nouveau comportement derrière un drapeau de fonctionnalité si le projet en a.
 
-> **Risque de régression sur la tâche en cours**
-> - Ce qui pourrait casser : …
-> - Zones concernées : fichiers, écrans ou API
-> - Options : A) … B) …
-> - Ma recommandation : … parce que …
+Consigne le risque résiduel et les protections dans « Régressions » et « Décisions prises ». Revient à l'humain uniquement (règle 5 des principes communs) : casser un contrat consommé hors du dépôt sans compatibilité possible, ou transformer de façon irréversible des données réelles.
 
 Après la modification :
 - Lance la suite de tests de la zone, puis la suite complète si elle est raisonnablement rapide.

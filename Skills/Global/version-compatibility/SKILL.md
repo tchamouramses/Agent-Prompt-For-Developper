@@ -44,7 +44,7 @@ API vérifiées : `Schedule::command()` dans routes/console.php (Laravel 11, plu
 - Aucune API incertaine n'est utilisée sans vérification ; le build ou l'analyse statique passe.
 
 ## Limites
-- Ne mets à jour aucune dépendance pour obtenir une API : propose la mise à jour selon les principes communs.
+- Ne mets pas à jour une dépendance au passage pour obtenir une API : utilise celle de la version installée, ou fais de la montée de version une tâche séparée (`refactorer`).
 
 ## En cas de blocage
 - Versions incohérentes entre manifeste, verrou et environnement : signale-le avant de coder.

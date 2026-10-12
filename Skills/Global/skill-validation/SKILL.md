@@ -42,4 +42,4 @@ Le skill corrigé, la sortie de `scripts/validate-skills.py`, et les cas d'essai
 - Le contrôle automatique vérifie la forme, pas la qualité : les étapes 2 à 7 restent nécessaires.
 
 ## En cas de blocage
-- Deux skills se recouvrent : proposer la fusion ou un partage clair des responsabilités à l'utilisateur, avec les deux descriptions côte à côte.
+- Deux skills se recouvrent : fusionne-les ou partage clairement les responsabilités, et consigne le choix avec les deux descriptions côte à côte.

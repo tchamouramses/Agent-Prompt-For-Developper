@@ -26,14 +26,18 @@ docs/
 ## État
 
 - Agents : 25 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
-- Skills : socle rédigé (`repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`) et les skills de design `design-inputs` et `design-fidelity-review` ; les autres à rédiger.
+- Skills : socle rédigé (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`) et les skills de design `design-inputs` et `design-fidelity-review` ; les autres à rédiger.
+
+## Fonctionnement autonome
+
+Les agents décident seuls de tout ce qui est réversible (choix par défaut, librairies selon des critères de licence, maintenance et compatibilité, réduction des régressions, arbitrage entre agents) et consignent chaque choix dans `docs/` (journal, ADR, hypothèses). Ils travaillent sur une branche, committent, poussent et ouvrent la PR sans demander. L'humain n'intervient que pour les actions réservées : fusion dans la branche principale, déploiement, données réelles, secrets, coûts, messages vers l'extérieur et choix légaux. Ces actions sont préparées et regroupées en un seul message « Décisions humaines requises ». Détails : règles 2 et 5 de `Agent/_commun/principes-communs.md` et skill `autonomy-policy`.
 
 ## Installation dans un projet
 
 **Claude Code**
 - Copier les fichiers de `Agent/*/` voulus dans `.claude/agents/` et les dossiers de skills (`Skills/*/<skill>/`) dans `.claude/skills/`.
 - Chaque agent précharge ses skills (champ `skills`) ; un skill absent est ignoré avec un avertissement dans le journal de débogage.
-- Pour une demande sur plusieurs phases, lancer la session avec `claude --agent orchestrator` : c'est lui qui parle à l'utilisateur et lance les autres agents.
+- Pour une demande sur plusieurs phases, lancer la session avec `claude --agent orchestrator` : c'est lui qui lance les autres agents et présente le bilan et les décisions humaines requises.
 
 **Codex**
 - Copier `Codex/AGENTS.md` à la racine du projet, `Codex/agents/*.toml` dans `.codex/agents/` et les dossiers de skills dans `.agents/skills/`.

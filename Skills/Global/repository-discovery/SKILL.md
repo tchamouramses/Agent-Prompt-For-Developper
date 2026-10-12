@@ -51,9 +51,9 @@ Une fiche courte, dans ton compte rendu (ou dans `docs/PROJECT.md` si tu es `doc
 - Les échecs de départ sont listés avec leurs fichiers.
 
 ## Limites
-- Pas d'installation de dépendances ni de service sans accord (principes communs) : si les tests ne peuvent pas tourner faute d'installation, note-le comme **non vérifié** et indique la commande nécessaire.
+- Installer les dépendances déclarées par le projet (`composer install`, `npm ci`…) est permis ; démarrer un service payant ou se connecter à une base réelle ne l'est pas (principes communs, règle 5). Si les tests ne peuvent pas tourner, note-le comme **non vérifié** avec la cause.
 - Pas de lecture de secrets : ouvre `.env.example`, jamais `.env`.
 
 ## En cas de blocage
 - Commandes introuvables ou contradictoires (README contre CI) : la CI fait foi ; signale l'écart.
-- Projet qui ne s'installe pas : arrête-toi après la fiche et pose la question avec les erreurs exactes.
+- Projet qui ne s'installe pas : cherche la cause (version de l'environnement, service manquant, étape absente du README) et corrige ce qui relève de l'environnement local ; sinon livre la fiche avec les erreurs exactes et la cause supposée.

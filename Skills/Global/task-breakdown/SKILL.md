@@ -38,10 +38,10 @@ description: Découper une fonctionnalité ou un projet en tâches petites, ordo
 - Statut : à faire
 ```
 
-7. **Vérifier la couverture** : chaque critère Must de la spec est couvert par au moins une tâche ; aucune tâche ne fait quelque chose que la spec ne demande pas (sinon c'est une question).
+7. **Vérifier la couverture** : chaque critère Must de la spec est couvert par au moins une tâche ; aucune tâche ne fait quelque chose que la spec ne demande pas (sinon elle sort du plan ou devient une hypothèse consignée).
 
 ## Livrable
-`docs/plan.md` : liste ordonnée des tâches au format ci-dessus, avec en tête un tableau récapitulatif (identifiant, titre, dépendances, statut) et la liste des décisions qui restent à l'utilisateur.
+`docs/plan.md` : liste ordonnée des tâches au format ci-dessus, avec en tête un tableau récapitulatif (identifiant, titre, dépendances, statut) la liste des hypothèses retenues et, s'il y en a, des décisions humaines requises (actions réservées uniquement).
 
 ## Vérifications
 - Chaque tâche a un critère « terminé » vérifiable et un agent recommandé.
@@ -53,4 +53,4 @@ description: Découper une fonctionnalité ou un projet en tâches petites, ordo
 - Pas d'estimation en jours : la taille se juge au périmètre et au diff.
 
 ## En cas de blocage
-- Spec trop floue pour découper : liste les questions à `product-analyst` au lieu de deviner.
+- Spec trop floue pour découper : renvoie les points flous à `product-analyst`, qui les tranche en hypothèses ; sans lui, tranche selon le skill `autonomy-policy` et consigne.

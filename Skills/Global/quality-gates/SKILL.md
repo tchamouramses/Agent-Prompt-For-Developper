@@ -29,7 +29,7 @@ description: Règles bloquantes de livraison, preuves exigées par contrôle, co
 | Tests, lint, typage ou build en échec sur le commit livré | bloquant | bloquant |
 | Test supprimé, sauté ou affaibli par le changement | bloquant | bloquant |
 | Point bloquant de `code-reviewer` ouvert | bloquant | bloquant |
-| Dépendance ajoutée sans accord tracé | bloquant | bloquant |
+| Dépendance ajoutée hors critères ou sans comparaison consignée | bloquant | bloquant |
 | Critère d'acceptation Must sans test ni preuve | bloquant | bloquant |
 | Code mort introduit | important | bloquant |
 | Parcours e2e critique non validé | — | bloquant |
@@ -39,7 +39,7 @@ description: Règles bloquantes de livraison, preuves exigées par contrôle, co
 | Écart bloquant avec le design (skill `design-fidelity-review`) | — | bloquant |
 
    Un échec « intermittent » reste un échec : il est relancé une fois ; s'il échoue encore, il bloque.
-4. **Classer chaque exigence** : validée, non testée, en échec, risque accepté (décision explicite et tracée de l'utilisateur).
+4. **Classer chaque exigence** : validée, non testée, en échec, risque accepté (décision tracée de l'utilisateur pour un point bloquant, d'un agent arbitre pour un point non bloquant).
 5. **Décider** : Accepté, Accepté sous réserve (points non bloquants listés), Refusé.
 6. **En cas de refus**, pour chaque anomalie : exigence, preuve d'échec, agent responsable, attendu pour lever le refus.
 7. **Après une correction**, refaire : la suite complète de tests et le lint (toujours), la revue du diff de la correction, et chaque contrôle spécialisé dont la zone a été touchée (sécurité, e2e, performance, design).
