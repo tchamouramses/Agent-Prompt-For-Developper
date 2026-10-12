@@ -1,14 +1,21 @@
 #!/bin/sh
-# Installe la bibliothèque d'agents sans cloner le dépôt, puis la commande `agents-dev`.
+# Installe la bibliothèque d'agents, puis la commande `agents-dev`, ou directement dans un projet.
 #
 #   curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh
-#   curl -fsSL .../install.sh | sh -s -- --global          puis installe pour tous les projets
-#   curl -fsSL .../install.sh | sh -s -- --stack laravel   puis installe dans le dossier courant
+#   curl -fsSL .../install.sh | sh -s -- --projet          installe dans le dossier courant, sans rien hors du projet
+#   curl -fsSL .../install.sh | sh -s -- --projet ~/app    installe dans ce dossier
+#   curl -fsSL .../install.sh | sh -s -- --global          installe la commande, puis pour tous les projets
+#
+# Dépôt privé : raw.githubusercontent.com répond 404 sans authentification. Lancer alors le script
+# depuis un clone, qui sert de source sans rien télécharger :
+#   git clone https://github.com/tchamouramses/Agent-Prompt-For-Developper.git
+#   sh Agent-Prompt-For-Developper/install.sh --projet ~/app
 #
 # Ensuite, depuis la racine de n'importe quel projet :
-#   agents-dev                 stacks et outils détectés (options : python3 install.py --help)
-#   agents-dev maj             télécharge la dernière version et met à jour l'installation globale
+#   agents-dev                 stacks et outils détectés (options : agents-dev --help)
+#   agents-dev maj             récupère la dernière version et met à jour l'installation globale
 #
+# Les options qui suivent --projet (ou toutes, sans --projet) sont passées à scripts/install.mjs.
 # Variables : AGENTS_DEV_HOME (défaut ~/.local/share/agents-dev), AGENTS_DEV_BIN (défaut ~/.local/bin),
 # AGENTS_DEV_REF (branche ou tag, défaut main).
 set -eu
@@ -18,33 +25,78 @@ REF="${AGENTS_DEV_REF:-main}"
 DEST="${AGENTS_DEV_HOME:-$HOME/.local/share/agents-dev}"
 BIN="${AGENTS_DEV_BIN:-$HOME/.local/bin}"
 
-command -v python3 >/dev/null 2>&1 || { echo "python3 (3.9 ou plus) est requis." >&2; exit 1; }
-command -v curl >/dev/null 2>&1 || { echo "curl est requis." >&2; exit 1; }
+command -v node >/dev/null 2>&1 || { echo "Node.js 18 ou plus est requis (https://nodejs.org)." >&2; exit 1; }
+node -e 'process.exit(parseInt(process.versions.node, 10) < 18 ? 1 : 0)' || { echo "Node.js 18 ou plus est requis (version trouvée : $(node --version))." >&2; exit 1; }
 
+PROJET=""
+if [ "${1:-}" = "--projet" ]; then
+  shift
+  PROJET="."
+  case "${1:-}" in
+    ""|-*) ;;
+    *) PROJET="$1"; shift ;;
+  esac
+fi
+
+# Source : le clone d'où le script est lancé, sinon un clone Git (identifiants de l'utilisateur,
+# donc dépôt privé compris), sinon l'archive publique.
+# Lancé par `curl … | sh`, $0 vaut « sh » : seul un chemin vers install.sh désigne un clone.
+ICI=""
+case "$0" in
+  *install.sh) ICI="$(cd "$(dirname "$0")" && pwd)" ;;
+esac
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
-curl -fsSL "https://codeload.github.com/$DEPOT/tar.gz/$REF" | tar -xz -C "$TMP"
-rm -rf "$DEST"
-mkdir -p "$(dirname "$DEST")" "$BIN"
-mv "$TMP"/*-* "$DEST"
+if [ -n "$ICI" ] && [ -f "$ICI/scripts/install.mjs" ]; then
+  SOURCE="$ICI"
+elif command -v git >/dev/null 2>&1 && git clone -q --depth 1 --branch "$REF" "https://github.com/$DEPOT.git" "$TMP/source" 2>/dev/null; then
+  SOURCE="$TMP/source"
+else
+  command -v curl >/dev/null 2>&1 || { echo "git ou curl est requis." >&2; exit 1; }
+  mkdir "$TMP/source"
+  curl -fsSL "https://codeload.github.com/$DEPOT/tar.gz/$REF" | tar -xz -C "$TMP/source" --strip-components 1 || {
+    echo "Téléchargement impossible. Si le dépôt est privé, clone-le puis lance son install.sh (voir l'en-tête)." >&2
+    exit 1
+  }
+  SOURCE="$TMP/source"
+fi
+
+if [ -n "$PROJET" ]; then
+  # Rien n'est gardé hors du projet : la source temporaire est effacée à la sortie.
+  node "$SOURCE/scripts/install.mjs" "$PROJET" "$@"
+  exit $?
+fi
+
+if [ "$SOURCE" != "$ICI" ]; then
+  rm -rf "$DEST"
+  mkdir -p "$(dirname "$DEST")"
+  mv "$SOURCE" "$DEST"
+else
+  DEST="$ICI"  # lancé depuis un clone : la commande utilise ce clone, mis à jour par git pull
+fi
+mkdir -p "$BIN"
 
 cat > "$BIN/agents-dev" <<EOF
 #!/bin/sh
 # Généré par install.sh de $DEPOT.
 if [ "\${1:-}" = "maj" ]; then
-  curl -fsSL "https://raw.githubusercontent.com/$DEPOT/$REF/install.sh" | AGENTS_DEV_HOME="$DEST" AGENTS_DEV_BIN="$BIN" AGENTS_DEV_REF="$REF" sh
-  [ -f "\$HOME/.bibliotheque-agents.json" ] && exec python3 "$DEST/scripts/install.py" --global
+  if [ -d "$DEST/.git" ]; then
+    git -C "$DEST" pull -q --ff-only
+  else
+    curl -fsSL "https://raw.githubusercontent.com/$DEPOT/$REF/install.sh" | AGENTS_DEV_HOME="$DEST" AGENTS_DEV_BIN="$BIN" AGENTS_DEV_REF="$REF" sh
+  fi
+  [ -f "\$HOME/.bibliotheque-agents.json" ] && exec node "$DEST/scripts/install.mjs" --global
   exit 0
 fi
-exec python3 "$DEST/scripts/install.py" "\$@"
+exec node "$DEST/scripts/install.mjs" "\$@"
 EOF
 chmod +x "$BIN/agents-dev"
-echo "Bibliothèque téléchargée dans $DEST, commande installée : $BIN/agents-dev"
+echo "Bibliothèque dans $DEST, commande installée : $BIN/agents-dev"
 case ":$PATH:" in
   *":$BIN:"*) ;;
   *) echo "Ajoute $BIN à ton PATH, par exemple : echo 'export PATH=\"$BIN:\$PATH\"' >> ~/.profile" ;;
 esac
 
 if [ "$#" -gt 0 ]; then
-  exec python3 "$DEST/scripts/install.py" "$@"
+  exec node "$DEST/scripts/install.mjs" "$@"
 fi
