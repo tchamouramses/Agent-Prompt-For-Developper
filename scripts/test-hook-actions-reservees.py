@@ -31,6 +31,10 @@ BLOQUES = [
     ("Bash", "./vendor/bin/pint", "code-reviewer"),
     ("Bash", "git commit -am wip", "quality-gatekeeper"),
     ("Bash", "composer require foo/bar", "code-reviewer"),
+    ("Bash", "cat > app/Probe.php <<'EOF'\n<?php echo 1;\nEOF", "security-auditor"),
+    ("Bash", "bash <<'EOF'\nrm -rf app\nEOF", "code-reviewer"),
+    ("Bash", "php artisan make:test ProbeTest", "quality-gatekeeper"),
+    ("Bash", "npx eslint --fix src", "code-reviewer"),
 ]
 
 PERMIS = [
@@ -46,6 +50,14 @@ PERMIS = [
     ("Bash", "git diff main...HEAD > /dev/null", "code-reviewer"),
     ("Bash", "php -r 'echo [1 => 2][1];'", "quality-gatekeeper"),
     ("Bash", "echo ok > app/Foo.php", "laravel-implementer"),
+    ("Bash", "DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan migrate --force", ""),
+    ("Bash", "mkdir -p /tmp/sonde && cat > /tmp/sonde/SondeTest.php <<'EOF'\n<?php\nrm ici n'est pas une commande;\n$a->b > 3;\nEOF", "security-auditor"),
+    ("Bash", "ls vendor/bin | grep -i -E \"pint|phpstan\"", "code-reviewer"),
+    ("Bash", "printf \"%s > %s\\n\" a b; rm /tmp/probe.php", "code-reviewer"),
+    ("Bash", "git log --all -p 2>/dev/null | grep -nE \"secret\\s*=\" | head", "security-auditor"),
+    ("Bash", "./vendor/bin/pint --test >/dev/null 2>&1; echo \"exit=$?\"", "quality-gatekeeper"),
+    ("Bash", "php artisan migrate --env=testing", "quality-gatekeeper"),
+    ("Bash", "DB_DATABASE=/tmp/m.sqlite bash -c 'touch /tmp/m.sqlite; php artisan migrate --force'", ""),
     ("Read", "/projet/.env.example", ""),
     ("Write", "/projet/app/Models/Note.php", ""),
 ]
