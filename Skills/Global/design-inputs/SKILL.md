@@ -1,13 +1,28 @@
 ---
 name: design-inputs
-description: Lire et analyser toute source visuelle fournie pour une interface (images, captures, photos de croquis, PDF, pages HTML et CSS, URL d'un site, Figma, SVG, fichiers d'autres outils de design, vidéos, descriptions) pour en tirer des spécifications d'écran, puis comparer le rendu implémenté à ces sources.
+description: Lire et analyser toute source visuelle fournie pour une interface (images, captures, photos de croquis, PDF, pages HTML et CSS, URL d'un site, Figma, SVG, fichiers d'autres outils de design, vidéos, descriptions) pour en tirer des spécifications d'écran et un design system. La comparaison du rendu final relève de design-fidelity-review.
 ---
 
 # Sources visuelles : analyse et comparaison
 
-Une maquette ne se « regarde » pas, elle se **traduit** en spécification que l'on peut implémenter et vérifier. Ce skill dit comment lire chaque type de source, quoi en extraire, comment signaler ce qu'elle ne dit pas, puis comment comparer le rendu final à la source.
+Une maquette ne se « regarde » pas, elle se **traduit** en spécification que l'on peut implémenter et vérifier. Ce skill dit comment lire chaque type de source, quoi en extraire et comment signaler ce qu'elle ne dit pas. La comparaison du rendu implémenté à la source relève du skill `design-fidelity-review`.
 
-## 1. Inventorier les sources
+## Quand l'utiliser
+- `ui-ux-designer` (mode « partir de l'existant »), `product-analyst` : des sources visuelles sont fournies.
+- Agents qui touchent une interface : avant de coder un écran qui n'a pas encore de spécification.
+
+## Ce que l'agent rate sans ce skill
+- Il présente des couleurs et tailles « lues » sur une image compressée comme des valeurs exactes.
+- Il implémente seulement ce que la maquette montre : pas d'état de chargement, d'erreur, de vide, ni de version mobile.
+- Il recopie le HTML d'une source au lieu d'utiliser les composants du projet.
+- Il devine le contenu d'un fichier illisible (Sketch, XD, vidéo) au lieu de demander un export.
+
+## Entrées
+- Les sources visuelles de tout type, `docs/spec.md`, `docs/ux/design-system.md` s'il existe.
+
+## Procédure
+
+### 1. Inventorier les sources
 Avant toute analyse, liste chaque source reçue dans `docs/ux/sources.md` :
 
 ```markdown
@@ -20,7 +35,7 @@ Avant toute analyse, liste chaque source reçue dans `docs/ux/sources.md` :
 
 Fiabilité : **maquette finale** (fait foi), **brouillon** (intention, pas de valeurs exactes), **existant à reprendre**, **référence d'inspiration** (ne pas copier). En cas de conflit entre deux sources, la plus récente et la plus fiable gagne ; le conflit est noté et soumis à l'utilisateur.
 
-## 2. Lire chaque type de source
+### 2. Lire chaque type de source
 
 | Type | Comment le lire | Ce qu'on en tire de façon fiable | Limites et quoi demander |
 |------|-----------------|----------------------------------|--------------------------|
@@ -39,7 +54,7 @@ Fiabilité : **maquette finale** (fait foi), **brouillon** (intention, pas de va
 
 Un fichier binaire non listé : ne pas deviner son contenu, demander un export lisible.
 
-## 3. Extraire une spécification par écran
+### 3. Extraire une spécification par écran
 Pour chaque écran, crée ou complète `docs/ux/ecrans/<ecran>.md` :
 
 ```markdown
@@ -71,18 +86,16 @@ Règles :
 - Tout ce que la source ne montre pas est listé dans « États » ou « Questions ouvertes », jamais inventé en silence.
 - Signaler les problèmes de la source elle-même : contraste insuffisant, texte trop petit, zone tactile trop petite, incohérence entre deux écrans.
 
-## 4. Comparer le rendu implémenté à la source
-Après l'implémentation d'un écran :
-1. **Capturer le rendu** aux mêmes largeurs que la source (et au minimum 375 px et 1280 px pour le web), avec les mêmes données de démonstration, via l'outil déjà présent dans le projet (Playwright, Maestro, Detox, outil MCP de navigateur). Sans outil de capture, ne pas en installer : le proposer selon les principes communs et marquer la comparaison **non vérifiée**.
-2. **Comparer zone par zone** avec la spécification d'écran et la source : structure et ordre, composants, textes, couleurs, typographie, espacements, alignements, états, comportement responsive.
-3. **Lister les écarts** :
+## Livrable
+- `docs/ux/sources.md`, une spécification par écran dans `docs/ux/ecrans/`, les jetons et composants extraits dans `docs/ux/design-system.md`.
 
-```markdown
-| Écran / zone | Attendu (source) | Obtenu (capture) | Gravité | Agent |
-|--------------|------------------|------------------|---------|-------|
-| Accueil / bouton principal | #1E5EFF, rayon 8 | #2563EB, rayon 4 | mineur | nextjs-implementer |
-```
+## Vérifications
+- Chaque valeur visuelle porte son exactitude ; chaque état non montré par la source est listé.
+- Chaque source de l'inventaire est rattachée à au moins un écran, ou marquée « inspiration ».
 
-Gravité : **bloquant** (élément ou état manquant, texte faux, mise en page cassée à une largeur, accessibilité dégradée), **mineur** (écart d'une valeur *exacte*), **toléré** (écart sur une valeur *estimée* qui reste dans l'esprit de la maquette).
+## Limites
+- Pas de modification d'une source fournie (fichier Figma, maquette) ; pas d'installation d'outil sans accord.
 
-4. Joindre les captures comme preuves (chemin des fichiers) dans le compte rendu.
+## En cas de blocage
+- Source illisible : demander l'export indiqué dans le tableau de la section 2.
+- Sources contradictoires : noter le conflit et poser la question avec les deux versions.

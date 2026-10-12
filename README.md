@@ -17,6 +17,7 @@ Skills/
   PHP/ Java/ TypeScript/   savoirs propres à chaque langage et framework
 scripts/
   sync-agents.py        recopie les principes dans chaque agent et génère Codex/
+  validate-skills.py    vérifie la forme des skills et les skills cités par les agents
 docs/
   catalogue.md          catalogue des agents et skills, principes et décisions
   doc-suivi-projet.md   documentation de suivi installée dans chaque projet
@@ -25,7 +26,7 @@ docs/
 ## État
 
 - Agents : 25 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
-- Skills : `project-docs-tracking` et `design-inputs` rédigés, les autres à rédiger.
+- Skills : socle rédigé (`repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`) et les skills de design `design-inputs` et `design-fidelity-review` ; les autres à rédiger.
 
 ## Installation dans un projet
 
@@ -42,3 +43,7 @@ docs/
 
 - Principes : éditer `Agent/_commun/principes-communs.md` (tous les agents) ou `Agent/_commun/principes-code.md` (agents qui modifient du code, liste `CODE_AGENTS` du script).
 - Puis lancer `python3 scripts/sync-agents.py`, qui met à jour les agents et régénère `Codex/`. L'option `--check` échoue si un fichier n'est pas synchronisé.
+
+## Écrire un skill
+
+Chaque skill suit le même contrat : Quand l'utiliser, Ce que l'agent rate sans ce skill, Entrées, Procédure, Livrable, Vérifications, Limites, En cas de blocage. Une règle reste dans les principes des agents ; le skill porte la méthode détaillée et cite la règle sans la réécrire. Avant de publier, appliquer le skill `skill-validation` et lancer `python3 scripts/validate-skills.py`.

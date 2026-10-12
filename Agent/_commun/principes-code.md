@@ -14,11 +14,12 @@ Ces règles complètent les principes communs pour tout agent qui écrit ou modi
   - *Inversion des dépendances* : la logique métier dépend d'abstractions injectées (constructeur, conteneur du framework), pas d'implémentations concrètes ni d'appels statiques à l'infrastructure.
   - Limite : SOLID ne justifie pas une abstraction sans usage réel. Une interface avec une seule implémentation n'est créée que si elle sert déjà (test, frontière avec l'infrastructure, convention du framework). Si appliquer SOLID demande de restructurer du code hors de ta tâche, signale-le au lieu de le faire.
 - **Zéro code mort.** Aucun code commenté, import, variable, paramètre, fonction, fichier, route, style ou dépendance inutilisés ne doit subsister après ton passage. Quand tu remplaces quelque chose, supprime l'ancienne version dans le même changement, après avoir vérifié par recherche dans tout le projet qu'elle n'est plus utilisée. Pas de `TODO` sans référence à une tâche de `docs/plan.md`.
+- **Versions réelles.** N'utilise une API de framework ou de librairie que si tu sais qu'elle existe dans la version installée ; en cas de doute, vérifie-la avec le skill `version-compatibility`.
 - **Typage et erreurs.** Types stricts, pas de `any` ou équivalent sans justification. Les erreurs sont traitées ou propagées explicitement, jamais avalées en silence.
 - **Changement minimal.** Ton diff ne contient que ce que la tâche exige. Pas de reformatage de fichiers entiers ni de renommages hors sujet.
 
 ### 2. Gestion des régressions
-Avant toute modification :
+Avant toute modification (méthode détaillée : skill `change-impact-analysis`) :
 1. Identifie tout ce qui dépend du code touché : recherche des appels, imports, routes, événements, requêtes, composants qui l'utilisent.
 2. Repère les tests existants qui couvrent cette zone et lance-les une première fois pour connaître l'état de départ.
 3. Évalue le risque de régression : **aucun**, **faible**, **possible** ou **probable**.
@@ -33,11 +34,11 @@ Si le risque est **possible** ou **probable**, ou si tu as un doute, ne modifie 
 
 Après la modification :
 - Lance la suite de tests de la zone, puis la suite complète si elle est raisonnablement rapide.
-- Si ton changement porte sur un comportement (et non sur de la configuration ou de la documentation), ajoute un test qui protège ce comportement.
+- Si ton changement porte sur un comportement (et non sur de la configuration ou de la documentation), ajoute un test qui protège ce comportement (niveau et cas : skill `testing-strategy`).
 - Indique dans ton compte rendu les zones vérifiées et celles que tu n'as pas pu vérifier.
 
 ### 3. Interfaces et sources visuelles
 Si ta tâche touche un écran, une page, un composant visuel ou un e-mail :
 - Avant de coder, lis `docs/ux/ecrans/<écran>.md`, `docs/ux/design-system.md` et les sources visuelles citées (maquettes, captures, PDF, HTML, Figma…). Si tu n'as qu'une source brute sans spécification d'écran, analyse-la avec le skill `design-inputs` et indique dans ton compte rendu les valeurs estimées et les états que la source ne montre pas.
 - Réutilise les composants et jetons du design system ; ne recopie jamais tel quel le HTML ou le CSS d'une source, reconstruis-le avec les conventions du projet.
-- Après l'implémentation, compare le rendu à la source selon la section « Comparer » du skill `design-inputs`, avec l'outil de capture déjà présent dans le projet. Sans outil, marque la comparaison **non vérifiée**.
+- Après l'implémentation, compare le rendu à la source selon le skill `design-fidelity-review`, avec l'outil de capture déjà présent dans le projet. Sans outil, marque la comparaison **non vérifiée**.
