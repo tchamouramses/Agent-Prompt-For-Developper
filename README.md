@@ -23,7 +23,7 @@ docs/
 
 ## État
 
-- Agents : rôles détaillés rédigés (en relecture).
+- Agents : 24 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
 - Skills : à rédiger.
 - Installation dans un projet : à venir (copie dans `.claude/agents/` et `.claude/skills/` pour Claude Code ; déclinaison Codex à définir).
 

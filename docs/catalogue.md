@@ -1,4 +1,4 @@
-# Catalogue des agents et skills (v0.3)
+# Catalogue des agents et skills (v0.4)
 
 > Brouillon à valider.
 > Date : 2026-10-12
@@ -8,28 +8,33 @@
 1. **Un agent = un rôle, une phase.** Chaque agent a une mission étroite, des entrées et sorties claires, et une liste explicite de ce qu'il ne fait pas. C'est ce qui le rend fiable en vibe coding.
 2. **Les agents portent le comportement, les skills portent le savoir.** Un agent dit *comment travailler* (méthode, limites, format de sortie). Un skill apporte une *connaissance réutilisable* (checklist, convention, template, savoir propre à un langage).
 3. **Global d'abord, spécifique ensuite.** La plupart des agents sont globaux. La spécialisation par langage passe surtout par des skills de langage que l'agent global charge. On ne crée un agent spécifique à un langage que si sa méthode de travail change vraiment (ex. un intégrateur mobile Flutter).
-4. **Le moins de droits possible.** Les agents d'analyse (revue, sécurité, audit) sont en lecture seule. Les agents qui écrivent du code ne touchent qu'à leur périmètre.
-5. **L'humain garde la main sur l'irréversible.** Aucun agent ne déploie, ne supprime de données, ne pousse sur la branche principale ou n'ajoute de dépendance majeure sans validation.
+4. **Le moins de droits possible.** Les agents de contrôle (revue, sécurité, gatekeeper) ne modifient pas le code et n'écrivent que dans `docs/`. Les agents qui écrivent du code ne touchent qu'à leur périmètre.
+5. **L'humain garde la main sur l'irréversible.** Aucun agent ne déploie, ne supprime de données, ne pousse sur la branche principale ou n'ajoute de dépendance sans validation.
+6. **Produire et contrôler sont séparés.** L'agent qui produit ne valide jamais son propre travail. Des agents de contrôle indépendants vérifient, et `quality-gatekeeper` autorise ou refuse la livraison sur preuves.
+7. **Aucune affirmation sans preuve.** Un test, un build ou un parcours n'est « réussi » que si la commande a été exécutée et son résultat cité.
 
 ## 2. Phases couvertes
 
 | # | Phase | Agent principal |
 |---|-------|-----------------|
 | 1 | Cadrage du besoin | `product-analyst` |
+| 1b | Expérience utilisateur et design | `ui-ux-designer` |
 | 2 | Architecture et conception | `architect` |
 | 3 | Planification | `planner` |
 | 4 | Initialisation du projet | `scaffolder` |
 | 5 | Implémentation | `implementer` |
 | 6 | Données et base de données | `data-modeler` |
-| 7 | Tests | `test-engineer` |
+| 7 | Tests (dont contrats d'API) | `test-engineer` |
+| 7b | Validation de bout en bout | `e2e-validator` |
 | 8 | Revue de code | `code-reviewer` |
-| 9 | Débogage | `debugger` |
+| 9 | Débogage et incidents | `debugger` |
 | 10 | Sécurité | `security-auditor` |
 | 11 | Performance | `performance-optimizer` |
 | 12 | Refactoring et migration | `refactorer` |
 | 13 | Documentation | `doc-writer` |
-| 14 | CI/CD et déploiement | `devops-engineer` |
-| transverse | Coordination | `orchestrator` (optionnel) |
+| 14 | CI/CD, versions et déploiement | `devops-engineer` |
+| 15 | Autorisation de livraison | `quality-gatekeeper` |
+| transverse | Coordination | `orchestrator` |
 
 ## 3. Agents globaux
 
@@ -125,6 +130,35 @@ Format de chaque fiche : **Mission**, **Entrées / Sorties**, **Fait**, **Ne fai
 - **Mission :** recevoir une demande, choisir le bon agent et enchaîner les phases (spec → plan → implémentation → tests → revue).
 - **Ne fait pas :** ne code pas lui-même ; s'arrête et demande validation entre chaque phase.
 
+### 3.16 `ui-ux-designer` (Expérience utilisateur)
+- **Mission :** parcours, architecture de l'information, maquettes, états d'écran, design system, accessibilité.
+- **Ne fait pas :** ne code pas l'application ; propose les librairies de composants sans les imposer.
+- **Skills :** `ux-patterns`, `design-system`, `accessibility`.
+
+### 3.17 `e2e-validator` (Validation de bout en bout) — indépendant
+- **Mission :** utiliser l'application comme un vrai utilisateur (Playwright, Maestro ou Detox), vérifier les critères d'acceptation et l'intégration réelle front / back, fournir des preuves.
+- **Ne fait pas :** ne modifie pas le code de l'application ; ne valide jamais par simple lecture du code.
+- **Skills :** `e2e-testing`, `api-contracts`, `acceptance-criteria`.
+
+### 3.18 `quality-gatekeeper` (Autorisation de livraison) — indépendant
+- **Mission :** confronter chaque exigence aux preuves, ré-exécuter les contrôles clés, appliquer les règles bloquantes, rendre un verdict et produire le rapport de livraison lu par l'utilisateur à la place du code.
+- **Ne fait pas :** ne code pas, ne corrige pas, n'accepte aucune affirmation sans preuve.
+- **Skills :** `quality-gates`, `acceptance-criteria`.
+
+### 3.19 Responsabilités intégrées aux agents existants
+| Responsabilité proposée | Intégrée dans | Comment |
+|-------------------------|---------------|---------|
+| Acceptation produit | `quality-gatekeeper` + `e2e-validator` | matrice critère → test → parcours → preuve |
+| Intégration front / back | `test-engineer` + `e2e-validator` | tests de contrats d'API, vérification des appels réels |
+| Gestion des versions | `devops-engineer` | CI bloquante, staging, sauvegarde, liste de déploiement, retour arrière |
+| Réponse aux incidents | `debugger` (mode incident) | qualification, limitation de l'impact, analyse après coup |
+| Maintenance des dépendances | `security-auditor` + `refactorer` | audit et versions obsolètes, puis mise à jour après accord ; à lancer en routine périodique |
+
+### 3.20 Agents reportés (à créer selon le projet)
+- `sre-observability` : utile quand un projet est en production avec des outils de supervision accessibles.
+- `ai-engineer` : utile pour un projet avec des fonctionnalités IA (LLM, RAG, embeddings).
+- `product-analytics` : utile quand des données d'usage réelles sont disponibles.
+
 ## 4. Agents spécifiques à un framework
 
 Décision : un agent d'implémentation par framework utilisé. Les autres phases restent couvertes par les agents globaux, qui chargent les skills du langage.
@@ -138,9 +172,9 @@ Décision : un agent d'implémentation par framework utilisé. Les autres phases
 | `Agent/TypeScript/` | `nextjs-implementer` | Next.js |
 | `Agent/TypeScript/` | `expo-mobile-implementer` | React Native + Expo |
 
-Les rôles détaillés des 21 agents sont dans `Agent/`.
+Les rôles détaillés des 24 agents sont dans `Agent/`.
 
-**Principes communs :** un agent ne voit que son propre fichier. Les règles partagées par tous (posture senior, qualité du code, zéro code mort, gestion des régressions, choix des librairies validés par l'utilisateur, actions interdites, compte rendu, suivi documentaire) sont donc maintenues dans `Agent/_commun/principes-communs.md` et recopiées dans chaque agent par `python3 scripts/sync-agents.py`. Ne jamais modifier la section générée directement dans un agent.
+**Principes communs :** un agent ne voit que son propre fichier. Les règles partagées par tous (posture senior, qualité du code, zéro code mort, gestion des régressions, preuves et contrôle indépendant, choix des librairies validés par l'utilisateur, actions interdites, compte rendu, suivi documentaire) sont donc maintenues dans `Agent/_commun/principes-communs.md` et recopiées dans chaque agent par `python3 scripts/sync-agents.py`. Ne jamais modifier la section générée directement dans un agent.
 
 ## 5. Skills
 
@@ -153,8 +187,9 @@ Les rôles détaillés des 21 agents sont dans `Agent/`.
 | Planification | `task-breakdown` |
 | Code | `git-workflow` (branches, commits conventionnels, PR), `error-handling`, `logging` |
 | Données | `db-schema-design`, `migrations`, `db-query-optimization` |
-| Tests | `testing-strategy` |
-| Qualité | `code-review-checklist`, `refactoring-patterns`, `debugging-method` |
+| Tests | `testing-strategy`, `api-contracts`, `e2e-testing` |
+| Expérience utilisateur | `ux-patterns`, `design-system`, `accessibility` |
+| Qualité | `code-review-checklist`, `refactoring-patterns`, `debugging-method`, `quality-gates` (règles bloquantes, rapport de livraison) |
 | Sécurité | `owasp-checklist`, `env-secrets`, `dependency-audit` |
 | Performance | `profiling`, `caching` |
 | Docs | `project-docs-tracking` (suivi par projet, voir `docs/doc-suivi-projet.md`), `readme-template`, `api-docs`, `changelog-semver` |
@@ -199,3 +234,4 @@ Installation dans un projet : copier les agents voulus dans `.claude/agents/` et
 4. Tous les agents sont conservés, sans fusion.
 5. Documentation de suivi par projet : voir `docs/doc-suivi-projet.md`.
 6. Tous les agents se comportent en seniors : code lisible, sans répétition ni code mort ; risque de régression évalué avant chaque modification, avec question à l'utilisateur en cas de doute ; aucune librairie installée sans que l'utilisateur ait choisi parmi des options proposées.
+7. Équipe « version resserrée » : ajout de `ui-ux-designer`, `e2e-validator` et `quality-gatekeeper` ; les autres responsabilités proposées sont intégrées aux agents existants ou reportées (section 3.19 et 3.20).
