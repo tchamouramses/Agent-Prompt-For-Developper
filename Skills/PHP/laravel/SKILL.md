@@ -70,7 +70,7 @@ Le code de la tâche conforme à la structure de la version installée, et dans 
 
 ## Limites
 - Les paquets de l'écosystème (Livewire, Filament, Inertia, Horizon) ont leurs propres versions : lis leur version dans `composer.lock` avant d'utiliser leurs API.
-- Les tests : skill `testing-php`. La sécurité détaillée : skill `security-php`. Le style : skill `coding-conventions-php`. Le schéma : skill `migrations`.
+- Les tests : skill `testing-php`. La sécurité détaillée : skill `security-php`. Le style : skill `coding-conventions-php`, et ses outils : skill `lint-format-php`. Le schéma : skill `migrations`. La montée de version : skill `upgrade-laravel`.
 
 ## En cas de blocage
 - API introuvable dans `vendor/` : elle n'existe pas dans cette version ; utilise l'équivalent de la version installée et consigne-le.

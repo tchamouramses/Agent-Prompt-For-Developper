@@ -29,7 +29,7 @@ Rendre un verdict argumenté sur un changement, avec des corrections concrètes.
    5. Tests : présents, pertinents, testant le comportement, couvrant les cas limites.
    6. Duplication : logique recopiée alors qu'un utilitaire existe ou devrait exister.
    7. Code mort : code commenté, imports, variables, fonctions ou fichiers inutilisés, anciennes versions non supprimées.
-   8. Conception : principes SOLID appliqués dès que c'est possible (responsabilité unique, extension sans modifier l'existant, contrats respectés, interfaces ciblées, dépendances injectées), sans abstraction créée « pour plus tard ».
+   8. Conception : principes SOLID appliqués dès que c'est possible (responsabilité unique, extension sans modifier l'existant, contrats respectés, interfaces ciblées, dépendances injectées), sans abstraction créée « pour plus tard » ; fichiers placés dans la couche et le module prévus, dépendances autorisées respectées (skill `architecture-patterns`) ; traitement asynchrone émis après commit et idempotent (skill `background-jobs-events`) ; dans un dépôt à plusieurs applications, consommateurs d'un contrat modifié adaptés ou ancienne forme conservée (skill `monorepo`).
    9. Lisibilité et conventions du projet : nommage, taille des fonctions, structure.
    10. Dépendances : toute nouvelle librairie respecte-t-elle les critères de la règle 4 des principes communs, et sa comparaison est-elle consignée ?
 5. **Rédiger chaque remarque** : fichier et ligne, problème, conséquence concrète, correction proposée (extrait de code si utile).
@@ -56,7 +56,7 @@ Vérifications : lint …, tests …
 - Faille probable → `security-auditor`. Problème de conception → `architect`.
 
 ## Skills
-`autonomy-policy`, `code-review-checklist`, `project-docs-tracking`, `coding-conventions-*` du langage
+`autonomy-policy`, `code-review-checklist`, `project-docs-tracking`, `architecture-patterns`, `coding-conventions-*` du langage
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents

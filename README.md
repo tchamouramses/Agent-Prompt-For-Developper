@@ -35,12 +35,18 @@ docs/
 ## État
 
 - Agents : 25 rôles détaillés rédigés (en relecture), dont 3 agents de contrôle indépendants.
-- Skills : socle (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills transverses (produit et design, architecture et données, journalisation, erreurs, performance, sécurité des dépendances et des secrets, documentation, CI, Docker, déploiement), et la stack Laravel complète (`laravel`, `testing-php`, `security-php`, `coding-conventions-php`, `upgrade-laravel`). Les skills des autres stacks restants sont listés dans `Skills/PREVUS.md`.
+- Skills : socle (`autonomy-policy`, `repository-discovery`, `version-compatibility`, `change-impact-analysis`, `acceptance-criteria`, `task-breakdown`, `agent-handoff`, `testing-strategy`, `code-review-checklist`, `evidence-tracking`, `quality-gates`, `project-docs-tracking`, `skill-validation`), skills transverses (produit et design, architecture et données, journalisation, erreurs, performance, sécurité des dépendances et des secrets, documentation, CI, Docker, déploiement), skills d'architecture (`coverage-check`, `monorepo`, `architecture-patterns`, `background-jobs-events`, `multi-tenancy`, `realtime`), et les skills des six stacks : PHP (`laravel`, `symfony`, `coding-conventions-php`, `testing-php`, `security-php`, `lint-format-php`, `upgrade-laravel`, `upgrade-symfony`), Java (`spring-boot`, `coding-conventions-java`, `testing-java`, `security-java`, `lint-format-java`, `upgrade-spring-boot`), TypeScript (`react`, `angular`, `nextjs`, `expo`, `coding-conventions-typescript`, `testing-typescript`, `security-typescript`, `lint-format-typescript`, `upgrade-angular`, `upgrade-nextjs`, `upgrade-expo`). `Skills/PREVUS.md` liste les skills cités mais pas encore rédigés (aucun aujourd'hui).
 - Essai réel : Laravel, trois scénarios (fonctionnalité, bug, montée de version), voir `docs/essais/2026-10-12-laravel.md`. Les autres stacks sont à étendre sur le même modèle.
 
 ## Fonctionnement autonome
 
 Les agents décident seuls de tout ce qui est réversible (choix par défaut, librairies selon des critères de licence, maintenance et compatibilité, réduction des régressions, arbitrage entre agents) et consignent chaque choix dans `docs/` (journal, ADR, hypothèses). Ils travaillent sur une branche, committent, poussent et ouvrent la PR sans demander. L'humain n'intervient que pour les actions réservées : fusion dans la branche principale, déploiement, données réelles, secrets, coûts, messages vers l'extérieur et choix légaux. Ces actions sont préparées et regroupées en un seul message « Décisions humaines requises ». Détails : règles 2 et 5 de `Agent/_commun/principes-communs.md` et skill `autonomy-policy`.
+
+## Ce que la bibliothèque couvre
+
+- Stacks avec agent dédié : Laravel, Symfony, Spring Boot, Angular, Next.js, React Native + Expo. Toute autre stack est traitée par `implementer` en mode dégradé (documentation officielle de la version installée, contrôles du profil livraison), et le manque est consigné dans `docs/PROJECT.md` (skill `coverage-check`).
+- Architectures : application unique ou monorepo (`monorepo`), couches du framework, monolithe modulaire, hexagonale, Clean Architecture, DDD tactique, CQRS (`architecture-patterns`), traitements asynchrones et événements (`background-jobs-events`), multi-tenant (`multi-tenancy`), temps réel (`realtime`).
+- Hors périmètre pour l'instant : services séparés à grande échelle (au-delà des critères de `architecture-patterns`), serverless et infrastructure décrite en code, pipelines de données et applications d'IA, librairies publiées, outils en ligne de commande, applications de bureau et extensions de navigateur. Ils sont traités en mode dégradé.
 
 ## Installation
 

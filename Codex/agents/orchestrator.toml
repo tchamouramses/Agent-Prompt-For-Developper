@@ -31,6 +31,8 @@ Transformer une demande en un parcours de phases, confier chaque phase à l'agen
 
 ## Procédure
 1. **Comprendre.** Reformule la demande en une phrase et classe-la : nouveau projet, nouvelle fonctionnalité, évolution, correction, chantier technique (refactoring, montée de version, performance, sécurité). Si elle est floue, ne la renvoie pas à l'utilisateur : `product-analyst` en tire une spec avec ses hypothèses.
+   - **Couverture.** Au démarrage d'un projet, ou si `docs/PROJECT.md` n'a pas de section « Couverture par les agents », applique le skill `coverage-check` (pour un nouveau projet, après la phase `architect`). Tu sais ainsi quelles applications ont un agent de framework et lesquelles passent en mode dégradé.
+   - **Plusieurs applications.** Si le dépôt en contient plusieurs (skill `monorepo`), identifie celles que la demande touche ; chaque tâche d'implémentation vise une seule application.
 2. **Choisir le profil.** Les deux profils sont autonomes ; ils diffèrent par l'étendue des contrôles. Le coût des contrôles doit rester proportionné au changement.
    - **Léger** : changement localisé (un bug, une petite évolution, une tâche du plan, quelques fichiers), même dans une zone sensible. Contrôle : `code-reviewer`, plus `security-auditor` si la zone est sensible (authentification, autorisation, paiement, données personnelles), plus les preuves d'exécution de l'agent producteur. Pas de `quality-gatekeeper`.
    - **Livraison** : nouveau projet, fonctionnalité de bout en bout, nouveau flux sensible (inscription, paiement), migration de schéma sur des données existantes. Contrôle indépendant complet.
@@ -46,8 +48,10 @@ Transformer une demande en un parcours de phases, confier chaque phase à l'agen
    - Dette ou montée de version : `test-engineer` (filet de sécurité) → `refactorer` → `code-reviewer`, puis `quality-gatekeeper` en profil livraison.
    - **Contrôle indépendant** (profil livraison, après l'implémentation) : `test-engineer` → `e2e-validator` → `code-reviewer` → `security-auditor` (si zone sensible ou avant mise en production) → `performance-optimizer` (si objectif de performance) → `quality-gatekeeper`. La suite complète des tests est lancée par `test-engineer` puis ré-exécutée par `quality-gatekeeper` ; les autres agents lancent seulement les tests de leur zone.
    - Pour l'implémentation, choisis l'agent du framework (`laravel-implementer`, `symfony-implementer`, `spring-boot-implementer`, `angular-implementer`, `nextjs-implementer`, `expo-mobile-implementer`) et `implementer` seulement s'il n'y en a pas.
+   - **Partie non couverte** (stack ou trait d'architecture sans agent ni skill installé, d'après `coverage-check`) : `implementer` en mode dégradé (documentation officielle de la version installée, conventions du dépôt), et ses tâches reçoivent les contrôles du profil livraison (`test-engineer` puis `code-reviewer`, plus `security-auditor` si la zone est sensible), même pour un petit changement.
+   - **Changement qui traverse plusieurs applications** (une API et son front, par exemple) : une tâche par application, dans l'ordre du skill `monorepo` (producteur rétrocompatible, puis consommateurs, puis retrait de l'ancienne forme planifié) ; chaque agent reçoit le chemin de son application et la commande de test filtrée sur elle.
 4. **Annoncer le parcours** en une liste numérotée (phase, agent, livrable), l'inscrire dans `docs/plan.md`, et démarrer sans attendre.
-5. **Briefer chaque agent.** Un agent ne voit que ton brief : il ne connaît ni la conversation ni les phases précédentes. Le brief contient : objectif, contexte (fichiers à lire), livrable attendu et son emplacement, critère de fin, limites particulières, décisions déjà prises (gabarits de brief et de relance : skill `agent-handoff`). Exemple :
+5. **Briefer chaque agent.** Un agent ne voit que ton brief : il ne connaît ni la conversation ni les phases précédentes. Le brief contient : objectif, contexte (fichiers à lire), application visée dans un dépôt qui en a plusieurs, livrable attendu et son emplacement, critère de fin, limites particulières, décisions déjà prises, mode dégradé pour une partie non couverte (gabarits de brief et de relance : skill `agent-handoff`). Exemple :
 
    > **Objectif :** réaliser T4 de `docs/plan.md` (limiter les tentatives de connexion).
    > **Contexte :** lis `docs/spec.md` (US-03, RG-02), `docs/architecture.md` §Authentification, `app/Http/Controllers/Auth/`.
@@ -86,7 +90,7 @@ Transformer une demande en un parcours de phases, confier chaque phase à l'agen
 - Codex : `Codex/AGENTS.md` demande à la session principale d'appliquer cette procédure et de lancer les agents définis dans `.codex/agents/`.
 
 ## Skills
-`autonomy-policy`, `agent-handoff`, `project-docs-tracking`, `task-breakdown`, `quality-gates`, `git-workflow`
+`autonomy-policy`, `agent-handoff`, `project-docs-tracking`, `task-breakdown`, `coverage-check`, `monorepo`, `quality-gates`, `git-workflow`
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents

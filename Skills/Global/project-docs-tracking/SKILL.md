@@ -38,6 +38,7 @@ Fichier `docs/journal/AAAA-MM-JJ-<sujet-court>.md`. Si le fichier existe déjà 
 ```markdown
 # AAAA-MM-JJ · <Titre lisible>
 - Agent : <nom de l'agent>
+- Application : <chemin, si le dépôt en contient plusieurs>
 - Tâche : plan.md#<Tx> (ou « hors plan : <demande> »)
 - Fait : <ce qui a changé, en une à trois lignes>
 - Fichiers : <chemins principaux>
@@ -57,7 +58,7 @@ Ajoute une ligne dans `docs/CHANGELOG.md`, section `## [Unreleased]`, sous la bo
 - `Security` : correction de sécurité ;
 - `Deprecated` : fonctionnalité appelée à disparaître.
 
-Une ligne = une phrase compréhensible par un utilisateur du produit, suivie de la référence (`(T4)`, `(US-03)`). Pas de ligne pour un refactoring sans effet visible, des tests seuls ou de la documentation interne.
+Une ligne = une phrase compréhensible par un utilisateur du produit, suivie de la référence (`(T4)`, `(US-03)`). Dans un dépôt à plusieurs applications visibles, la ligne commence par l'application (« Web : … »). Pas de ligne pour un refactoring sans effet visible, des tests seuls ou de la documentation interne.
 
 #### 3. Plan (si la tâche vient du plan)
 Dans `docs/plan.md`, mets à jour le statut de la tâche : `à faire` → `en cours` → `terminée` (ou `bloquée : <raison>`). Une tâche n'est `terminée` que si son critère « terminé » est prouvé.
@@ -66,6 +67,8 @@ Dans `docs/plan.md`, mets à jour le statut de la tâche : `à faire` → `en co
 Les autres agents ne modifient pas `docs/PROJECT.md` : ils signalent dans leur compte rendu ce qui devrait y changer (nouvelle décision, nouveau risque, fonctionnalité livrée).
 
 ### Gabarits pour initialiser `docs/`
+
+Un seul `docs/` à la racine du dépôt, même s'il contient plusieurs applications (skill `monorepo`).
 
 ```
 docs/
@@ -99,6 +102,12 @@ Version, date de dernière mise à jour, ce qui marche, ce qui est en cours.
 
 ## Stack et architecture
 Résumé ; détail dans [architecture.md](architecture.md).
+
+## Applications
+Dépôt à plusieurs applications seulement : carte du skill `monorepo` (chemin, rôle, stack, commandes, dépendances).
+
+## Couverture par les agents
+Table du skill `coverage-check` : ce qui est couvert, ce qui passe en mode dégradé, skills manquants.
 
 ## Fonctionnalités
 | Fonctionnalité | Statut (prévu, en cours, livré) | Spec |

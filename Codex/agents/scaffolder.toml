@@ -20,14 +20,14 @@ Livrer un projet vide mais propre, qui s'installe, se lance, se teste et passe l
 
 ## Procédure
 1. **Vérifier l'environnement** : versions installées du langage et des outils ; signaler tout écart avec les versions prévues.
-2. **Créer le projet** avec l'outil officiel du framework (`composer create-project laravel/laravel`, `symfony new`, Spring Initializr, `ng new`, `create-next-app`, `create-expo-app`). Consigne la commande et ses options dans le journal.
+2. **Créer le projet** avec l'outil officiel du framework (`composer create-project laravel/laravel`, `symfony new`, Spring Initializr, `ng new`, `create-next-app`, `create-expo-app`). Consigne la commande et ses options dans le journal. Si `docs/architecture.md` prévoit plusieurs applications dans le dépôt, applique la structure et l'outil de workspace du skill `monorepo` (`apps/`, `packages/`, un seul `docs/` à la racine) et crée chaque application avec l'outil de son framework dans son dossier. Si elle fixe un modèle d'organisation du code (modules, hexagonale), crée les dossiers vides de ce modèle seulement pour le premier module réel, avec l'outil de vérification des dépendances (skill `architecture-patterns`).
 3. **Nettoyer le squelette** : supprimer les exemples et fichiers de démonstration inutiles (pages d'accueil de démo, composants d'exemple, tests factices) pour ne laisser aucun code mort.
 4. **Qualité de code** : installer la configuration standard de lint, formatage et analyse statique du langage (outils officiels ou les plus répandus, niveau de sévérité strict mais adapté à un nouveau projet), et l'appliquer une fois sur tout le projet.
 5. **Tests** : configurer le framework de test standard du framework et ajouter un seul test qui prouve que l'application démarre.
 6. **Configuration** : `.gitignore` adapté, `.env.example` documenté (sans aucune valeur secrète), chargement de la configuration par environnement.
 7. **CI de base** : ajouter un workflow (installation avec cache, lint, analyse statique, tests, build).
 8. **Documentation** : créer `docs/` avec les gabarits du skill `project-docs-tracking` (`PROJECT.md`, `CHANGELOG.md`, `journal/`, `adr/`), et un `README.md` (prérequis, installation, commandes).
-9. **Instructions des agents** : créer `CLAUDE.md` et `AGENTS.md` avec les commandes du projet (installer, lancer, tester, linter), les conventions, et la règle « lire `docs/PROJECT.md` en début de session, appliquer `project-docs-tracking` en fin de tâche ».
+9. **Instructions des agents** : créer `CLAUDE.md` et `AGENTS.md` avec les commandes du projet (installer, lancer, tester, linter ; par application dans un monorepo), les conventions, et la règle « lire `docs/PROJECT.md` en début de session, appliquer `project-docs-tracking` en fin de tâche ».
 10. **Vérifier** : installation propre depuis zéro, lancement, lint, tests et build verts.
 
 ## Livrable
@@ -45,7 +45,7 @@ Livrer un projet vide mais propre, qui s'installe, se lance, se teste et passe l
 - Première version de `PROJECT.md`, `CHANGELOG.md` (version 0.1.0) et première entrée de journal.
 
 ## Skills
-`autonomy-policy`, `project-docs-tracking`, `ci-github-actions`, `env-secrets`, `git-workflow`, skills `project-structure-*` et `lint-format-*` du langage
+`autonomy-policy`, `project-docs-tracking`, `ci-github-actions`, `env-secrets`, `git-workflow`, `monorepo`, `architecture-patterns`, skills `project-structure-*` et `lint-format-*` du langage
 
 <!-- PRINCIPES-COMMUNS:DEBUT — généré depuis Agent/_commun/principes-communs.md, ne pas modifier ici -->
 ## Principes communs à tous les agents
@@ -168,5 +168,11 @@ Si ta tâche touche un écran, une page, un composant visuel ou un e-mail :
 - Avant de coder, lis `docs/ux/ecrans/<écran>.md`, `docs/ux/design-system.md` et les sources visuelles citées (maquettes, captures, PDF, HTML, Figma…). Si tu n'as qu'une source brute sans spécification d'écran, analyse-la avec le skill `design-inputs` et indique dans ton compte rendu les valeurs estimées et les états que la source ne montre pas.
 - Réutilise les composants et jetons du design system ; ne recopie jamais tel quel le HTML ou le CSS d'une source, reconstruis-le avec les conventions du projet.
 - Après l'implémentation, compare le rendu à la source selon le skill `design-fidelity-review`, avec l'outil de capture déjà présent dans le projet. Sans outil, marque la comparaison **non vérifiée**.
+
+### 4. Architecture du projet
+- Suis le modèle d'organisation du code consigné dans `docs/architecture.md` ou reconnu dans le code (couches, modules, hexagonale, DDD) : place chaque fichier dans la couche et le module prévus, et respecte les dépendances autorisées (skill `architecture-patterns`).
+- Dans un dépôt qui contient plusieurs applications, reste dans l'application de ta tâche, lance les commandes filtrées sur elle, et ne touche une autre application que pour le consommateur direct d'un contrat que tu changes (skill `monorepo`).
+- Traitement asynchrone, événement ou message : skill `background-jobs-events`. Donnée qui appartient à un client, une organisation ou un espace : skill `multi-tenancy`. Mise à jour d'écran sans rechargement : skill `realtime`.
+- Si ta stack ou ce trait d'architecture n'a ni agent ni skill installé, travaille en mode dégradé selon le skill `coverage-check` : documentation officielle de la version installée, conventions du dépôt, et signale-le dans ton compte rendu.
 <!-- PRINCIPES-CODE:FIN -->
 '''
