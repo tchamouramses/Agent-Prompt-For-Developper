@@ -19,8 +19,10 @@ Skills/
   Global/        savoirs transverses (checklists, conventions, gabarits)
   PHP/ Java/ TypeScript/   savoirs propres à chaque langage et framework
   PREVUS.md      skills cités mais pas encore rédigés
+install.sh       installation en une commande sans clone, et commande agents-dev
 scripts/
-  install.py                     installe agents, skills et garde-fous dans un projet
+  install.py                     installe agents, skills et garde-fous dans un projet ou pour tous (--global)
+  test-install.py                cas d'essai de l'installation
   sync-agents.py                 recopie les principes dans chaque agent et génère Codex/
   validate-skills.py             vérifie la forme des skills et les skills cités (--strict : tous rédigés)
   test-hook-actions-reservees.py cas d'essai du hook Claude Code
@@ -40,13 +42,35 @@ docs/
 
 Les agents décident seuls de tout ce qui est réversible (choix par défaut, librairies selon des critères de licence, maintenance et compatibilité, réduction des régressions, arbitrage entre agents) et consignent chaque choix dans `docs/` (journal, ADR, hypothèses). Ils travaillent sur une branche, committent, poussent et ouvrent la PR sans demander. L'humain n'intervient que pour les actions réservées : fusion dans la branche principale, déploiement, données réelles, secrets, coûts, messages vers l'extérieur et choix légaux. Ces actions sont préparées et regroupées en un seul message « Décisions humaines requises ». Détails : règles 2 et 5 de `Agent/_commun/principes-communs.md` et skill `autonomy-policy`.
 
-## Installation dans un projet
+## Installation
+
+**Une seule fois sur la machine** (sans cloner ; Python 3.9+ et curl requis) :
 
 ```
-python3 scripts/install.py <dossier-du-projet> --stack laravel --outil claude   # ou codex, les-deux
+curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh
 ```
 
-Le script installe les agents globaux et ceux des stacks choisies, tous les skills rédigés qu'ils citent, et les garde-fous. Il ne remplace aucun fichier existant sans `--force`, fusionne `.claude/settings.json`, ajoute ses instructions Codex dans `AGENTS.md` entre marqueurs, et liste les skills cités qui ne sont pas encore rédigés. Installation manuelle :
+La bibliothèque est téléchargée dans `~/.local/share/agents-dev` et la commande `agents-dev` dans `~/.local/bin`.
+
+**Dans un projet**, depuis sa racine :
+
+```
+agents-dev                          # stacks et outils détectés
+agents-dev --stack laravel,nextjs   # stacks imposées (laravel, symfony, spring-boot, angular, nextjs, expo, toutes, aucune)
+agents-dev --langage typescript     # stacks d'un langage : php (Laravel, Symfony), java (Spring Boot), typescript (Angular, Next.js, Expo)
+agents-dev --outil codex            # claude, codex ou les-deux ; par défaut, les outils trouvés dans le PATH
+agents-dev --desinstaller           # retire ce que la commande a installé
+```
+
+**Pour tous les projets** : `agents-dev --global` installe toutes les stacks dans `~/.claude/` (agents, skills, hook, réglages fusionnés) et pour Codex dans `~/.codex/` (bloc `AGENTS.md`, agents, règles) et `~/.agents/skills/`. Le `~/.codex/config.toml` de l'utilisateur n'est pas modifié. Une installation dans un projet reste prioritaire sur l'installation globale.
+
+**Mise à jour** : `agents-dev maj` télécharge la dernière version et met à jour l'installation globale ; relancer `agents-dev` sans option dans un projet le met à jour avec les mêmes stacks et outils.
+
+Détection : `composer.json` (Laravel, Symfony), `pom.xml` ou `build.gradle` (Spring Boot), `package.json` (Angular, Next.js, Expo), à la racine et jusqu'à deux niveaux de sous-dossiers (`apps/web`). Un langage hors liste (Go, Python, .NET…) est signalé et reçoit les agents génériques. Les fichiers installés sont listés dans `.bibliotheque-agents.json` : la relance remplace ces fichiers et retire ceux devenus inutiles, mais ne remplace jamais un fichier du projet sans `--force`. `.claude/settings.json` est fusionné, les instructions Codex vont dans `AGENTS.md` entre marqueurs, et la commande liste les skills cités qui ne sont pas encore rédigés.
+
+Depuis un clone, la même commande est `python3 scripts/install.py [dossier] [options]`.
+
+Installation manuelle :
 
 **Claude Code**
 - Copier les fichiers de `Agent/*/` voulus dans `.claude/agents/` et les dossiers de skills (`Skills/*/<skill>/`) dans `.claude/skills/`.
