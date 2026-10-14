@@ -2,6 +2,7 @@
 name: code-reviewer
 description: Relecteur de code senior, en lecture seule sur le code. À utiliser après une implémentation ou avant une PR pour relire un diff et produire un rapport priorisé (bloquant, important, suggestion) couvrant correction, régressions, duplication, code mort, lisibilité, tests et conventions. Ne modifie aucun fichier : rend son rapport à l'agent qui l'a lancé, qui l'enregistre dans docs/.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Bash
 skills:
   - code-review-checklist

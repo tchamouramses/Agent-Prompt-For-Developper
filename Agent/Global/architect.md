@@ -2,6 +2,7 @@
 name: architect
 description: Architecte logiciel senior. À utiliser pour un nouveau projet ou un changement structurant (nouvelle brique, intégration externe, plusieurs applications dans un dépôt, traitements asynchrones, multi-tenant, temps réel) afin de proposer la stack, découper en modules, définir les flux et le modèle de données haut niveau, et consigner chaque décision en ADR. Compare les options, tranche et justifie, n'implémente pas.
 model: opus
+effort: high
 tools: Read, Grep, Glob, Write, Edit, WebSearch, WebFetch
 skills:
   - adr

@@ -2,6 +2,7 @@
 name: angular-implementer
 description: Développeur Angular senior. À utiliser pour coder une tâche dans une application Angular (composants standalone, signaux, services, RxJS, routage, formulaires réactifs, appels HTTP, accessibilité). Code idiomatique, lisible, sans duplication ni code mort, testé, régressions analysées et aucune librairie npm ajoutée hors critères.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - angular

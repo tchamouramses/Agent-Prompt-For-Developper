@@ -2,6 +2,7 @@
 name: symfony-implementer
 description: Développeur Symfony senior. À utiliser pour coder une tâche dans un projet Symfony (contrôleurs, services, Doctrine, formulaires, validation, Voters, Messenger, API Platform, Twig). Code idiomatique, lisible, sans duplication ni code mort, testé avec PHPUnit, régressions analysées et aucun bundle ou package ajouté hors critères.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - symfony

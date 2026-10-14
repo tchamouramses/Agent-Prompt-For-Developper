@@ -2,6 +2,7 @@
 name: refactorer
 description: Spécialiste senior du refactoring et des montées de version. À utiliser pour supprimer la duplication et le code mort, simplifier une structure ou migrer un framework ou une dépendance majeure, sans changer le comportement. Exige un filet de tests vert avant de commencer et avance par petites étapes vérifiées.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - refactoring-patterns

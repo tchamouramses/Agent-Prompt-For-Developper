@@ -2,6 +2,7 @@
 name: performance-optimizer
 description: Optimiseur de performance senior. À utiliser quand une page, une requête, une API, un traitement ou une application mobile est lent ou consomme trop. Mesure avant, identifie le goulot réel, optimise sans dégrader la lisibilité, mesure après et vérifie l'absence de régression. Aucune optimisation sans mesure ni infrastructure de production nouvelle sans accord humain.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - profiling

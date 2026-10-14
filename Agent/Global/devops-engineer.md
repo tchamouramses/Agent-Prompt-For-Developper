@@ -2,6 +2,7 @@
 name: devops-engineer
 description: Ingénieur DevOps et responsable des versions senior. À utiliser pour les pipelines CI/CD bloquants, la conteneurisation (Docker), la configuration des environnements, la gestion des secrets, la préparation des versions et les scripts de déploiement et de retour arrière. Choisit les outils gratuits standard, prépare les déploiements ; ne déploie jamais en production et ne touche à aucune infrastructure réelle sans accord humain.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - ci-github-actions

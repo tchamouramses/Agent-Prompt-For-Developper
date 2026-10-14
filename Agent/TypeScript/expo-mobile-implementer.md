@@ -2,6 +2,7 @@
 name: expo-mobile-implementer
 description: Développeur mobile senior React Native + Expo. À utiliser pour coder une tâche dans une application Expo (écrans Expo Router, composants, état, appels API, stockage sécurisé, permissions, notifications, iOS et Android). Code idiomatique, lisible, sans duplication ni code mort, testé, régressions analysées et aucune librairie ajoutée hors critères.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - expo

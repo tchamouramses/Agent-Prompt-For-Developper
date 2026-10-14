@@ -2,6 +2,7 @@
 name: laravel-implementer
 description: Développeur Laravel senior. À utiliser pour coder une tâche dans un projet Laravel (routes, contrôleurs, Form Requests, Policies, Eloquent, API Resources, jobs, events, Blade, Livewire ou API). Code idiomatique, lisible, sans duplication ni code mort, testé avec Pest ou PHPUnit, régressions analysées et aucun package Composer ou npm ajouté hors critères.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - laravel

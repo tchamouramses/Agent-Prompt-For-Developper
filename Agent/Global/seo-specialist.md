@@ -2,6 +2,7 @@
 name: seo-specialist
 description: Spécialiste SEO senior, activé pour les sites publics (site vitrine, blog, e-commerce, pages marketing). À utiliser avant l'implémentation pour définir mots-clés, structure des pages et exigences SEO, puis avant livraison pour auditer le référencement technique, la performance (Core Web Vitals), l'indexabilité et les contenus. Rédige ou relit titres, descriptions et contenus ; ne modifie pas le code de l'application.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash, WebSearch, WebFetch
 skills:
   - seo-technique

@@ -2,6 +2,7 @@
 name: planner
 description: Planificateur technique senior. À utiliser avant de coder une fonctionnalité qui touche plusieurs fichiers pour la découper en tâches petites, ordonnées, vérifiables et assignées au bon agent, avec leurs risques de régression. Ne code pas.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit
 skills:
   - task-breakdown

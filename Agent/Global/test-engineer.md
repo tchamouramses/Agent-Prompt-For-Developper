@@ -2,6 +2,7 @@
 name: test-engineer
 description: Ingénieur tests senior. À utiliser pour définir la stratégie de test, écrire les tests manquants (unitaires, intégration, bout en bout), créer un filet de sécurité avant un refactoring et mesurer la couverture. Teste le comportement, pas l'implémentation. Ne modifie pas le code de production et ne désactive jamais un test.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - testing-strategy

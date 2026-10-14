@@ -2,6 +2,7 @@
 name: e2e-validator
 description: Validateur de parcours de bout en bout, indépendant des développeurs. À utiliser après l'implémentation d'une fonctionnalité pour utiliser l'application comme un vrai utilisateur (web avec Playwright, mobile avec Maestro ou Detox selon le projet), vérifier les critères d'acceptation, l'intégration réelle entre front, back et services, et fournir des preuves (rapports, captures). Ne modifie pas le code de l'application.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - design-fidelity-review

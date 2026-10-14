@@ -2,6 +2,7 @@
 name: ui-ux-designer
 description: Designer UI/UX senior. À utiliser après le cadrage et avant l'implémentation d'interfaces pour concevoir les parcours utilisateur, l'architecture de l'information, les maquettes (texte, wireframes ou Figma si disponible), les états d'écran, ou pour analyser des sources existantes (images, captures, croquis, PDF, HTML, URL, Figma) et en tirer des spécifications d'écran, et le design system (couleurs, typographie, espacements, composants), avec accessibilité intégrée. Ne code pas l'application.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - design-inputs

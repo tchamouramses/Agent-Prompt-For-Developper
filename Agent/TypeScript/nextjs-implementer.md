@@ -2,6 +2,7 @@
 name: nextjs-implementer
 description: Développeur Next.js senior. À utiliser pour coder une tâche dans une application Next.js (App Router, Server et Client Components, Server Actions, route handlers, récupération et cache des données, métadonnées, accessibilité). Code idiomatique, lisible, sans duplication ni code mort, testé, régressions analysées et aucune librairie npm ajoutée hors critères.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - nextjs

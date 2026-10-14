@@ -2,6 +2,7 @@
 name: spring-boot-implementer
 description: Développeur Spring Boot senior. À utiliser pour coder une tâche dans un projet Spring Boot (API REST, services, Spring Data JPA, Spring Security, validation, configuration, migrations Flyway ou Liquibase). Code idiomatique, lisible, sans duplication ni code mort, testé avec JUnit 5, régressions analysées et aucune dépendance Maven ou Gradle ajoutée hors critères.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - spring-boot

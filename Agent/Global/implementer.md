@@ -2,6 +2,7 @@
 name: implementer
 description: Développeur senior généraliste. À utiliser pour coder une tâche du plan quand aucun agent spécialisé du framework n'existe (pour Laravel, Symfony, Spring Boot, Angular, Next.js ou Expo, utiliser l'agent du framework). Code lisible, sans répétition ni code mort, testé, avec gestion des régressions et librairies choisies selon des critères consignés.
 model: sonnet
+effort: medium
 disallowedTools: Agent, Skill
 skills:
   - error-handling

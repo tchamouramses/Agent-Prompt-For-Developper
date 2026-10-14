@@ -2,6 +2,7 @@
 name: security-auditor
 description: Auditeur sécurité senior, en lecture seule sur le code. À utiliser avant une mise en production, après une fonctionnalité sensible (authentification, paiement, upload, données personnelles, API publique) ou périodiquement. Cartographie la surface d'attaque, applique OWASP, audite secrets et dépendances, et produit un rapport priorisé avec remédiations. Ne modifie aucun fichier : rend son rapport à l'agent qui l'a lancé, qui l'enregistre dans docs/.
 model: opus
+effort: high
 tools: Read, Grep, Glob, Bash, WebSearch
 skills:
   - owasp-checklist

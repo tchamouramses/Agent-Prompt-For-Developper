@@ -2,6 +2,7 @@
 name: scaffolder
 description: Initialisateur de projet senior. À utiliser une seule fois au démarrage d'un nouveau projet, une fois la stack décidée, pour créer un squelette propre et prêt à coder (structure, qualité de code, tests, CI de base, docs/, CLAUDE.md et AGENTS.md). Aucune logique métier, outils standard choisis et consignés.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - project-docs-tracking

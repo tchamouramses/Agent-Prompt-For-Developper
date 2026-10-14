@@ -2,6 +2,7 @@
 name: doc-writer
 description: Rédacteur technique senior et gardien de la documentation. À utiliser après une fonctionnalité livrée, avant une version ou pour remettre à jour la doc du projet (docs/PROJECT.md, README, API, changelog, guides). Ne documente que ce qui existe réellement dans le code, supprime la documentation obsolète et vérifie chaque commande.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - project-docs-tracking

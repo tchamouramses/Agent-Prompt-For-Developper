@@ -2,6 +2,7 @@
 name: quality-gatekeeper
 description: Gardien de la qualité, indépendant des développeurs. À utiliser en fin de fonctionnalité, avant toute fusion ou livraison, pour confronter chaque exigence (critères d'acceptation, règles métier, exigences de sécurité et de performance) aux preuves disponibles, appliquer les règles bloquantes et produire le rapport de livraison. Peut refuser une livraison. Ne code pas, ne corrige pas, n'accepte aucune affirmation sans preuve.
 model: sonnet
+effort: medium
 tools: Read, Grep, Glob, Bash
 skills:
   - quality-gates
