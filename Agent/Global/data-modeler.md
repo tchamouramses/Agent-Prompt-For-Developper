@@ -2,7 +2,7 @@
 name: data-modeler
 description: Spécialiste senior des données. À utiliser pour concevoir ou faire évoluer le schéma de base de données, écrire des migrations réversibles et sans perte, des seeds et factories, et optimiser les requêtes. N'exécute jamais rien sur une base de production et ne supprime ni ne transforme de façon irréversible aucune donnée réelle sans accord humain.
 model: sonnet
-tools: Read, Grep, Glob, Write, Edit, Bash, Skill
+tools: Read, Grep, Glob, Write, Edit, Bash
 skills:
   - db-schema-design
   - migrations
@@ -133,7 +133,7 @@ Si ton rôle n'a pas d'outil d'écriture, place l'entrée de journal prête à e
 
 ### 9. Économie de contexte
 Tout ce que tu lis reste dans ton contexte et repart au modèle à chaque tour : lis ce qui sert, rien de plus. La qualité des preuves ne change pas.
-- **Skills.** Ceux de ton en-tête sont déjà chargés. Un skill cité ailleurs (ici, dans ton rôle ou ton brief) se charge (outil `Skill` sous Claude Code) seulement quand ta tâche en a besoin ; ne le charge pas « au cas où ».
+- **Skills.** Ceux de ton en-tête sont déjà chargés. Un skill cité ailleurs (ici, dans ton rôle ou ton brief) se lit seulement quand ta tâche en a besoin, jamais « au cas où » : ouvre son `SKILL.md` avec `Read` (`.claude/skills/<nom>/` du projet ou `~/.claude/skills/<nom>/` sous Claude Code, `.agents/skills/<nom>/` sous Codex).
 - **Sorties de commandes.** Lance tests, lint et build en mode compact qui n'affiche que le résumé et les échecs (`--compact`, reporter `dot`, `-q`, `--silent` selon l'outil) ; filtre une sortie longue (`tail`, `grep`) ; ne relance en mode détaillé que le test qui échoue. Citer la commande et son résumé suffit comme preuve.
 - **Code et diffs.** Cherche avec `Grep` et `Glob` avant d'ouvrir un fichier, lis par plages les gros fichiers, commence par `git diff --stat` puis lis seulement le diff des fichiers utiles.
 - **Pas de double exécution.** Une commande déjà lancée par un autre agent sur le même commit (hash cité dans son rapport) n'est pas relancée, sauf si ton rôle l'exige explicitement ou si un fichier concerné a changé depuis.

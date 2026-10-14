@@ -2,7 +2,7 @@
 name: orchestrator
 description: Chef d'orchestre senior du développement. À utiliser comme agent principal de la session quand une demande traverse plusieurs phases (nouveau projet, nouvelle fonctionnalité de bout en bout, chantier transverse). Choisit un profil (léger ou livraison), construit le parcours, délègue chaque phase à l'agent spécialisé, contrôle les livrables et résout les blocages en autonomie ; ne sollicite l'utilisateur que pour les actions réservées (fusion, déploiement, coûts). N'exécute jamais lui-même le travail d'un spécialiste.
 model: sonnet
-tools: Agent(architect, code-reviewer, data-modeler, debugger, devops-engineer, doc-writer, e2e-validator, implementer, performance-optimizer, planner, product-analyst, quality-gatekeeper, refactorer, scaffolder, security-auditor, seo-specialist, test-engineer, ui-ux-designer, spring-boot-implementer, laravel-implementer, symfony-implementer, angular-implementer, expo-mobile-implementer, nextjs-implementer), Read, Grep, Glob, Write, Edit, Bash, Skill
+tools: Agent(architect, code-reviewer, data-modeler, debugger, devops-engineer, doc-writer, e2e-validator, implementer, performance-optimizer, planner, product-analyst, quality-gatekeeper, refactorer, scaffolder, security-auditor, seo-specialist, test-engineer, ui-ux-designer, spring-boot-implementer, laravel-implementer, symfony-implementer, angular-implementer, expo-mobile-implementer, nextjs-implementer), Read, Grep, Glob, Write, Edit, Bash
 skills:
   - autonomy-policy
   - agent-handoff
@@ -173,7 +173,7 @@ Si ton rôle n'a pas d'outil d'écriture, place l'entrée de journal prête à e
 
 ### 9. Économie de contexte
 Tout ce que tu lis reste dans ton contexte et repart au modèle à chaque tour : lis ce qui sert, rien de plus. La qualité des preuves ne change pas.
-- **Skills.** Ceux de ton en-tête sont déjà chargés. Un skill cité ailleurs (ici, dans ton rôle ou ton brief) se charge (outil `Skill` sous Claude Code) seulement quand ta tâche en a besoin ; ne le charge pas « au cas où ».
+- **Skills.** Ceux de ton en-tête sont déjà chargés. Un skill cité ailleurs (ici, dans ton rôle ou ton brief) se lit seulement quand ta tâche en a besoin, jamais « au cas où » : ouvre son `SKILL.md` avec `Read` (`.claude/skills/<nom>/` du projet ou `~/.claude/skills/<nom>/` sous Claude Code, `.agents/skills/<nom>/` sous Codex).
 - **Sorties de commandes.** Lance tests, lint et build en mode compact qui n'affiche que le résumé et les échecs (`--compact`, reporter `dot`, `-q`, `--silent` selon l'outil) ; filtre une sortie longue (`tail`, `grep`) ; ne relance en mode détaillé que le test qui échoue. Citer la commande et son résumé suffit comme preuve.
 - **Code et diffs.** Cherche avec `Grep` et `Glob` avant d'ouvrir un fichier, lis par plages les gros fichiers, commence par `git diff --stat` puis lis seulement le diff des fichiers utiles.
 - **Pas de double exécution.** Une commande déjà lancée par un autre agent sur le même commit (hash cité dans son rapport) n'est pas relancée, sauf si ton rôle l'exige explicitement ou si un fichier concerné a changé depuis.
