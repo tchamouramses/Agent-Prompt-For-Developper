@@ -43,8 +43,10 @@ Le cadre d'audit (surface d'attaque, OWASP, rapport) est dans l'agent `security-
 6. **Appels sortants** : URL fournie par l'utilisateur seulement en `https`, hôte résolu et refusé s'il est privé, local ou de métadonnées (`127.0.0.0/8`, `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16`, `::1`), sans suivre les redirections vers ces adresses ; délai d'attente court.
 7. **Authentification et secrets** :
    - `Hash::make` ou `UserPasswordHasherInterface`, jamais `md5` ou `sha1` ; comparaison de jetons avec `hash_equals`.
-   - Limitation de débit sur connexion, réinitialisation de mot de passe, codes à usage unique et routes coûteuses (`RateLimiter`, `throttle`, `symfony/rate-limiter`).
-   - Jetons d'API avec capacités minimales (abilities Sanctum, scopes) et expiration.
+   - Limitation de débit sur connexion, réinitialisation de mot de passe, codes à usage unique et routes coûteuses (`RateLimiter`, `throttle`, `symfony/rate-limiter`). Sur la connexion, la clé combine l'identifiant saisi (normalisé : chaîne, minuscules) et l'IP, pas l'IP seule ; un limiteur général couvre aussi les routes d'API authentifiées.
+   - Pas d'énumération de comptes : même message, même code et durée comparable que le compte existe ou non (vérification d'un hash factice quand l'utilisateur est introuvable).
+   - Jetons d'API avec capacités minimales (abilities Sanctum, scopes) et expiration configurée (`sanctum.expiration` non nul, durée lisible dans `.env.example`), purge des jetons expirés planifiée, révocation à la déconnexion.
+   - Chaque champ texte reçu a une longueur maximale (`max:`, `Length`), y compris les contenus longs.
    - `APP_DEBUG=false` et `APP_ENV=production` en production ; aucun secret dans le code, les tests ou la documentation ; nouvelles clés seulement dans `.env.example`, sans valeur.
    - Journaux sans mot de passe, jeton, numéro de carte ni donnée personnelle inutile.
 8. **Dépendances** : `composer audit` (et `npm audit --omit=dev` si un front est présent) ; une vulnérabilité haute ou critique dans une dépendance utilisée est bloquante.
