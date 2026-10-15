@@ -5,7 +5,7 @@ description: Tenue de la documentation de suivi du projet dans docs/ (journal, C
 
 # Suivi documentaire du projet
 
-Le dossier `docs/` est la mémoire du projet. Une nouvelle session ou un nouvel agent doit pouvoir lire `docs/PROJECT.md` et les dernières entrées de `docs/journal/` et savoir immédiatement où en est le projet, sans relire le code. La règle est dans les principes communs (« Suivi documentaire ») ; ce skill donne la procédure et les gabarits.
+Le dossier `docs/` est la mémoire du projet. Une nouvelle session ou un nouvel agent doit pouvoir lire `docs/PROJECT.md` et les entrées utiles de `docs/journal/` et savoir immédiatement où en est le projet, sans relire le code. La règle est dans les principes communs (« Suivi documentaire ») ; ce skill donne la procédure et les gabarits.
 
 ## Quand l'utiliser
 - Au début d'une tâche, pour savoir où en est le projet.
@@ -25,7 +25,7 @@ Le dossier `docs/` est la mémoire du projet. Une nouvelle session ou un nouvel 
 
 ### Au début d'une tâche
 1. Lis `docs/PROJECT.md` (état actuel, décisions clés, dette et risques).
-2. Lis les 5 dernières entrées de `docs/journal/` (tri par nom de fichier, qui commence par la date).
+2. Lis les entrées de `docs/journal/` citées dans ton brief ou qui portent sur ta zone (recherche par nom de fichier ou par chemin avec `Grep`) ; à défaut, les deux plus récentes (le nom de fichier commence par la date). Ne lis pas tout le journal.
 3. Si ta tâche vient de `docs/plan.md`, lis sa ligne : identifiant, critère « terminé », dépendances, risque.
 
 Si `docs/` n'existe pas, ne crée pas l'arborescence de ta propre initiative : signale-le dans ton compte rendu. Seuls `scaffolder` (nouveau projet), `doc-writer` et `orchestrator` la créent, à partir des gabarits ci-dessous.

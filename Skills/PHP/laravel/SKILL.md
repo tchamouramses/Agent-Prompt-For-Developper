@@ -54,6 +54,7 @@ La règle « outils natifs avant toute librairie » et les standards de base son
 - **Dates** : `now()` et `Carbon` sont mutables ; copie avec `->copy()` ou utilise `CarbonImmutable` si le projet l'a choisi. Stocke en UTC, convertis à l'affichage.
 - **Configuration** : `env()` uniquement dans `config/*.php` (après `config:cache`, `env()` renvoie `null` ailleurs). Toute nouvelle variable va dans `.env.example` sans valeur réelle.
 - **Liaison de route** : pour des ressources imbriquées (`/projets/{projet}/taches/{tache}`), `->scopeBindings()` empêche d'atteindre la tâche d'un autre projet.
+- **Erreurs d'API** : sous `api/*`, toute erreur rend du JSON, même sans en-tête `Accept` : `->withExceptions(fn ($e) => $e->shouldRenderJsonWhen(fn ($request) => $request->is('api/*') || $request->expectsJson()))` dans `bootstrap/app.php`. Sinon un appel non authentifié tente une redirection vers la route `login`, absente d'une API, et renvoie 500 au lieu de 401. Un test l'appelle sans `Accept`.
 - **API Resources** : `whenLoaded()` pour les relations, `whenCounted()` pour les compteurs ; pagination avec `->paginate()` renvoyée telle quelle à la Resource pour garder les métadonnées.
 - **Cache** : clé qui inclut tout ce qui fait varier la valeur (utilisateur, tenant, langue) ; invalidation prévue au même endroit que l'écriture.
 

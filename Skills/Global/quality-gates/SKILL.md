@@ -46,7 +46,7 @@ description: Règles bloquantes de livraison, preuves exigées par contrôle, co
 4. **Classer chaque exigence** : validée, non testée, en échec, risque accepté (décision tracée de l'utilisateur pour un point bloquant, d'un agent arbitre pour un point non bloquant).
 5. **Décider** : Accepté, Accepté sous réserve (points non bloquants listés), Refusé.
 6. **En cas de refus**, pour chaque anomalie : exigence, preuve d'échec, agent responsable, attendu pour lever le refus.
-7. **Après une correction**, refaire : la suite complète de tests et le lint (toujours), la revue du diff de la correction, et chaque contrôle spécialisé dont la zone a été touchée (sécurité, e2e, performance, design). La deuxième passe d'un agent de contrôle porte sur ce diff et sur ses anomalies précédentes, pas sur tout le livrable ; chaque agent de contrôle intervient au plus deux fois par parcours. Un contrôle qui a accepté et dont la zone n'est pas touchée par la correction n'est pas refait.
+7. **Après une correction**, refaire : la suite complète de tests et le lint (toujours), la revue du diff de la correction, et chaque contrôle spécialisé dont la zone a été touchée par la correction d'un point bloquant (sécurité, e2e, performance, design) ; la correction de points non bloquants n'en relance aucun. La deuxième passe d'un agent de contrôle porte sur ce diff et sur ses anomalies précédentes, pas sur tout le livrable ; chaque agent de contrôle intervient au plus deux fois par parcours. Un contrôle qui a accepté et dont la zone n'est pas touchée par la correction n'est pas refait.
 
 ## Livrable
 Le rapport de livraison défini dans le rôle `quality-gatekeeper`, avec la matrice :

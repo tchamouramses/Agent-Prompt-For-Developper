@@ -112,7 +112,8 @@ Installation manuelle :
 **Claude Code**
 - Copier les fichiers de `Agent/*/` voulus dans `.claude/agents/` et les dossiers de skills (`Skills/*/<skill>/`) dans `.claude/skills/`.
 - Fusionner `Config/claude/settings.json` dans `.claude/settings.json` et copier `Config/claude/hooks/actions-reservees.mjs` dans `.claude/hooks/` (Node.js 18+ requis). Le hook bloque push vers la branche principale ou forcé, fusion, déploiement, base destructrice hors test, lecture des secrets, et toute écriture hors de `/tmp` par les agents de contrôle.
-- Chaque agent précharge ses skills (champ `skills`) ; un skill absent est ignoré avec un avertissement dans le journal de débogage.
+- Chaque agent précharge seulement les skills de son cœur de métier (champ `skills`) ; les autres skills cités sont lus à la demande (`Read` sur leur `SKILL.md`), quand la tâche en a besoin (traduction, maquette, SEO…). L'outil `Skill` est retiré des agents : il ajouterait à chacun la liste de tous les skills installés, soit plusieurs milliers de tokens à chaque tour. Un skill absent est ignoré avec un avertissement dans le journal de débogage.
+- Chaque agent fixe son modèle (champ `model`) et son niveau de réflexion (champ `effort`) : Opus pour `architect` et `security-auditor`, Sonnet pour les autres, quel que soit le modèle de la session ; effort `high` pour `architect` et `debugger`, `medium` pour les autres. Pour en changer, modifier ces champs dans `Agent/` puis relancer `scripts/sync-agents.py`.
 - Pour une demande sur plusieurs phases, lancer la session avec `claude --agent orchestrator` : c'est lui qui lance les autres agents et présente le bilan et les décisions humaines requises.
 
 **Codex**

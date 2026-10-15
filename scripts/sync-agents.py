@@ -109,7 +109,7 @@ def render_codex_agents_md(agents: list[tuple[dict, Path]]) -> str:
     return f"""<!-- Généré par scripts/sync-agents.py depuis Agent/, ne pas modifier ici. -->
 # Instructions du projet
 
-Au début de chaque session, lis `docs/PROJECT.md` et les dernières entrées de `docs/journal/` s'ils existent.
+Au début de chaque session, lis `docs/PROJECT.md` et les entrées de `docs/journal/` liées à la demande (à défaut, les deux plus récentes) s'ils existent.
 
 ## Travail avec les agents spécialisés
 
