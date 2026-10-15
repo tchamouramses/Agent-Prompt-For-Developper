@@ -6,10 +6,9 @@
 #   curl -fsSL .../install.sh | sh -s -- --projet ~/app    installe dans ce dossier
 #   curl -fsSL .../install.sh | sh -s -- --global          installe la commande, puis pour tous les projets
 #
-# Dépôt privé : raw.githubusercontent.com répond 404 sans authentification. Lancer alors le script
-# depuis un clone, qui sert de source sans rien télécharger :
-#   git clone https://github.com/tchamouramses/Agent-Prompt-For-Developper.git
+# Depuis un clone, le script prend le clone comme source sans rien télécharger :
 #   sh Agent-Prompt-For-Developper/install.sh --projet ~/app
+# Avec npm, sans ce script : npx @tchamouramses/agents-dev (voir le README).
 #
 # Ensuite, depuis la racine de n'importe quel projet :
 #   agents-dev                 stacks et outils détectés (options : agents-dev --help)
@@ -38,8 +37,7 @@ if [ "${1:-}" = "--projet" ]; then
   esac
 fi
 
-# Source : le clone d'où le script est lancé, sinon un clone Git (identifiants de l'utilisateur,
-# donc dépôt privé compris), sinon l'archive publique.
+# Source : le clone d'où le script est lancé, sinon un clone Git, sinon l'archive de GitHub.
 # Lancé par `curl … | sh`, $0 vaut « sh » : seul un chemin vers install.sh désigne un clone.
 ICI=""
 case "$0" in
@@ -55,7 +53,7 @@ else
   command -v curl >/dev/null 2>&1 || { echo "git ou curl est requis." >&2; exit 1; }
   mkdir "$TMP/source"
   curl -fsSL "https://codeload.github.com/$DEPOT/tar.gz/$REF" | tar -xz -C "$TMP/source" --strip-components 1 || {
-    echo "Téléchargement impossible. Si le dépôt est privé, clone-le puis lance son install.sh (voir l'en-tête)." >&2
+    echo "Téléchargement impossible depuis GitHub. Vérifie la connexion ou AGENTS_DEV_REF ($REF)." >&2
     exit 1
   }
   SOURCE="$TMP/source"

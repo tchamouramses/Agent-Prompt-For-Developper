@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Vérifie le paquet npm : son contenu, puis une installation comme dépendance d'un projet
- * (`npx agents-dev`) et un lancement ponctuel (`npx --package <archive> agents-dev`).
+ * (`npx agents-dev`), un lancement ponctuel (`npx --package <archive> agents-dev`) et une
+ * installation globale (`npm install -g`).
  * Node.js 18 ou plus, npm, sans dépendance.
  */
 import { execFileSync } from "node:child_process";
@@ -53,6 +54,13 @@ try {
   verifier(sortiePonctuelle.includes("stacks : angular"), "npx --package <archive> installe sans dépendance");
   const relancePonctuelle = manifeste(ponctuel).relance;
   verifier(relancePonctuelle.startsWith("npx --yes ") && relancePonctuelle.endsWith(sortie[0].filename), `relance enregistrée : source rappelée par npx (${relancePonctuelle})`);
+
+  const prefixe = path.join(temp, "global");
+  lancer(NPM, ["install", "--global", "--prefix", prefixe, "--no-audit", "--no-fund", archive], temp);
+  const binaire = process.platform === "win32" ? path.join(prefixe, "agents-dev.cmd") : path.join(prefixe, "bin", "agents-dev");
+  const machine = projet("machine", { expo: "52.0.0" });
+  verifier(lancer(binaire, ["--outil", "claude"], machine).includes("stacks : expo"), "commande globale (npm install -g)");
+  verifier(manifeste(machine).relance === "agents-dev", "relance enregistrée : agents-dev pour l'installation globale");
 
   const clone = projet("clone", {});
   lancer(process.execPath, [path.join(ROOT, "scripts", "install.mjs"), "--outil", "claude", "--stack", "aucune"], clone);
