@@ -38,6 +38,8 @@
       "Bash(python3:*)",
       "Bash(node:*)",
       "Bash(agents-dev:*)",
+      "Bash(npx agents-dev:*)",
+      "Bash(npx --yes @tchamouramses/agents-dev:*)",
       "Bash(docker compose ps:*)",
       "Bash(docker compose logs:*)"
     ],

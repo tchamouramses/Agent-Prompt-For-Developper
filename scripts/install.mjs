@@ -44,6 +44,20 @@ Exemples :
   node scripts/install.mjs --desinstaller             retire ce qui a été installé ici`;
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const PAQUET_NPM = "@tchamouramses/agents-dev";
+
+/** Commande qui relance cette installation, enregistrée dans le manifeste pour les agents. */
+function commandeDeRelance(base) {
+  const morceaux = ROOT.split(path.sep);
+  if (!morceaux.includes("node_modules")) return "agents-dev";
+  // Dépendance npm du projet : npx la trouve dans node_modules.
+  if (fs.existsSync(path.join(base, "node_modules", ...PAQUET_NPM.split("/")))) return "npx agents-dev";
+  // Cache de npx : son package.json garde la source demandée (registre, github:…, archive).
+  const cache = morceaux.slice(0, morceaux.lastIndexOf("node_modules")).join(path.sep);
+  const source = (lireJson(path.join(cache, "package.json")).dependencies || {})[PAQUET_NPM];
+  const registre = !source || /^[\^~]?\d/.test(source);
+  return `npx --yes ${registre ? PAQUET_NPM : source}`;
+}
 const MANIFESTE = ".bibliotheque-agents.json";
 const HOOK = "actions-reservees.mjs";
 const STACKS = {
@@ -551,7 +565,7 @@ function main() {
   if ((ancienOutil === "codex" || ancienOutil === "les-deux") && outil === "claude") retirerBlocAgentsMd(base, inst.journal);
   retirerDossiersVides(base);
   inst.ecrire(path.join(base, MANIFESTE), json({
-    outil, stacks, global: args.global, nouveau,
+    outil, stacks, global: args.global, nouveau, relance: commandeDeRelance(base),
     fichiers: trier(inst.fichiers), refus_ajoutes: trier(new Set(inst.refusAjoutes)),
     autorisations_ajoutees: trier(new Set(inst.autorisationsAjoutees)),
   }));
