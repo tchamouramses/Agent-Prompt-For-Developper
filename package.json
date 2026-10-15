@@ -2,6 +2,19 @@
   "name": "@tchamouramses/agents-dev",
   "version": "1.0.0",
   "description": "Agents et skills Claude Code et Codex pour développer de bout en bout, installés dans un projet en une commande.",
+  "keywords": [
+    "claude-code",
+    "codex",
+    "agents",
+    "skills",
+    "ai",
+    "laravel",
+    "symfony",
+    "spring-boot",
+    "angular",
+    "nextjs",
+    "expo"
+  ],
   "type": "module",
   "bin": {
     "agents-dev": "scripts/install.mjs"
@@ -20,5 +33,15 @@
     "type": "git",
     "url": "git+https://github.com/tchamouramses/Agent-Prompt-For-Developper.git"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/tchamouramses/Agent-Prompt-For-Developper#readme",
+  "bugs": {
+    "url": "https://github.com/tchamouramses/Agent-Prompt-For-Developper/issues"
+  },
+  "scripts": {
+    "test": "node scripts/test-install.mjs && node scripts/test-hook-actions-reservees.mjs && node scripts/test-paquet-npm.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

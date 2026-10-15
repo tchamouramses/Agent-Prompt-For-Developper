@@ -52,6 +52,8 @@ function commandeDeRelance(base) {
   if (!morceaux.includes("node_modules")) return "agents-dev";
   // Dépendance npm du projet : npx la trouve dans node_modules.
   if (fs.existsSync(path.join(base, "node_modules", ...PAQUET_NPM.split("/")))) return "npx agents-dev";
+  // Installation globale (npm install -g) : la commande agents-dev est dans le PATH.
+  if (!morceaux.includes("_npx")) return "agents-dev";
   // Cache de npx : son package.json garde la source demandée (registre, github:…, archive).
   const cache = morceaux.slice(0, morceaux.lastIndexOf("node_modules")).join(path.sep);
   const source = (lireJson(path.join(cache, "package.json")).dependencies || {})[PAQUET_NPM];

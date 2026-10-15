@@ -22,11 +22,11 @@ Skills/
   PHP/ Java/ TypeScript/   savoirs propres à chaque langage et framework
   PREVUS.md      skills cités mais pas encore rédigés
 install.sh       installation en une commande, dans un projet (--projet) ou avec la commande agents-dev
-package.json     paquet npm : npx lance la commande agents-dev (scripts/install.mjs)
+package.json     paquet npm @tchamouramses/agents-dev, publié par .github/workflows/publier-npm.yml à chaque tag vX.Y.Z
 scripts/
   install.mjs                    installe agents, skills et garde-fous dans un projet ou pour tous (--global), en Node.js
   test-install.mjs               cas d'essai de l'installation
-  test-paquet-npm.mjs            cas d'essai du paquet npm (contenu, npx, dépendance)
+  test-paquet-npm.mjs            cas d'essai du paquet npm (contenu, npx, dépendance, global)
   sync-agents.py                 recopie les principes dans chaque agent et génère Codex/
   validate-skills.py             vérifie la forme des skills et les skills cités (--strict : tous rédigés)
   test-hook-actions-reservees.mjs cas d'essai du hook Claude Code
@@ -54,44 +54,36 @@ Les agents décident seuls de tout ce qui est réversible (choix par défaut, li
 
 ## Installation
 
-**Directement dans un projet**, sans rien installer ailleurs sur la machine (Node.js 18+, et git ou curl) :
+Prérequis : Node.js 18 ou plus.
+
+**Avec npm (recommandé)**, à la racine du projet :
 
 ```
-curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh -s -- --projet
-curl -fsSL .../install.sh | sh -s -- --projet ~/mon-app --stack nextjs   # autre dossier, options de install.mjs
+npx @tchamouramses/agents-dev                    # stacks et outils détectés, rien n'est ajouté au package.json
+npx @tchamouramses/agents-dev --stack laravel    # mêmes options que agents-dev (agents-dev --help)
 ```
 
-La bibliothèque est récupérée dans un dossier temporaire, installée dans le projet, puis effacée. Pour mettre à jour, relancer la même commande.
-
-**Ou une seule fois sur la machine**, pour avoir la commande `agents-dev` partout :
+Pour figer la version avec le projet, l'ajouter comme dépendance de développement, puis utiliser la commande du projet :
 
 ```
-curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh
+npm install --save-dev @tchamouramses/agents-dev
+npx agents-dev
 ```
 
-La bibliothèque est récupérée dans `~/.local/share/agents-dev` et la commande `agents-dev` dans `~/.local/bin`.
+Pour avoir la commande `agents-dev` partout sur la machine : `npm install -g @tchamouramses/agents-dev`.
 
-**Dépôt privé** : `raw.githubusercontent.com` répond 404 sans authentification. Cloner le dépôt et lancer son `install.sh`, qui prend le clone comme source :
+Tant que la première version n'est pas publiée sur le registre npm, ou pour une branche précise, la même chose fonctionne directement depuis GitHub : `npx github:tchamouramses/Agent-Prompt-For-Developper` (ajouter `#<branche-ou-tag>` pour une autre version que `main`).
 
-```
-git clone https://github.com/tchamouramses/Agent-Prompt-For-Developper.git
-sh Agent-Prompt-For-Developper/install.sh --projet ~/mon-app   # dans un projet
-sh Agent-Prompt-For-Developper/install.sh                      # ou la commande agents-dev, qui utilise ce clone
-```
+Mise à jour : relancer la même commande `npx` (elle prend la dernière version publiée), `npm update @tchamouramses/agents-dev` pour une dépendance, `npm update -g @tchamouramses/agents-dev` pour la commande globale. La commande utilisée est enregistrée dans `.bibliotheque-agents.json` (champ `relance`) : les agents qui doivent relancer l'installation (nouvelle stack, squelette créé) s'en servent.
 
-Sans clone, `install.sh` passe d'abord par `git clone` (avec les identifiants Git de la machine), puis par l'archive publique. Avec un clone, `agents-dev maj` fait un `git pull`.
-
-**Avec npm**, dans un projet qui a un `package.json` (ou n'importe quel dossier) :
+**Sans npm**, avec le script d'installation (git ou curl) :
 
 ```
-npx github:tchamouramses/Agent-Prompt-For-Developper                 # installe sans rien ajouter au projet
-npx github:tchamouramses/Agent-Prompt-For-Developper --stack laravel  # mêmes options que agents-dev
-
-npm install --save-dev github:tchamouramses/Agent-Prompt-For-Developper   # ou comme dépendance de développement, version figée dans package-lock.json
-npx agents-dev                                                            # puis la commande du projet
+curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh -s -- --projet   # dans le projet courant
+curl -fsSL https://raw.githubusercontent.com/tchamouramses/Agent-Prompt-For-Developper/main/install.sh | sh                   # commande agents-dev dans ~/.local/bin
 ```
 
-npm récupère le dépôt avec les identifiants Git de la machine, ce qui marche aussi tant que le dépôt est privé. Une fois le paquet publié sur le registre npm, `npx @tchamouramses/agents-dev` suffit. La commande qui a servi est enregistrée dans `.bibliotheque-agents.json` (champ `relance`) : les agents qui doivent relancer l'installation (nouvelle stack, squelette créé) l'utilisent. Pour mettre à jour : relancer la même commande `npx`, ou `npm update @tchamouramses/agents-dev` puis `npx agents-dev`.
+Avec `--projet`, la bibliothèque est récupérée dans un dossier temporaire, installée dans le projet, puis effacée. Sinon, elle est gardée dans `~/.local/share/agents-dev`, et `agents-dev maj` la met à jour. Depuis un clone du dépôt, `sh install.sh --projet ~/mon-app` utilise le clone comme source.
 
 **Dans un projet**, depuis sa racine :
 
@@ -105,7 +97,7 @@ agents-dev --desinstaller           # retire ce que la commande a installé
 
 **Pour tous les projets** : `agents-dev --global` installe toutes les stacks dans `~/.claude/` (agents, skills, hook, réglages fusionnés) et pour Codex dans `~/.codex/` (bloc `AGENTS.md`, agents, règles) et `~/.agents/skills/`. Le `~/.codex/config.toml` de l'utilisateur n'est pas modifié. Une installation dans un projet reste prioritaire sur l'installation globale.
 
-**Mise à jour** : `agents-dev maj` télécharge la dernière version et met à jour l'installation globale ; relancer `agents-dev` sans option dans un projet le met à jour avec les mêmes outils, les mêmes stacks et celles apparues depuis dans le dépôt. Pour retirer une stack, la relancer avec `--stack`.
+**Mise à jour** : `agents-dev maj` (installation par `install.sh`) télécharge la dernière version et met à jour l'installation globale ; relancer `agents-dev` sans option dans un projet le met à jour avec les mêmes outils, les mêmes stacks et celles apparues depuis dans le dépôt. Pour retirer une stack, la relancer avec `--stack`.
 
 ### Choisir le mode de déploiement
 
