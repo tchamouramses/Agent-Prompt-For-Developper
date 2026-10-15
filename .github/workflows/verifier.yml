@@ -24,3 +24,5 @@ jobs:
         run: node scripts/test-hook-actions-reservees.mjs
       - name: Cas d'essai de l'installation
         run: node scripts/test-install.mjs
+      - name: Paquet npm (contenu, npx, dépendance)
+        run: node scripts/test-paquet-npm.mjs

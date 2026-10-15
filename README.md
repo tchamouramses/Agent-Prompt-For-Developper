@@ -22,9 +22,11 @@ Skills/
   PHP/ Java/ TypeScript/   savoirs propres à chaque langage et framework
   PREVUS.md      skills cités mais pas encore rédigés
 install.sh       installation en une commande, dans un projet (--projet) ou avec la commande agents-dev
+package.json     paquet npm : npx lance la commande agents-dev (scripts/install.mjs)
 scripts/
   install.mjs                    installe agents, skills et garde-fous dans un projet ou pour tous (--global), en Node.js
   test-install.mjs               cas d'essai de l'installation
+  test-paquet-npm.mjs            cas d'essai du paquet npm (contenu, npx, dépendance)
   sync-agents.py                 recopie les principes dans chaque agent et génère Codex/
   validate-skills.py             vérifie la forme des skills et les skills cités (--strict : tous rédigés)
   test-hook-actions-reservees.mjs cas d'essai du hook Claude Code
@@ -78,6 +80,18 @@ sh Agent-Prompt-For-Developper/install.sh                      # ou la commande 
 ```
 
 Sans clone, `install.sh` passe d'abord par `git clone` (avec les identifiants Git de la machine), puis par l'archive publique. Avec un clone, `agents-dev maj` fait un `git pull`.
+
+**Avec npm**, dans un projet qui a un `package.json` (ou n'importe quel dossier) :
+
+```
+npx github:tchamouramses/Agent-Prompt-For-Developper                 # installe sans rien ajouter au projet
+npx github:tchamouramses/Agent-Prompt-For-Developper --stack laravel  # mêmes options que agents-dev
+
+npm install --save-dev github:tchamouramses/Agent-Prompt-For-Developper   # ou comme dépendance de développement, version figée dans package-lock.json
+npx agents-dev                                                            # puis la commande du projet
+```
+
+npm récupère le dépôt avec les identifiants Git de la machine, ce qui marche aussi tant que le dépôt est privé. Une fois le paquet publié sur le registre npm, `npx @tchamouramses/agents-dev` suffit. La commande qui a servi est enregistrée dans `.bibliotheque-agents.json` (champ `relance`) : les agents qui doivent relancer l'installation (nouvelle stack, squelette créé) l'utilisent. Pour mettre à jour : relancer la même commande `npx`, ou `npm update @tchamouramses/agents-dev` puis `npx agents-dev`.
 
 **Dans un projet**, depuis sa racine :
 

@@ -1,0 +1,24 @@
+{
+  "name": "@tchamouramses/agents-dev",
+  "version": "1.0.0",
+  "description": "Agents et skills Claude Code et Codex pour développer de bout en bout, installés dans un projet en une commande.",
+  "type": "module",
+  "bin": {
+    "agents-dev": "scripts/install.mjs"
+  },
+  "files": [
+    "Agent",
+    "Codex",
+    "Config",
+    "Skills",
+    "scripts/install.mjs"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tchamouramses/Agent-Prompt-For-Developper.git"
+  },
+  "license": "UNLICENSED"
+}
